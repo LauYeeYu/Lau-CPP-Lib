@@ -161,8 +161,8 @@ b now at multiple modewith delimiter [ ] and stringfirst second third fourth ...
 first second third fourth ...
 ```
 
-## Details
-### <span id="Constructors">Constructors</span>
+## 詳細訊息
+### <span id="Constructors">構造函數</span>
 - `lau::TokenScanner();`
     - 默認構造函數，空輸入字符串，空格爲分隔符，連續掃描模式。
 
