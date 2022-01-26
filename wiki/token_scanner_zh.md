@@ -76,6 +76,91 @@ public:
 - [`Read`](#Read)：讀取内容
 - [`SkipDelimiter`](#SkipDelimiter)：跳過目前遇到的分隔符
 
+## 例子
+```c++
+#include <iostream>
+
+#include "lau/token_scanner.h"
+
+int main() {
+    lau::TokenScanner a;
+
+    a.Read("first second third fourth ...");
+    std::cout << a.TotalLength() << std::endl;
+    while (a.HasMoreToken()) {
+        std::cout << a.NextToken() << " " << a.PeekNextToken() << std::endl;
+    }
+
+    lau::TokenScanner b("first||second third|fourth|fifth|sixth",
+                        '|',
+                        lau::TokenScanner::single);
+    while (b.HasMoreToken()) {
+        std::cout << b.PeekNextToken() << std::endl;
+        std::cout << b.NextToken() << std::endl;
+        std::cout << b.PeekNextToken() << std::endl;
+    }
+    b.ResetState();
+    std::cout << b.NextToken() << std::endl;
+    b.ChangeMode(lau::TokenScanner::multiple).SkipDelimiter();
+    while (b.HasMoreToken()) {
+        std::cout << b.PeekNextToken() << " " << b.NextToken() << " " << b.PeekNextToken() << std::endl;
+    }
+    b.Read("second third|fourth|fifth|sixth").SetDelimiter(' ');
+    while (b.HasMoreToken()) {
+        std::cout << b.PeekNextToken() << " " << b.NextToken() << " " << b.PeekNextToken() << std::endl;
+    }
+    b = a;
+    std::cout << "b now at ";
+    if (b.GetMode() == lau::TokenScanner::multiple) std::cout << "multiple mode";
+    else std::cout << "single mode";
+    std::cout << "with delimiter [" << b.GetDelimiter() << "] and string" << b.GetInputString() << std::endl;
+    while (b.HasMoreToken()) {
+        std::cout << b.PeekNextToken() << " " << b.NextToken() << " " << b.PeekNextToken() << std::endl;
+    }
+    b = std::move(a);
+    std::cout << b.GetInputString() << std::endl;
+    return 0;
+}
+```
+
+上述程序之輸出爲：
+
+```
+29
+first second
+second third
+third fourth
+fourth ...
+... 
+first
+first
+
+
+
+second third
+second third
+second third
+fourth
+fourth
+fourth
+fifth
+fifth
+fifth
+sixth
+sixth
+sixth
+
+first
+second third second third fourth
+fourth fourth fifth
+fifth fifth sixth
+sixth sixth 
+second second third|fourth|fifth|sixth
+third|fourth|fifth|sixth third|fourth|fifth|sixth 
+b now at multiple modewith delimiter [ ] and stringfirst second third fourth ...
+first second third fourth ...
+```
+
 ## Details
 ### <span id="Constructors">Constructors</span>
 - `lau::TokenScanner();`
