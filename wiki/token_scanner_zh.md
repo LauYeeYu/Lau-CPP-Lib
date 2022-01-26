@@ -24,7 +24,7 @@ public:
 
     ~TokenScanner() = default;
 
-    TokenScanner& operator=(const TokenScanner& obj) noexcept;
+    TokenScanner& operator=(const TokenScanner& obj);
     TokenScanner& operator=(TokenScanner&& obj) noexcept;
 
     TokenScanner& SetDelimiter(char delimiter) noexcept;
@@ -156,5 +156,5 @@ public:
     - 獲取掃描方式。
 
 ### <span id="operator=">operator=</span>
-- `TokenScanner& operator=(const TokenScanner& obj) noexcept;`
+- `TokenScanner& operator=(const TokenScanner& obj);`
 - `TokenScanner& operator=(TokenScanner&& obj) noexcept;`

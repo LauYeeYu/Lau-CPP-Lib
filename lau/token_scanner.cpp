@@ -99,6 +99,6 @@ lau::TokenScanner::TokenScannerMode lau::TokenScanner::GetMode() const noexcept 
     return mode_;
 }
 
-lau::TokenScanner& lau::TokenScanner::operator=(const lau::TokenScanner& obj) noexcept = default;
+lau::TokenScanner& lau::TokenScanner::operator=(const lau::TokenScanner& obj) = default;
 
 lau::TokenScanner& lau::TokenScanner::operator=(lau::TokenScanner&& obj) noexcept = default;

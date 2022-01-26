@@ -129,7 +129,7 @@ public:
      */
     [[nodiscard]] TokenScannerMode GetMode() const noexcept;
 
-    TokenScanner& operator=(const TokenScanner& obj) noexcept;
+    TokenScanner& operator=(const TokenScanner& obj);
 
     TokenScanner& operator=(TokenScanner&& obj) noexcept;
 
