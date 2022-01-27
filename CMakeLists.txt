@@ -11,4 +11,4 @@ add_executable(test
         lau/token_scanner.cpp
         lau/utility.h
         lau/utility.cpp
-        test.cpp)
+        test.cpp lau/file_data_structure.h)
