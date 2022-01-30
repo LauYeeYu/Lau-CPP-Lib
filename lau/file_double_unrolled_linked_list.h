@@ -17,13 +17,278 @@ namespace lau {
  *
  * WARNING:
  * <br>
- * 1. The key type MUST have valid operator< and operator== !
+ * 1. The two key type MUST have valid operator< and operator== !
  * <br>
  * 2. The two key and value types must have default constructor and
  * trivial move and copy constructor.
  */
 template<class keyType1, class keyType2, class valueType>
 class FileDoubleUnrolledLinkedList {
+public:
+    explicit FileDoubleUnrolledLinkedList(const std::string& fileName, int nodeSize = 316)
+        : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
+        list_.seekg(0);
+        list_.seekp(0);
+        if (list_.peek() == EOF) {
+            list_.seekg(0, std::ios::beg);
+            list_.seekp(0, std::ios::beg);
+            list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+        } else {
+            list_.read(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+        }
+    }
+
+    ~FileDoubleUnrolledLinkedList() = default;
+
+    /**
+     * This function inserts a new key-value pair.
+     * <br><br>
+     * WARNING: the new node to be inserted CANNOT be the same of the
+     * node in the unrolled linked list, or it may cause severe and
+     * unexpected problem.
+     * @param key1 the new key1
+     * @param key2 the new key2
+     * @param value the value of the new key
+     */
+    void Insert(const keyType1& key1, const keyType2& key2, const valueType& value) {
+        std::pair<Ptr, int> position = Find_(key1, key2);
+        if (position.first == 0) {
+            MainNode_ mainNode{key1, key2, value, 0, 0, 0, 0};
+            NewNode_(mainNode, 0);
+            return;
+        }
+
+        // Get the main node
+        MainNode_ mainNode; // the place to place the new node
+        list_.seekg(position.first);
+        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+
+        Node_ tmpNode;
+        if (mainNode.pre == 0 && (key1 < mainNode.key1 || (key1 == mainNode.key1 && key2 < mainNode.key2))) {
+            // Push back the data
+            char* buffer = Read_(mainNode.target, mainNode.count * sizeof(Node_));
+            Write_(buffer, mainNode.target + sizeof(Node_), mainNode.count * sizeof(Node_));
+            delete[] buffer;
+
+            // Move the data in main node to the first node of its array
+            tmpNode.key1 = mainNode.key1;
+            tmpNode.key2 = mainNode.key2;
+            tmpNode.value = mainNode.value;
+            list_.seekp(mainNode.target);
+            list_.write(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+
+            // set the new data in the main node
+            mainNode.key1 = key1;
+            mainNode.key2 = key2;
+            mainNode.value = value;
+            ++(mainNode.count);
+            list_.seekp(position.first);
+            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+            return;
+        } else {
+            // Move the node(s) after the node to be inserted
+            char* buffer = Read_(mainNode.target + (position.second + 1) * sizeof(Node_),
+                                 (mainNode.count - position.second - 1) * sizeof(Node_));
+            Write_(buffer, mainNode.target + (position.second + 2) * sizeof(Node_),
+                   (mainNode.count - position.second - 1) * sizeof(Node_));
+            delete[] buffer;
+
+            // Put the new node
+            Node_ newNode{key1, key2, value};
+            list_.seekp(mainNode.target + (position.second + 1) * sizeof(Node_));
+            list_.write(reinterpret_cast<char*>(&newNode), sizeof(Node_));
+
+            // Change the main node
+            ++(mainNode.count);
+            list_.seekp(position.first);
+            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+        }
+
+        // Split the main node if it is larger its expected size
+        if (mainNode.count >= head_.maxNodeSize) {
+            Split_(mainNode, position.first);
+        }
+    }
+
+    void Erase(const keyType1& key1, const keyType2& key2) {
+        std::pair<Ptr, int> position = FindExact_(key1, key2);
+        if (position.first == -1) return; // no such node
+
+        // Get the main node
+        MainNode_ mainNode;
+        Node_ tmpNode;
+        list_.seekg(position.first);
+        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+
+        if (position.second == -1) { // the case that the data is in the main node
+            if (mainNode.count == 0) { // the case that the main node has no other members
+                DeleteNode_(mainNode, position.first);
+            } else { // the case that the main node has other members
+                // Set the main node
+                list_.seekg(mainNode.target);
+                list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+                mainNode.key1 = tmpNode.key1;
+                mainNode.key2 = tmpNode.key2;
+                mainNode.value = tmpNode.value;
+                --(mainNode.count);
+
+                // Put the main Node
+                list_.seekp(position.first);
+                list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+
+                // Move forward the other nodes
+                char* buffer = Read_(mainNode.target + sizeof(Node_), mainNode.count * sizeof(Node_));
+                Write_(buffer, mainNode.target, mainNode.count * sizeof(Node_));
+                delete[] buffer;
+            }
+        } else { // the case that the data is in the array of the main node
+            // Set and put the main node
+            --(mainNode.count);
+            list_.seekp(position.first);
+            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+
+            // Move forward the other nodes
+            char* buffer = Read_(mainNode.target + (position.second + 1) * sizeof(Node_),
+                                 (mainNode.count - position.second) * sizeof(Node_));
+            Write_(buffer, mainNode.target + position.second * sizeof(Node_),
+                   (mainNode.count - position.second) * sizeof(Node_));
+            delete[] buffer;
+        }
+    }
+
+    void Modify(const keyType1& key1, const keyType2& key2, const valueType& value) {
+        std::pair<Ptr, int> position = FindExact_(key1, key2);
+        if (position.first == -1) return; // no such node\
+
+        // Get the main node
+        MainNode_ mainNode;
+        list_.seekg(position.first);
+        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+
+        if (position.second == -1) { // the case that the data is in the main node
+            mainNode.value = value;
+            list_.seekp(position.first);
+            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+        } else { // the case that the data is in the array of the main node
+            Node_ tmpNode;
+            list_.seekg(mainNode.target + position.second * sizeof(Node_));
+            list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+            tmpNode.value = value; // Modify the value
+            list_.seekp(mainNode.target + position.second * sizeof(Node_));
+            list_.write(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+        }
+    }
+
+    /**
+     * The function clears all the data in the unrolled linked list
+     */
+    void Clear() {
+        head_.next = 0;
+        head_.pre = 0;
+        list_.seekp(0);
+        list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+    }
+
+    /**
+     * This function gets the point of the value of a certain key pair.
+     * If the key pair doesn't exist, a nullptr will be returned instead.
+     * <br><br>
+     * WARNING: If the function doesn't return a nullptr, ALWAYS free
+     * the memory whenever you don't need it.
+     * @param key1
+     * @param key2
+     * @return the point of the value of a certain key.
+     * <br>
+     * If the key pair doesn't exist, a nullptr will be returned instead.
+     */
+    valueType* Get(const keyType1& key1, const keyType2& key2) {
+        std::pair<Ptr, int> position = FindExact_(key1, key2);
+        if (position.first == -1) return nullptr; // no such node
+
+        MainNode_ mainNode;
+        list_.seekg(position.first);
+        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+        if (position.second == -1) {
+            return new valueType(mainNode.value);
+        } else {
+            Node_ tmpNode;
+            list_.seekg(mainNode.target + position.second * sizeof(Node_));
+            list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+            return new valueType(tmpNode.value);
+        }
+    }
+
+    std::vector<valueType> Traverse() {
+        std::vector<valueType> values; // can be optimized
+        MainNode_ mainNode;
+        Node_ node;
+        Ptr mainPtr = head_.next;
+        while (mainPtr != 0) {
+            list_.seekg(mainPtr);
+            list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+            values.emplace_back(mainNode.value);
+            for (int i = 0; i < mainNode.count; ++i) {
+                list_.seekg(mainNode.target + i * sizeof(Node_));
+                list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
+                values.emplace_back(node.value);
+            }
+            mainPtr = mainNode.next;
+        }
+        return std::move(values);
+    }
+
+    std::vector<valueType> Traverse(const keyType1& key1) {
+        std::vector<valueType> values; // can be optimized
+
+        std::pair<Ptr, int> position = SingleFind_(key1);
+
+        // The case of there are no such key
+        if (position.first == -1) {
+            return std::move(values);
+        }
+
+        Ptr ptr = position.first;
+        MainNode_ mainNode;
+        Node_ node;
+        list_.seekg(ptr);
+        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+        if (position.second != -1) {
+            // Traverse all the data in the array of the main node
+            for (int i = position.second; i < mainNode.count; ++i) {
+                list_.seekg(mainNode.target + i * sizeof(Node_));
+                list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
+                if (!(node.key1 == key1)) break;
+                values.emplace_back(node.value);
+            }
+
+            // Move to the next node
+            ptr = mainNode.next;
+            list_.seekg(ptr);
+            list_.read(reinterpret_cast<char*>(&mainNode), sizeof(mainNode));
+        }
+        while (mainNode.key1 == key1) {
+            values.emplace_back(mainNode.value);
+
+            // Traverse all the data in the array of the main node
+            for (int i = 0; i < mainNode.count; ++i) {
+                list_.seekg(mainNode.target + i * sizeof(Node_));
+                list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
+                if (!(node.key1 == key1)) break;
+                values.emplace_back(node.value);
+            }
+
+            // Move to the next node
+            ptr = mainNode.next;
+            list_.seekg(ptr);
+            list_.read(reinterpret_cast<char*>(&mainNode), sizeof(mainNode));
+        }
+        return std::move(values);
+    }
+
+    void Flush() {
+        list_.flush();
+    }
+
 private:
     typedef long Ptr;
 
@@ -502,271 +767,6 @@ private:
     void Write_(char* source, Ptr target, int length) {
         list_.seekp(target);
         list_.write(source, length);
-    }
-
-public:
-    explicit FileDoubleUnrolledLinkedList(const std::string& fileName, int nodeSize = 316)
-        : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
-        list_.seekg(0);
-        list_.seekp(0);
-        if (list_.peek() == EOF) {
-            list_.seekg(0, std::ios::beg);
-            list_.seekp(0, std::ios::beg);
-            list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
-        } else {
-            list_.read(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
-        }
-    }
-
-    ~FileDoubleUnrolledLinkedList() = default;
-
-    /**
-     * This function inserts a new key-value pair.
-     * <br><br>
-     * WARNING: the new node to be inserted CANNOT be the same of the
-     * node in the unrolled linked list, or it may cause severe and
-     * unexpected problem.
-     * @param key1 the new key1
-     * @param key2 the new key2
-     * @param value the value of the new key
-     */
-    void Insert(const keyType1& key1, const keyType2& key2, const valueType& value) {
-        std::pair<Ptr, int> position = Find_(key1, key2);
-        if (position.first == 0) {
-            MainNode_ mainNode{key1, key2, value, 0, 0, 0, 0};
-            NewNode_(mainNode, 0);
-            return;
-        }
-
-        // Get the main node
-        MainNode_ mainNode; // the place to place the new node
-        list_.seekg(position.first);
-        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-
-        Node_ tmpNode;
-        if (mainNode.pre == 0 && (key1 < mainNode.key1 || (key1 == mainNode.key1 && key2 < mainNode.key2))) {
-            // Push back the data
-            char* buffer = Read_(mainNode.target, mainNode.count * sizeof(Node_));
-            Write_(buffer, mainNode.target + sizeof(Node_), mainNode.count * sizeof(Node_));
-            delete[] buffer;
-
-            // Move the data in main node to the first node of its array
-            tmpNode.key1 = mainNode.key1;
-            tmpNode.key2 = mainNode.key2;
-            tmpNode.value = mainNode.value;
-            list_.seekp(mainNode.target);
-            list_.write(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
-
-            // set the new data in the main node
-            mainNode.key1 = key1;
-            mainNode.key2 = key2;
-            mainNode.value = value;
-            ++(mainNode.count);
-            list_.seekp(position.first);
-            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-            return;
-        } else {
-            // Move the node(s) after the node to be inserted
-            char* buffer = Read_(mainNode.target + (position.second + 1) * sizeof(Node_),
-                                 (mainNode.count - position.second - 1) * sizeof(Node_));
-            Write_(buffer, mainNode.target + (position.second + 2) * sizeof(Node_),
-                   (mainNode.count - position.second - 1) * sizeof(Node_));
-            delete[] buffer;
-
-            // Put the new node
-            Node_ newNode{key1, key2, value};
-            list_.seekp(mainNode.target + (position.second + 1) * sizeof(Node_));
-            list_.write(reinterpret_cast<char*>(&newNode), sizeof(Node_));
-
-            // Change the main node
-            ++(mainNode.count);
-            list_.seekp(position.first);
-            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-        }
-
-        // Split the main node if it is larger its expected size
-        if (mainNode.count >= head_.maxNodeSize) {
-            Split_(mainNode, position.first);
-        }
-    }
-
-    void Erase(const keyType1& key1, const keyType2& key2) {
-        std::pair<Ptr, int> position = FindExact_(key1, key2);
-        if (position.first == -1) return; // no such node
-
-        // Get the main node
-        MainNode_ mainNode;
-        Node_ tmpNode;
-        list_.seekg(position.first);
-        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-
-        if (position.second == -1) { // the case that the data is in the main node
-            if (mainNode.count == 0) { // the case that the main node has no other members
-                DeleteNode_(mainNode, position.first);
-            } else { // the case that the main node has other members
-                // Set the main node
-                list_.seekg(mainNode.target);
-                list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
-                mainNode.key1 = tmpNode.key1;
-                mainNode.key2 = tmpNode.key2;
-                mainNode.value = tmpNode.value;
-                --(mainNode.count);
-
-                // Put the main Node
-                list_.seekp(position.first);
-                list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-
-                // Move forward the other nodes
-                char* buffer = Read_(mainNode.target + sizeof(Node_), mainNode.count * sizeof(Node_));
-                Write_(buffer, mainNode.target, mainNode.count * sizeof(Node_));
-                delete[] buffer;
-            }
-        } else { // the case that the data is in the array of the main node
-            // Set and put the main node
-            --(mainNode.count);
-            list_.seekp(position.first);
-            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-
-            // Move forward the other nodes
-            char* buffer = Read_(mainNode.target + (position.second + 1) * sizeof(Node_),
-                                 (mainNode.count - position.second) * sizeof(Node_));
-            Write_(buffer, mainNode.target + position.second * sizeof(Node_),
-                   (mainNode.count - position.second) * sizeof(Node_));
-            delete[] buffer;
-        }
-    }
-
-    void Modify(const keyType1& key1, const keyType2& key2, const valueType& value) {
-        std::pair<Ptr, int> position = FindExact_(key1, key2);
-        if (position.first == -1) return; // no such node\
-
-        // Get the main node
-        MainNode_ mainNode;
-        list_.seekg(position.first);
-        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-
-        if (position.second == -1) { // the case that the data is in the main node
-            mainNode.value = value;
-            list_.seekp(position.first);
-            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-        } else { // the case that the data is in the array of the main node
-            Node_ tmpNode;
-            list_.seekg(mainNode.target + position.second * sizeof(Node_));
-            list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
-            tmpNode.value = value; // Modify the value
-            list_.seekp(mainNode.target + position.second * sizeof(Node_));
-            list_.write(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
-        }
-    }
-
-    /**
-     * The function clears all the data in the unrolled linked list
-     */
-    void Clear() {
-        head_.next = 0;
-        head_.pre = 0;
-        list_.seekp(0);
-        list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
-    }
-
-    /**
-     * This function gets the point of the value of a certain key pair.
-     * If the key pair doesn't exist, a nullptr will be returned instead.
-     * <br><br>
-     * WARNING: If the function doesn't return a nullptr, ALWAYS free
-     * the memory whenever you don't need it.
-     * @param key1
-     * @param key2
-     * @return the point of the value of a certain key.
-     * <br>
-     * If the key pair doesn't exist, a nullptr will be returned instead.
-     */
-    valueType* Get(const keyType1& key1, const keyType2& key2) {
-        std::pair<Ptr, int> position = FindExact_(key1, key2);
-        if (position.first == -1) return nullptr; // no such node
-
-        MainNode_ mainNode;
-        list_.seekg(position.first);
-        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-        if (position.second == -1) {
-            return new valueType(mainNode.value);
-        } else {
-            Node_ tmpNode;
-            list_.seekg(mainNode.target + position.second * sizeof(Node_));
-            list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
-            return new valueType(tmpNode.value);
-        }
-    }
-
-    std::vector<valueType> Traverse() {
-        std::vector<valueType> values; // can be optimized
-        MainNode_ mainNode;
-        Node_ node;
-        Ptr mainPtr = head_.next;
-        while (mainPtr != 0) {
-            list_.seekg(mainPtr);
-            list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-            values.emplace_back(mainNode.value);
-            for (int i = 0; i < mainNode.count; ++i) {
-                list_.seekg(mainNode.target + i * sizeof(Node_));
-                list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
-                values.emplace_back(node.value);
-            }
-            mainPtr = mainNode.next;
-        }
-        return std::move(values);
-    }
-
-    std::vector<valueType> Traverse(const keyType1& key1) {
-        std::vector<valueType> values; // can be optimized
-
-        std::pair<Ptr, int> position = SingleFind_(key1);
-
-        // The case of there are no such key
-        if (position.first == -1) {
-            return std::move(values);
-        }
-
-        Ptr ptr = position.first;
-        MainNode_ mainNode;
-        Node_ node;
-        list_.seekg(ptr);
-        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-        if (position.second != -1) {
-            // Traverse all the data in the array of the main node
-            for (int i = position.second; i < mainNode.count; ++i) {
-                list_.seekg(mainNode.target + i * sizeof(Node_));
-                list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
-                if (!(node.key1 == key1)) break;
-                values.emplace_back(node.value);
-            }
-
-            // Move to the next node
-            ptr = mainNode.next;
-            list_.seekg(ptr);
-            list_.read(reinterpret_cast<char*>(&mainNode), sizeof(mainNode));
-        }
-        while (mainNode.key1 == key1) {
-            values.emplace_back(mainNode.value);
-
-            // Traverse all the data in the array of the main node
-            for (int i = 0; i < mainNode.count; ++i) {
-                list_.seekg(mainNode.target + i * sizeof(Node_));
-                list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
-                if (!(node.key1 == key1)) break;
-                values.emplace_back(node.value);
-            }
-
-            // Move to the next node
-            ptr = mainNode.next;
-            list_.seekg(ptr);
-            list_.read(reinterpret_cast<char*>(&mainNode), sizeof(mainNode));
-        }
-        return std::move(values);
-    }
-
-    void Flush() {
-        list_.flush();
     }
 };
 
