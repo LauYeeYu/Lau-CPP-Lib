@@ -51,7 +51,16 @@ public:
      * @param value the value of the new key
      */
     void Insert(const keyType1& key1, const keyType2& key2, const valueType& value) {
+        // put the new node into cache (store the data in memory to boost efficiency)
+        cachedNode_.key1 = key1;
+        cachedNode_.key2 = key2;
+        cachedNode_.value = value;
+        cached = true;
+
+        // Search the place to accommodate to new pair
         std::pair<Ptr, int> position = Find_(key1, key2);
+
+        // The case of no nodes at all
         if (position.first == 0) {
             MainNode_ mainNode{key1, key2, value, 0, 0, 0, 0};
             NewNode_(mainNode, 0);
@@ -84,7 +93,7 @@ public:
             ++(mainNode.count);
             list_.seekp(position.first);
             list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-            return;
+
         } else {
             // Move the node(s) after the node to be inserted
             char* buffer = Read_(mainNode.target + (position.second + 1) * sizeof(Node_),
@@ -111,6 +120,12 @@ public:
     }
 
     void Erase(const keyType1& key1, const keyType2& key2) {
+        // De-cache the node if it is really in cache
+        if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
+            cached = false;
+        }
+
+        // Find the exact place of the node to be erased
         std::pair<Ptr, int> position = FindExact_(key1, key2);
         if (position.first == -1) return; // no such node
 
@@ -157,8 +172,14 @@ public:
     }
 
     void Modify(const keyType1& key1, const keyType2& key2, const valueType& value) {
+        // Change cache the node if it is really in cache
+        if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
+            cachedNode_.value = value;
+        }
+
+        // Find the Node
         std::pair<Ptr, int> position = FindExact_(key1, key2);
-        if (position.first == -1) return; // no such node\
+        if (position.first == -1) return; // no such node
 
         // Get the main node
         MainNode_ mainNode;
@@ -187,6 +208,90 @@ public:
         head_.pre = 0;
         list_.seekp(0);
         list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+        cached = false;
+    }
+
+    /**
+     * This function tells whether there exists a node with a certain key
+     * or not.
+     * @param key1
+     * @param key2
+     * @return The boolean of whether there exists a node with a certain key
+     * or not
+     */
+    [[nodiscard]] bool Exist(const keyType1& key1, const keyType2& key2) {
+        // Check if it is cached
+        if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
+            return true;
+        }
+
+        std::pair<Ptr, int> position = FindExact_(key1, key2);
+        if (position.first == -1) return false; // no such node
+
+        MainNode_ mainNode;
+        list_.seekg(position.first);
+        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+        if (position.second == -1) {
+            cachedNode_.key1 = mainNode.key1;
+            cachedNode_.key2 = mainNode.key2;
+            cachedNode_.value = mainNode.value;
+            cached = true;
+            return true;
+
+        } else {
+            Node_ tmpNode;
+            list_.seekg(mainNode.target + position.second * sizeof(Node_));
+            list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+
+            cachedNode_.key1 = tmpNode.key1;
+            cachedNode_.key2 = tmpNode.key2;
+            cachedNode_.value = tmpNode.key;
+            cached = true;
+            return true;
+        }
+    }
+
+    /**
+     * This function returns the corresponding value of the key.  If there is
+     * no such node, it will return the default value (using the default
+     * constructor).
+     * @param key1
+     * @param key2
+     * @return the corresponding value of the key.
+     * <br>
+     * If there is no such node, it will return the default value (calling the
+     * default constructor).
+     */
+    [[nodiscard]] valueType Get(const keyType1& key1, const keyType2& key2) {
+        // Check if it is cached
+        if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
+            return cachedNode_.value;
+        }
+
+        std::pair<Ptr, int> position = FindExact_(key1, key2);
+        if (position.first == -1) return valueType(); // no such node
+
+        MainNode_ mainNode;
+        list_.seekg(position.first);
+        list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+        if (position.second == -1) {
+            cachedNode_.key1 = mainNode.key1;
+            cachedNode_.key2 = mainNode.key2;
+            cachedNode_.value = mainNode.value;
+            cached = true;
+            return cachedNode_.value;
+
+        } else {
+            Node_ tmpNode;
+            list_.seekg(mainNode.target + position.second * sizeof(Node_));
+            list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+
+            cachedNode_.key1 = tmpNode.key1;
+            cachedNode_.key2 = tmpNode.key2;
+            cachedNode_.value = tmpNode.value;
+            cached = true;
+            return cachedNode_.value;
+        }
     }
 
     /**
@@ -199,9 +304,14 @@ public:
      * @param key2
      * @return the point of the value of a certain key.
      * <br>
-     * If the key pair doesn't exist, a nullptr will be returned instead.
+     * If there is no such node, a nullptr will be returned instead.
      */
-    valueType* Get(const keyType1& key1, const keyType2& key2) {
+    [[nodiscard]] valueType* GetWithPointer(const keyType1& key1, const keyType2& key2) {
+        // Check if it is cached
+        if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
+            return new valueType(cachedNode_.value);
+        }
+
         std::pair<Ptr, int> position = FindExact_(key1, key2);
         if (position.first == -1) return nullptr; // no such node
 
@@ -209,11 +319,20 @@ public:
         list_.seekg(position.first);
         list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
         if (position.second == -1) {
+            cachedNode_.key1 = mainNode.key1;
+            cachedNode_.key2 = mainNode.key2;
+            cachedNode_.value = mainNode.value;
+            cached = true;
             return new valueType(mainNode.value);
         } else {
             Node_ tmpNode;
             list_.seekg(mainNode.target + position.second * sizeof(Node_));
             list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+
+            cachedNode_.key1 = tmpNode.key1;
+            cachedNode_.key2 = tmpNode.key2;
+            cachedNode_.value = tmpNode.value;
+            cached = true;
             return new valueType(tmpNode.value);
         }
     }
@@ -345,6 +464,10 @@ private:
 
         valueType value;
     } emptyNode_;
+
+    mutable Node_ cachedNode_;
+
+    mutable bool cached = false;
 
     /**
      * This function return a pair of the pointer to the main node
