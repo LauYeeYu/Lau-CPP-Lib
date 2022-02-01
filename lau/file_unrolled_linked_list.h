@@ -25,6 +25,64 @@ class FileUnrolledLinkedList {
 public:
     typedef long Ptr;
 
+    friend class Iterator;
+
+    class Iterator {
+    public:
+        friend class FileUnrolledLinkedList<KeyType, ValueType>;
+
+    private:
+        explicit Iterator(FileUnrolledLinkedList<KeyType, ValueType>& list,
+                          Ptr mainNodePtr,
+                          Ptr targetPtr,
+                          int count,
+                          int offset,
+                          KeyType key,
+                          ValueType value)
+            : list_(list),
+              mainNodePtr_(mainNodePtr),
+              targetPtr_(targetPtr),
+              mainNodeCount_(count),
+              offset_(offset),
+              key_(key),
+              value_(value) {
+            loaded_ = true;
+        }
+
+        explicit Iterator(FileUnrolledLinkedList<KeyType, ValueType>& list,
+                          Ptr mainNodePtr,
+                          Ptr targetPtr,
+                          int count,
+                          int offset)
+            : list_(list),
+              mainNodePtr_(mainNodePtr),
+              targetPtr_(targetPtr),
+              mainNodeCount_(count),
+              offset_(offset),
+              key_(),
+              value_() {
+            loaded_ = false;
+        }
+
+        ~Iterator() = default;
+
+        FileUnrolledLinkedList<KeyType, ValueType>& list_;
+
+        mutable KeyType key_;
+
+        mutable ValueType value_;
+
+        Ptr mainNodePtr_; // If mainNodePtr is 0, that is to say this is the end of the list
+
+        Ptr targetPtr_;
+
+        int mainNodeCount_;
+
+        int offset_; // If offset is 0, that is to say this is the main node.
+
+        bool loaded_;
+    };
+
     explicit FileUnrolledLinkedList(const std::string& fileName, int nodeSize = 316) noexcept
         : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
