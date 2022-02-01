@@ -27,7 +27,7 @@ class FileDoubleUnrolledLinkedList {
 public:
     typedef long Ptr;
 
-    explicit FileDoubleUnrolledLinkedList(const std::string& fileName, int nodeSize = 316)
+    explicit FileDoubleUnrolledLinkedList(const std::string& fileName, int nodeSize = 316) noexcept
         : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
         list_.seekp(0);
@@ -39,6 +39,27 @@ public:
             list_.read(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
         }
     }
+
+    explicit FileDoubleUnrolledLinkedList(const char* fileName, int nodeSize = 316) noexcept
+        : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
+        list_.seekg(0);
+        list_.seekp(0);
+        if (list_.peek() == EOF) {
+            list_.seekg(0, std::ios::beg);
+            list_.seekp(0, std::ios::beg);
+            list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+        } else {
+            list_.read(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+        }
+    }
+
+    FileDoubleUnrolledLinkedList(FileDoubleUnrolledLinkedList&&) noexcept = default;
+
+    FileDoubleUnrolledLinkedList(const FileDoubleUnrolledLinkedList&) = delete;
+
+    FileDoubleUnrolledLinkedList& operator=(FileDoubleUnrolledLinkedList&&) noexcept = default;
+
+    FileDoubleUnrolledLinkedList& operator=(const FileDoubleUnrolledLinkedList&) = delete;
 
     ~FileDoubleUnrolledLinkedList() = default;
 

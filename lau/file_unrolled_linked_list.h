@@ -10,22 +10,22 @@ namespace lau {
  * @class FileUnrolledLinkedList
  *
  * This is a template class of unrolled linked list on disk storage.
- * @tparam keyType Type of Key
- * @tparam valueType Type of Value
+ * @tparam KeyType Type of Key
+ * @tparam ValueType Type of Value
  *
- * WARNING:
+ * CAUTION:
  * <br>
  * 1. The key type MUST have valid operator< and operator== !
  * <br>
  * 2. The key and value type must have default constructor and trivial
  * move and copy constructor.
  */
-template <class keyType, class valueType>
+template <class KeyType, class ValueType>
 class FileUnrolledLinkedList {
 public:
     typedef long Ptr;
 
-    explicit FileUnrolledLinkedList(const std::string& fileName, int nodeSize = 316)
+    explicit FileUnrolledLinkedList(const std::string& fileName, int nodeSize = 316) noexcept
         : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
         list_.seekp(0);
@@ -38,6 +38,27 @@ public:
         }
     }
 
+    explicit FileUnrolledLinkedList(const char* fileName, int nodeSize = 316) noexcept
+        : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
+        list_.seekg(0);
+        list_.seekp(0);
+        if (list_.peek() == EOF) {
+            list_.seekg(0, std::ios::beg);
+            list_.seekp(0, std::ios::beg);
+            list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+        } else {
+            list_.read(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+        }
+    }
+
+    FileUnrolledLinkedList(FileUnrolledLinkedList&&) noexcept = default;
+
+    FileUnrolledLinkedList(const FileUnrolledLinkedList&) = delete;
+
+    FileUnrolledLinkedList& operator=(FileUnrolledLinkedList&&) noexcept = default;
+
+    FileUnrolledLinkedList& operator=(const FileUnrolledLinkedList&) = delete;
+
     ~FileUnrolledLinkedList() = default;
 
     /**
@@ -49,7 +70,7 @@ public:
      * @param key the new key
      * @param value the value of the new key
      */
-    FileUnrolledLinkedList& Insert(const keyType& key, const valueType& value) {
+    FileUnrolledLinkedList& Insert(const KeyType& key, const ValueType& value) {
         // Put the new node into cache (store the data in memory to boost efficiency)
         cachedNode_.key = key;
         cachedNode_.value = value;
@@ -117,7 +138,7 @@ public:
         return *this;
     }
 
-    FileUnrolledLinkedList& Erase(const keyType& key) {
+    FileUnrolledLinkedList& Erase(const KeyType& key) {
         // De-cache the node if it is really in cache
         if (cached && cachedNode_.key == key) {
             cached = false;
@@ -170,7 +191,7 @@ public:
         return *this;
     }
 
-    FileUnrolledLinkedList& Modify(const keyType& key, const valueType& value) {
+    FileUnrolledLinkedList& Modify(const KeyType& key, const ValueType& value) {
         // Change cache the node if it is really in cache
         if (cached && cachedNode_.key == key) {
             cachedNode_.value = value;
@@ -218,7 +239,7 @@ public:
      * @return The boolean of whether there exists a node with a certain key
      * or not
      */
-    [[nodiscard]] bool Exist(const keyType& key) {
+    [[nodiscard]] bool Exist(const KeyType& key) {
         // Check if it is cached
         if (cached && cachedNode_.key == key) {
             return true;
@@ -258,14 +279,14 @@ public:
      * If there is no such node, it will return the default value (calling the
      * default constructor).
      */
-    [[nodiscard]] valueType Get(const keyType& key) {
+    [[nodiscard]] ValueType Get(const KeyType& key) {
         // Check if it is cached
         if (cached && cachedNode_.key == key) {
             return cachedNode_.value;
         }
 
         auto [mainNodePtr, offset] = FindExact_(key);
-        if (mainNodePtr == -1) return valueType(); // no such node
+        if (mainNodePtr == -1) return ValueType(); // no such node
 
         MainNode_ mainNode;
         list_.seekg(mainNodePtr);
@@ -299,10 +320,10 @@ public:
      * <br>
      * If the key doesn't exist, a nullptr will be returned instead.
      */
-    [[nodiscard]] valueType* GetWithPointer(const keyType& key) {
+    [[nodiscard]] ValueType* GetWithPointer(const KeyType& key) {
         // Check if it is cached
         if (cached && cachedNode_.key == key) {
-            return new valueType(cachedNode_.value);
+            return new ValueType(cachedNode_.value);
         }
 
         auto [mainNodePtr, offset] = FindExact_(key);
@@ -314,7 +335,7 @@ public:
             cachedNode_.key = mainNode.key;
             cachedNode_.value = mainNode.value;
             cached = true;
-            return new valueType(mainNode.value);
+            return new ValueType(mainNode.value);
         } else {
             Node_ tmpNode;
             list_.seekg(mainNode.target + offset * sizeof(Node_));
@@ -323,12 +344,12 @@ public:
             cachedNode_.key = tmpNode.key;
             cachedNode_.value = tmpNode.key;
             cached = true;
-            return new valueType(tmpNode.value);
+            return new ValueType(tmpNode.value);
         }
     }
 
-    std::vector<valueType> Traverse() {
-        std::vector<valueType> values; // can be optimized
+    std::vector<ValueType> Traverse() {
+        std::vector<ValueType> values; // can be optimized
         MainNode_ mainNode;
         Node_ node;
         Ptr mainPtr = head_.next;
@@ -378,9 +399,9 @@ private:
      * link other main nodes.
      */
     struct MainNode_ {
-        keyType key;
+        KeyType key;
 
-        valueType value;
+        ValueType value;
 
         Ptr target;
 
@@ -397,9 +418,9 @@ private:
      * This is the Node to store data.
      */
     struct Node_ {
-        keyType key;
+        KeyType key;
 
-        valueType value;
+        ValueType value;
     } emptyNode_;
 
     mutable Node_ cachedNode_;
@@ -416,7 +437,7 @@ private:
      * @param key
      * @return a pair of the pointer to the main node and the offset (0-based)
      */
-    std::pair<Ptr, int> Find_(const keyType& key) {
+    std::pair<Ptr, int> Find_(const KeyType& key) {
         if (head_.next == 0) return std::make_pair(0, -1);
         MainNode_ tmp;
         Ptr Ptr = head_.pre;
@@ -468,7 +489,7 @@ private:
      * @param key
      * @return a pair of the pointer to the main node and the offset
      */
-    std::pair<Ptr, int> FindExact_(const keyType& key) {
+    std::pair<Ptr, int> FindExact_(const KeyType& key) {
         if (head_.next == 0) return std::make_pair(-1, -1);
 
         MainNode_ tmp;
