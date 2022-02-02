@@ -26,69 +26,6 @@ template<class KeyType1, class KeyType2, class ValueType>
 class FileDoubleUnrolledLinkedList {
 public:
     typedef long Ptr;
-    
-    friend class Iterator;
-
-    class Iterator {
-    public:
-        friend class FileDoubleUnrolledLinkedList<KeyType1, KeyType2, ValueType>;
-
-    private:
-        explicit Iterator(FileDoubleUnrolledLinkedList<KeyType1, KeyType2, ValueType>& list,
-                          Ptr mainNodePtr,
-                          Ptr targetPtr,
-                          int count,
-                          int offset,
-                          KeyType1 key1,
-                          KeyType2 key2,
-                          ValueType value)
-            : list_(list),
-              mainNodePtr_(mainNodePtr),
-              targetPtr_(targetPtr),
-              mainNodeCount_(count),
-              offset_(offset),
-              key1_(key1),
-              key2_(key2),
-              value_(value) {
-            loaded_ = true;
-        }
-
-        explicit Iterator(FileDoubleUnrolledLinkedList<KeyType1, KeyType2, ValueType>& list,
-                          Ptr mainNodePtr,
-                          Ptr targetPtr,
-                          int count,
-                          int offset)
-            : list_(list),
-              mainNodePtr_(mainNodePtr),
-              targetPtr_(targetPtr),
-              mainNodeCount_(count),
-              offset_(offset),
-              key1_(),
-              key2_(),
-              value_() {
-            loaded_ = false;
-        }
-
-        ~Iterator() = default;
-
-        FileDoubleUnrolledLinkedList<KeyType1, KeyType2, ValueType>& list_;
-
-        mutable KeyType1 key1_;
-
-        mutable KeyType2 key2_;
-
-        mutable ValueType value_;
-
-        Ptr mainNodePtr_; // If mainNodePtr is 0, that is to say this is the end of the list
-
-        Ptr targetPtr_;
-
-        int mainNodeCount_;
-
-        int offset_; // If offset is 0, that is to say this is the main node.
-
-        bool loaded_;
-    };
 
     explicit FileDoubleUnrolledLinkedList(const std::string& fileName, int nodeSize = 316) noexcept
         : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
