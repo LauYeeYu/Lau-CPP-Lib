@@ -26,7 +26,7 @@ public:
     typedef long Ptr;
 
     explicit FileUnrolledLinkedList(const std::string& fileName, int nodeSize = 316) noexcept
-        : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
+        : list_(fileName), head_{0, 0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
         list_.seekp(0);
         if (list_.peek() == EOF) {
@@ -39,7 +39,7 @@ public:
     }
 
     explicit FileUnrolledLinkedList(const char* fileName, int nodeSize = 316) noexcept
-        : list_(fileName), head_{0, 0, nodeSize, 2 * nodeSize} {
+        : list_(fileName), head_{0, 0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
         list_.seekp(0);
         if (list_.peek() == EOF) {
@@ -376,13 +376,14 @@ private:
     /// The following are private components of this linked list
 
     /**
-     * @struct FirstNode_{next, pre, nodeSize, maxNodeSize}
+     * @struct FirstNode_{next, pre, nextGarbage, preGarbage, nodeSize, maxNodeSize}
      *
      * This is the node to pointer to the data, and metadata of the list
      */
     struct FirstNode_ {
         Ptr next; // the first main node
         Ptr pre; // the last main node
+        Ptr nextGarbage; // the first garbage node
         int nodeSize;
         int maxNodeSize;
     };
@@ -533,12 +534,23 @@ private:
     void DeleteNode_(MainNode_& mainNode, Ptr target) {
         MainNode_ pre, next;
 
+        // Change the node to be deleted
+        mainNode.pre = 0;
+        mainNode.next = head_.nextGarbage;
+        mainNode.count = 0;
+        list_.seekp(target);
+        list_.write(reinterpret_cast<const char*>(&mainNode), sizeof(MainNode_));
+
+        // Change the first node
+        head_.nextGarbage = target;
+
         // The case that the only main node is to be deleted
         if (mainNode.pre == 0 && mainNode.next == 0) {
+            // Change the first node
             head_.pre = 0;
             head_.next = 0;
             list_.seekp(0);
-            list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+            list_.write(reinterpret_cast<const char*>(&head_), sizeof(FirstNode_));
             return;
         }
 
@@ -549,9 +561,9 @@ private:
             list_.read(reinterpret_cast<char*>(&next), sizeof(MainNode_));
             next.pre = 0;
             list_.seekp(mainNode.next);
-            list_.write(reinterpret_cast<char*>(&next), sizeof(MainNode_));
+            list_.write(reinterpret_cast<const char*>(&next), sizeof(MainNode_));
             list_.seekp(0);
-            list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+            list_.write(reinterpret_cast<const char*>(&head_), sizeof(FirstNode_));
             return;
         }
 
@@ -562,23 +574,25 @@ private:
             list_.read(reinterpret_cast<char*>(&pre), sizeof(MainNode_));
             pre.next = 0;
             list_.seekp(mainNode.pre);
-            list_.write(reinterpret_cast<char*>(&pre), sizeof(MainNode_));
+            list_.write(reinterpret_cast<const char*>(&pre), sizeof(MainNode_));
             list_.seekp(0);
-            list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
+            list_.write(reinterpret_cast<const char*>(&head_), sizeof(FirstNode_));
             return;
         }
 
         // The regular case
-        list_.seekp(mainNode.pre);
+        list_.seekg(mainNode.pre);
         list_.read(reinterpret_cast<char*>(&pre), sizeof(MainNode_));
         list_.seekg(mainNode.next);
         list_.read(reinterpret_cast<char*>(&next), sizeof(MainNode_));
         pre.next = mainNode.next;
         next.pre = mainNode.pre;
         list_.seekp(mainNode.pre);
-        list_.write(reinterpret_cast<char*>(&pre), sizeof(MainNode_));
+        list_.write(reinterpret_cast<const char*>(&pre), sizeof(MainNode_));
         list_.seekp(mainNode.next);
-        list_.write(reinterpret_cast<char*>(&next), sizeof(MainNode_));
+        list_.write(reinterpret_cast<const char*>(&next), sizeof(MainNode_));
+        list_.seekp(0);
+        list_.write(reinterpret_cast<const char*>(&head_), sizeof(FirstNode_));
     }
 
     /**
@@ -602,19 +616,37 @@ private:
                 list_.read(reinterpret_cast<char*>(&next), sizeof(MainNode_));
 
                 // Set the previous and next node
-                list_.seekp(0, std::ios::end);
-                mainNode.next = pre.next;
-                mainNode.pre = next.pre;
-                pre.next = list_.tellp();
-                next.pre = list_.tellp();
+                if (head_.nextGarbage == 0) {
+                    list_.seekp(0, std::ios::end);
+                    mainNode.next = pre.next;
+                    mainNode.pre = next.pre;
+                    pre.next = list_.tellp();
+                    next.pre = list_.tellp();
 
-                // Put the new node
-                mainNode.target = pre.next + sizeof(MainNode_);
-                list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+                    // Put the new node
+                    mainNode.target = pre.next + sizeof(MainNode_);
+                    list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
 
-                // Get a new space for its array
-                list_.seekp(head_.maxNodeSize * sizeof(Node_), std::ios::end);
-                list_.write(reinterpret_cast<char*>(&emptyNode_), sizeof(Node_));
+                    // Get a new space for its array
+                    list_.seekp(head_.maxNodeSize * sizeof(Node_), std::ios::end);
+                    list_.write(reinterpret_cast<char*>(&emptyNode_), sizeof(Node_));
+
+                } else {
+                    MainNode_ tmpMainNode;
+                    list_.seekg(head_.nextGarbage);
+                    list_.read(reinterpret_cast<char*>(&tmpMainNode), sizeof(MainNode_));
+
+                    mainNode.next = pre.next;
+                    mainNode.pre = next.pre;
+                    mainNode.target = tmpMainNode.target;
+                    pre.next = head_.nextGarbage;
+                    next.pre = head_.nextGarbage;
+                    list_.seekp(head_.nextGarbage);
+                    list_.write(reinterpret_cast<const char*>(&mainNode), sizeof(MainNode_));
+                    head_.nextGarbage = tmpMainNode.next;
+                    list_.seekp(0);
+                    list_.write(reinterpret_cast<const char*>(&head_), sizeof(FirstNode_));
+                }
 
                 // Put back the previous and next main node
                 list_.seekp(mainNode.next);
@@ -624,19 +656,35 @@ private:
                 return pre.next;
             } else { // the case that the next main node is the first node
                 // Set the previous and next node
-                list_.seekp(0, std::ios::end);
-                mainNode.next = 0;
-                mainNode.pre = target;
-                pre.next = list_.tellp();
-                head_.pre = list_.tellp();
+                if (head_.nextGarbage == 0) {
+                    list_.seekp(0, std::ios::end);
+                    mainNode.next = 0;
+                    mainNode.pre = target;
+                    pre.next = list_.tellp();
+                    head_.pre = list_.tellp();
 
-                // Put the new node
-                mainNode.target = pre.next + sizeof(MainNode_);
-                list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+                    // Put the new node
+                    mainNode.target = pre.next + sizeof(MainNode_);
+                    list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
 
-                // Get a new space for its array
-                list_.seekp(head_.maxNodeSize * sizeof(Node_), std::ios::end);
-                list_.write(reinterpret_cast<char*>(&emptyNode_), sizeof(Node_));
+                    // Get a new space for its array
+                    list_.seekp(head_.maxNodeSize * sizeof(Node_), std::ios::end);
+                    list_.write(reinterpret_cast<char*>(&emptyNode_), sizeof(Node_));
+
+                } else {
+                    MainNode_ tmpMainNode;
+                    list_.seekg(head_.nextGarbage);
+                    list_.read(reinterpret_cast<char*>(&tmpMainNode), sizeof(MainNode_));
+
+                    mainNode.next = 0;
+                    mainNode.pre = target;
+                    mainNode.target = tmpMainNode.target;
+                    pre.next = head_.nextGarbage;
+                    head_.pre = head_.nextGarbage;
+                    list_.seekp(head_.nextGarbage);
+                    list_.write(reinterpret_cast<const char*>(&mainNode), sizeof(MainNode_));
+                    head_.nextGarbage = tmpMainNode.next;
+                }
 
                 // Put back the previous and next main node
                 list_.seekp(mainNode.pre);
@@ -646,17 +694,32 @@ private:
                 return pre.next;
             }
         } else { // For an empty list
-            list_.seekp(0, std::ios::end);
-            head_.next = list_.tellp();
-            head_.pre = list_.tellp();
-            mainNode.target = head_.next + sizeof(MainNode_);
-            mainNode.next = 0;
-            mainNode.pre = 0;
-            list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
+            if (head_.nextGarbage == 0) {
+                list_.seekp(0, std::ios::end);
+                head_.next = list_.tellp();
+                head_.pre = list_.tellp();
+                mainNode.target = head_.next + sizeof(MainNode_);
+                mainNode.next = 0;
+                mainNode.pre = 0;
+                list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
 
-            // to reserve the space for the array of the main node
-            list_.seekp(head_.maxNodeSize * sizeof(Node_), std::ios::end);
-            list_.write(reinterpret_cast<char*>(&emptyNode_), sizeof(Node_));
+                // to reserve the space for the array of the main node
+                list_.seekp(head_.maxNodeSize * sizeof(Node_), std::ios::end);
+                list_.write(reinterpret_cast<const char*>(&emptyNode_), sizeof(Node_));
+            } else {
+                MainNode_ tmpMainNode;
+                list_.seekg(head_.nextGarbage);
+                list_.read(reinterpret_cast<char*>(&tmpMainNode), sizeof(MainNode_));
+
+                head_.next = head_.nextGarbage;
+                head_.pre = head_.nextGarbage;
+                mainNode.next = 0;
+                mainNode.pre = 0;
+                mainNode.target = tmpMainNode.target;
+                list_.seekp(head_.nextGarbage);
+                list_.write(reinterpret_cast<const char*>(&mainNode), sizeof(MainNode_));
+                head_.nextGarbage = tmpMainNode.next;
+            }
             list_.seekp(0);
             list_.write(reinterpret_cast<char*>(&head_), sizeof(FirstNode_));
             return head_.next;
