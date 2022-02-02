@@ -503,10 +503,6 @@ public:
     }
 
 private:
-    std::fstream list_;
-
-    /// The following are private components of this linked list
-
     /**
      * @struct FirstNode_{next, pre, nodeSize, maxNodeSize}
      *
@@ -514,13 +510,10 @@ private:
      */
     struct FirstNode_ {
         Ptr next; // the first main node
-
         Ptr pre; // the last main node
-
         int nodeSize;
-
         int maxNodeSize;
-    } head_;
+    };
 
     /**
      * @struct MainNode_{key1, key2, value, target, count, next, pre}
@@ -530,17 +523,11 @@ private:
      */
     struct MainNode_ {
         KeyType1 key1;
-
         KeyType2 key2;
-
         ValueType value;
-
         Ptr target;
-
         int count;
-
         Ptr next;
-
         Ptr pre;
     };
 
@@ -551,15 +538,9 @@ private:
      */
     struct Node_ {
         KeyType1 key1;
-
         KeyType2 key2;
-
         ValueType value;
-    } emptyNode_;
-
-    mutable Node_ cachedNode_;
-
-    mutable bool cached = false;
+    };
 
     /**
      * This function return a pair of the pointer to the main node
@@ -983,6 +964,12 @@ private:
         list_.seekp(target);
         list_.write(source, length);
     }
+
+    FirstNode_ head_;
+    std::fstream list_;
+    Node_ emptyNode_;
+    mutable Node_ cachedNode_;
+    mutable bool cached = false;
 };
 
 }
