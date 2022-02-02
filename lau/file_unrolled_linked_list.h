@@ -80,20 +80,21 @@ public:
      * @param key the new key
      * @param value the value of the new key
      */
-    FileUnrolledLinkedList& Insert(const KeyType& key, const ValueType& value) {
-        // Put the new node into cache (store the data in memory to boost efficiency)
-        cachedNode_.key = key;
-        cachedNode_.value = value;
-        cached = true;
-
+    bool Insert(const KeyType& key, const ValueType& value) {
         // Search the place to accommodate to new pair
-        auto [mainNodePtr, offset] = Find_(key);
+        auto [mainNodePtr, index] = Find_(key);
 
         // The case of no nodes at all
         if (mainNodePtr == 0) {
             MainNode_ mainNode{key, value, 0, 0, 0, 0};
             NewNode_(mainNode, 0);
-            return *this;
+
+            // Put the new node into cache (store the data in memory to boost efficiency)
+            cachedNode_.key = key;
+            cachedNode_.value = value;
+            cached = true;
+
+            return true;
         }
 
         // Get the main node
@@ -122,16 +123,26 @@ public:
             list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
 
         } else {
+            // Rule out the case of the same node
+            if (index == -1 && mainNode.key == key) {
+                return false;
+            }
+            if (index != -1) {
+                list_.seekg(mainNode.target + index * sizeof(Node_));
+                list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
+                if (tmpNode.key == key) return false;
+            }
+
             // Move the node(s) after the node to be inserted
-            char* buffer = Read_(mainNode.target + (offset + 1) * sizeof(Node_),
-                                 (mainNode.count - offset - 1) * sizeof(Node_));
-            Write_(buffer, mainNode.target + (offset + 2) * sizeof(Node_),
-                   (mainNode.count - offset - 1) * sizeof(Node_));
+            char* buffer = Read_(mainNode.target + (index + 1) * sizeof(Node_),
+                                 (mainNode.count - index - 1) * sizeof(Node_));
+            Write_(buffer, mainNode.target + (index + 2) * sizeof(Node_),
+                   (mainNode.count - index - 1) * sizeof(Node_));
             delete[] buffer;
 
             // Put the new node
             Node_ newNode{key, value};
-            list_.seekp(mainNode.target + (offset + 1) * sizeof(Node_));
+            list_.seekp(mainNode.target + (index + 1) * sizeof(Node_));
             list_.write(reinterpret_cast<char*>(&newNode), sizeof(Node_));
 
             // Change the main node
@@ -145,18 +156,23 @@ public:
             Split_(mainNode, mainNodePtr);
         }
 
-        return *this;
+        // Put the new node into cache (store the data in memory to boost efficiency)
+        cachedNode_.key = key;
+        cachedNode_.value = value;
+        cached = true;
+
+        return true;
     }
 
-    FileUnrolledLinkedList& Erase(const KeyType& key) {
+    bool Erase(const KeyType& key) {
         // De-cache the node if it is really in cache
         if (cached && cachedNode_.key == key) {
             cached = false;
         }
 
         // Find the exact place of the node to be erased
-        auto [mainNodePtr, offset] = FindExact_(key);
-        if (mainNodePtr == -1) return *this; // no such node
+        auto [mainNodePtr, index] = FindExact_(key);
+        if (mainNodePtr == -1) return false; // no such node
 
         // Get the main node
         MainNode_ mainNode;
@@ -164,7 +180,7 @@ public:
         list_.seekg(mainNodePtr);
         list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
 
-        if (offset == -1) { // the case that the target is in the main node
+        if (index == -1) { // the case that the target is in the main node
             if (mainNode.count == 0) { // the case that there is only one key-value pair
                 DeleteNode_(mainNode, mainNodePtr);
             } else { // the case that there is more than one key-value pair
@@ -191,43 +207,43 @@ public:
             list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
 
             // Move forward the other nodes
-            char* buffer = Read_(mainNode.target + (offset + 1) * sizeof(Node_),
-                                 (mainNode.count - offset) * sizeof(Node_));
-            Write_(buffer, mainNode.target + offset * sizeof(Node_),
-                   (mainNode.count - offset) * sizeof(Node_));
+            char* buffer = Read_(mainNode.target + (index + 1) * sizeof(Node_),
+                                 (mainNode.count - index) * sizeof(Node_));
+            Write_(buffer, mainNode.target + index * sizeof(Node_),
+                   (mainNode.count - index) * sizeof(Node_));
             delete[] buffer;
         }
 
-        return *this;
+        return true;
     }
 
-    FileUnrolledLinkedList& Modify(const KeyType& key, const ValueType& value) {
+    bool Modify(const KeyType& key, const ValueType& value) {
         // Change cache the node if it is really in cache
         if (cached && cachedNode_.key == key) {
             cachedNode_.value = value;
         }
 
         // Find the Node
-        auto [mainNodePtr, offset] = FindExact_(key);
-        if (mainNodePtr == -1) return *this; // no such node
+        auto [mainNodePtr, index] = FindExact_(key);
+        if (mainNodePtr == -1) return false; // no such node
 
         MainNode_ mainNode;
         list_.seekg(mainNodePtr);
         list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-        if (offset == -1) {
+        if (index == -1) {
             mainNode.value = value;
             list_.seekp(mainNodePtr);
             list_.write(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
         } else {
             Node_ tmpNode;
-            list_.seekg(mainNode.target + offset * sizeof(Node_));
+            list_.seekg(mainNode.target + index * sizeof(Node_));
             list_.read(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
             tmpNode.value = value;
-            list_.seekp(mainNode.target + offset * sizeof(Node_));
+            list_.seekp(mainNode.target + index * sizeof(Node_));
             list_.write(reinterpret_cast<char*>(&tmpNode), sizeof(Node_));
         }
 
-        return *this;
+        return true;
     }
 
     /**
@@ -415,9 +431,9 @@ private:
 
     /**
      * This function return a pair of the pointer to the main node
-     * and the number of node the target is right after, for the case
+     * and the index number of node the target is right after.  For the case
      * of the main node, the second member of the pair is -1.  If the
-     * key doesn't belongs to the unrolled linked list, it will the
+     * key doesn't belongs to the unrolled linked list, it will return the
      * node ahead of its place (except the case that the key is less than
      * any other keys, and in such case, it will return the first main node).
      * @param key
