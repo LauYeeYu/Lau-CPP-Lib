@@ -27,6 +27,17 @@ class FileDoubleUnrolledLinkedList {
 public:
     typedef long Ptr;
 
+    /**
+     * @struct Node{key1, key2, value}
+     *
+     * This is the Node to store data.
+     */
+    struct Node {
+        KeyType1 key1;
+        KeyType2 key2;
+        ValueType value;
+    };
+
     explicit FileDoubleUnrolledLinkedList(const std::string& fileName, int nodeSize = 316) noexcept
         : list_(fileName), head_{0, 0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
@@ -367,27 +378,27 @@ public:
         }
     }
 
-    std::vector<ValueType> Traverse() {
-        std::vector<ValueType> values; // can be optimized
+    std::vector<Node> Traverse() {
+        std::vector<Node> values; // can be optimized
         MainNode_ mainNode;
-        Node_ node;
+        Node node;
         Ptr mainPtr = head_.next;
         while (mainPtr != 0) {
             list_.seekg(mainPtr);
             list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-            values.emplace_back(mainNode.value);
+            values.emplace_back(Node{mainNode.key1, mainNode.key2, mainNode.value});
             for (int i = 0; i < mainNode.count; ++i) {
                 list_.seekg(mainNode.target + i * sizeof(Node_));
                 list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
-                values.emplace_back(node.value);
+                values.emplace_back(node);
             }
             mainPtr = mainNode.next;
         }
         return std::move(values);
     }
 
-    std::vector<ValueType> Traverse(const KeyType1& key1) {
-        std::vector<ValueType> values; // can be optimized
+    std::vector<Node> Traverse(const KeyType1& key1) {
+        std::vector<Node> values; // can be optimized
 
         auto [mainNodePtr, offset] = SingleFind_(key1);
 
@@ -397,7 +408,7 @@ public:
         }
 
         MainNode_ mainNode;
-        Node_ node;
+        Node node;
         list_.seekg(mainNodePtr);
         list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
         if (offset != -1) {
@@ -406,7 +417,7 @@ public:
                 list_.seekg(mainNode.target + i * sizeof(Node_));
                 list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
                 if (!(node.key1 == key1)) break;
-                values.emplace_back(node.value);
+                values.emplace_back(node);
             }
 
             // Move to the next node
@@ -415,14 +426,14 @@ public:
             list_.read(reinterpret_cast<char*>(&mainNode), sizeof(mainNode));
         }
         while (mainNode.key1 == key1) {
-            values.emplace_back(mainNode.value);
+            values.emplace_back(Node{mainNode.key1, mainNode.key2, mainNode.value});
 
             // Traverse all the data in the array of the main node
             for (int i = 0; i < mainNode.count; ++i) {
                 list_.seekg(mainNode.target + i * sizeof(Node_));
                 list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
                 if (!(node.key1 == key1)) break;
-                values.emplace_back(node.value);
+                values.emplace_back(node);
             }
 
             // Move to the next node
@@ -440,8 +451,10 @@ public:
     }
 
 private:
+    typedef Node Node_;
+
     /**
-     * @struct FirstNode_{next, pre, nextGarbage, preGarbage, nodeSize, maxNodeSize}
+     * @struct FirstNode_{next, pre, nextGarbage, nodeSize, maxNodeSize}
      *
      * This is the node to pointer to the data, and metadata of the list
      */
@@ -469,16 +482,6 @@ private:
         Ptr pre;
     };
 
-    /**
-     * @struct Node_{key1, key2, value}
-     *
-     * This is the Node to store data.
-     */
-    struct Node_ {
-        KeyType1 key1;
-        KeyType2 key2;
-        ValueType value;
-    };
 
     /**
      * This function return a pair of the pointer to the main node

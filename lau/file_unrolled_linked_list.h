@@ -25,6 +25,16 @@ class FileUnrolledLinkedList {
 public:
     typedef long Ptr;
 
+    /**
+     * @struct Node{key, value}
+     *
+     * This is the Node to store data.
+     */
+    struct Node {
+        KeyType key;
+        ValueType value;
+    };
+
     explicit FileUnrolledLinkedList(const std::string& fileName, int nodeSize = 316) noexcept
         : list_(fileName), head_{0, 0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
@@ -348,19 +358,19 @@ public:
         }
     }
 
-    std::vector<ValueType> Traverse() {
-        std::vector<ValueType> values; // can be optimized
+    std::vector<Node> Traverse() {
+        std::vector<Node> values; // can be optimized
         MainNode_ mainNode;
-        Node_ node;
+        Node node;
         Ptr mainPtr = head_.next;
         while (mainPtr != 0) {
             list_.seekg(mainPtr);
             list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
-            values.emplace_back(mainNode.value);
+            values.emplace_back(Node{mainNode.key, mainNode.value});
             for (int i = 0; i < mainNode.count; ++i) {
                 list_.seekg(mainNode.target + i * sizeof(Node_));
                 list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
-                values.emplace_back(node.value);
+                values.emplace_back(node);
             }
             mainPtr = mainNode.next;
         }
@@ -373,10 +383,10 @@ public:
     }
 
 private:
-    /// The following are private components of this linked list
+    typedef Node Node_;
 
     /**
-     * @struct FirstNode_{next, pre, nextGarbage, preGarbage, nodeSize, maxNodeSize}
+     * @struct FirstNode_{next, pre, nextGarbage, nodeSize, maxNodeSize}
      *
      * This is the node to pointer to the data, and metadata of the list
      */
@@ -401,16 +411,6 @@ private:
         int count;
         Ptr next;
         Ptr pre;
-    };
-
-    /**
-     * @struct Node_{key, value}
-     *
-     * This is the Node to store data.
-     */
-    struct Node_ {
-        KeyType key;
-        ValueType value;
     };
 
     /**
