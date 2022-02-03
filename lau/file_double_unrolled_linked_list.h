@@ -82,7 +82,7 @@ public:
      * @param value the value of the new key
      * @return whether the operation is valid or not
      */
-    FileDoubleUnrolledLinkedList& Insert(const KeyType1& key1, const KeyType2& key2, const ValueType& value) {
+    bool Insert(const KeyType1& key1, const KeyType2& key2, const ValueType& value) {
         // Search the place to accommodate to new pair
         auto [mainNodePtr, index] = Find_(key1, key2);
 
