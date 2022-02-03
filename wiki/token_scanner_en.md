@@ -8,41 +8,48 @@ class TokenScanner;
 ```
 
 This class is intended to separate an input string into pieces with customized
-delimiter.  There are two method of cutting the input string. in the single
-mode the class cuts the string with every single delimiter, while in the
-multiple mode treats multiple delimiters as one delimiter.
+delimiter.  There are two method of cutting the input string. In the single
+mode, the class cuts the string with every single delimiter, while in the
+multiple mode, it treats multiple delimiters as one delimiter.
 
 ## Overview
 ```c++
 namespace lau {
 class TokenScanner {
 public:
+    // Enum
     enum TokenScannerMode {multiple, single};
 
+    // Constructors
     TokenScanner() = default;
     explicit TokenScanner(std::string input,
                           char delimiter = ' ',
                           lau::TokenScanner::TokenScannerMode mode = multiple);
 
-    ~TokenScanner() = default;
-
+    // Assignment Operators
     TokenScanner& operator=(const TokenScanner& obj);
     TokenScanner& operator=(TokenScanner&& obj) noexcept;
 
+    // Destructor
+    ~TokenScanner() = default;
+
+    // Element Accessing
     TokenScanner& SetDelimiter(char delimiter) noexcept;
     [[nodiscard]] const std::string& GetInputString() const noexcept;
     [[nodiscard]] char GetDelimiter() const noexcept;
     [[nodiscard]] TokenScannerMode GetMode() const noexcept;
 
+    // Capacity
     bool HasMoreToken() noexcept;
     long TotalLength() noexcept;
 
+    // Operations
     std::string NextToken() noexcept;
     std::string PeekNextToken() noexcept;
     TokenScanner& NewLine() noexcept;
     TokenScanner& ChangeMode(TokenScannerMode mode) noexcept;
-    TokenScanner& ResetState() noexcept;
     TokenScanner& Read(std::string newInput) noexcept;
+    TokenScanner& ResetState() noexcept;
     TokenScanner& SkipDelimiter() noexcept;
 };
 } // namespace lau
@@ -56,8 +63,8 @@ public:
 
 ## Member Functions
 - [(constructors)](#Constructors)
-- (destructors)
 - [`operator=`](#operator=)
+- (destructors)
 
 ### Element Accessing
 - [`SetDelimiter`](#SetDelimiter): set the delimiter.

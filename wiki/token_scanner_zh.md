@@ -15,32 +15,39 @@ class TokenScanner;
 namespace lau {
 class TokenScanner {
 public:
+    // 枚舉
     enum TokenScannerMode {multiple, single};
 
+    // 構造函數
     TokenScanner() = default;
     explicit TokenScanner(std::string input,
                           char delimiter = ' ',
                           lau::TokenScanner::TokenScannerMode mode = multiple);
 
-    ~TokenScanner() = default;
-
+    // 賦值運算符
     TokenScanner& operator=(const TokenScanner& obj);
     TokenScanner& operator=(TokenScanner&& obj) noexcept;
 
-    TokenScanner& SetDelimiter(char delimiter) noexcept;
-    [[nodiscard]] const std::string& GetInputString() const noexcept;
-    [[nodiscard]] char GetDelimiter() const noexcept;
-    [[nodiscard]] TokenScannerMode GetMode() const noexcept;
+    // 析構函數
+    ~TokenScanner() = default;
 
+    // 元素訪問
+    [[nodiscard]] char GetDelimiter() const noexcept;
+    [[nodiscard]] const std::string& GetInputString() const noexcept;
+    [[nodiscard]] TokenScannerMode GetMode() const noexcept;
+    TokenScanner& SetDelimiter(char delimiter) noexcept;
+
+    // 容量
     bool HasMoreToken() noexcept;
     long TotalLength() noexcept;
 
+    // 操作
+    TokenScanner& ChangeMode(TokenScannerMode mode) noexcept;
+    TokenScanner& NewLine() noexcept;
     std::string NextToken() noexcept;
     std::string PeekNextToken() noexcept;
-    TokenScanner& NewLine() noexcept;
-    TokenScanner& ChangeMode(TokenScannerMode mode) noexcept;
-    TokenScanner& ResetState() noexcept;
     TokenScanner& Read(std::string newInput) noexcept;
+    TokenScanner& ResetState() noexcept;
     TokenScanner& SkipDelimiter() noexcept;
 };
 } // namespace lau
@@ -54,26 +61,26 @@ public:
 
 ## 成員函數
 - [（構造函數）](#Constructors)
-- （析構函數）
 - [`operator=`](#operator=)
+- （析構函數）
 
 ### 成員訪問
-- [`SetDelimiter`](#SetDelimiter)：設定分隔符
-- [`GetInputString`](#GetInputString)：獲取輸入字符串
 - [`GetDelimiter`](#GetDelimiter)：獲取分隔符
+- [`GetInputString`](#GetInputString)：獲取輸入字符串
 - [`GetMode`](#GetMode)：獲取掃描方式
+- [`SetDelimiter`](#SetDelimiter)：設定分隔符
 
 ### 容量
 - [`HasMoreToken`](#HasMoreToken)：表明是否存在更多字段
 - [`TotalLength`](#TotalLength)：輸入字符串全長
 
-### Operations
+### 操作
+- [`ChangeMode`](#ChangeMode)：更改掃描方式
+- [`NewLine`](#NewLine)：從 `std::cin` 讀取一行數據
 - [`NextToken`](#NextToken)：獲取下一個字段
 - [`PeekNextToken`](#PeekNextToken)：檢視下一個字段
-- [`NewLine`](#NewLine)：從 `std::cin` 讀取一行數據
-- [`ChangeMode`](#ChangeMode)：更改掃描方式
-- [`ResetState`](#ResetState)：重置掃描態
 - [`Read`](#Read)：讀取内容
+- [`ResetState`](#ResetState)：重置掃描態
 - [`SkipDelimiter`](#SkipDelimiter)：跳過目前遇到的分隔符
 
 ## 例子
