@@ -1,3 +1,10 @@
+/**
+ * @file lau/token_scanner.h
+ *
+ * This is a external header file, including a
+ * <code>lau::TokenScanner</code> class.
+ */
+
 #ifndef LAU_CPP_LIB_LAU_TOKEN_SCANNER_H
 #define LAU_CPP_LIB_LAU_TOKEN_SCANNER_H
 

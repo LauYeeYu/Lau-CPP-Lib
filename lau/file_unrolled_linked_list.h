@@ -1,3 +1,10 @@
+/**
+ * @file lau/file_unrolled_linked_list.h
+ *
+ * This is a external header file, including a
+ * <code>lau::FileUnrolledLinkedList</code> class.
+ */
+
 #ifndef LAU_CPP_LIB_LAU_FILE_UNROLLED_LINKED_LIST_H
 #define LAU_CPP_LIB_LAU_FILE_UNROLLED_LINKED_LIST_H
 

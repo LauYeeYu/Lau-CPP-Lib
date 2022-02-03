@@ -1,3 +1,10 @@
+/**
+ * @file lau/token_scanner.cpp
+ *
+ * This is a internal source file, including the implementation of the
+ * <code>lau::TokenScanner</code> class.
+ */
+
 #include "token_scanner.h"
 
 #include <iostream>

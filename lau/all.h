@@ -1,3 +1,9 @@
+/**
+ * @file lau/all.h
+ *
+ * This is a external header file, including all the contents in Lau CPP Lib.
+ */
+
 #ifndef LAU_CPP_LIB_LAU_ALL_H
 #define LAU_CPP_LIB_LAU_ALL_H
 

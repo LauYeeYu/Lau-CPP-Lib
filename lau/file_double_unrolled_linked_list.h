@@ -1,3 +1,10 @@
+/**
+ * @file lau/file_double_unrolled_linked_list.h
+ *
+ * This is a external header file, including a
+ * <code>lau::FileDoubleUnrolledLinkedList</code> class.
+ */
+
 #ifndef LAU_CPP_LIB_LAU_FILE_DOUBLE_UNROLLED_LINKED_LIST_H
 #define LAU_CPP_LIB_LAU_FILE_DOUBLE_UNROLLED_LINKED_LIST_H
 
@@ -7,7 +14,7 @@
 namespace lau {
 
 /**
- * @class DoubleUnrolledLinkedList
+ * @class FileDoubleUnrolledLinkedList
  *
  * This is a template class of double unrolled linked list on disk storage.
  *
