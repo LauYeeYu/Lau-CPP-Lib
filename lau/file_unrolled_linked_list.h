@@ -72,13 +72,10 @@ public:
     ~FileUnrolledLinkedList() = default;
 
     /**
-     * This function inserts a new key-value pair.
-     * <br><br>
-     * WARNING: the new node to be inserted CANNOT be the same of the
-     * node in the unrolled linked list, or it may cause severe and
-     * unexpected problem.
+     * Insert a new key-value pair.
      * @param key the new key
      * @param value the value of the new key
+     * @return whether the operation is valid or not
      */
     bool Insert(const KeyType& key, const ValueType& value) {
         // Search the place to accommodate to new pair
@@ -164,6 +161,11 @@ public:
         return true;
     }
 
+    /**
+     * Erase the corresponding key-value pair of the input key.
+     * @param key
+     * @return whether the operation is valid or not
+     */
     bool Erase(const KeyType& key) {
         // De-cache the node if it is really in cache
         if (cached && cachedNode_.key == key) {
@@ -217,6 +219,12 @@ public:
         return true;
     }
 
+    /**
+     * Modify the value of an existing key-value pair.
+     * @param key
+     * @param value
+     * @return whether the operation is valid or not
+     */
     bool Modify(const KeyType& key, const ValueType& value) {
         // Change cache the node if it is really in cache
         if (cached && cachedNode_.key == key) {
@@ -250,6 +258,7 @@ public:
      * The function clears all the data in the unrolled linked list
      */
     FileUnrolledLinkedList& Clear() {
+        head_.nextGarbage = head_.next;
         head_.next = 0;
         head_.pre = 0;
         list_.seekp(0);
@@ -259,7 +268,7 @@ public:
     }
 
     /**
-     * This function tells whether there exists a node with a certain key
+     * Tell whether there exists a node with a certain key
      * or not.
      * @param key the key to search
      * @return The boolean of whether there exists a node with a certain key
@@ -296,9 +305,8 @@ public:
     }
 
     /**
-     * This function returns the corresponding value of the key.  If there is
-     * no such node, it will return the default value (using the default
-     * constructor).
+     * Get the corresponding value of the key.  If there is no such node,
+     * it will return the default value (using the default constructor).
      * @param key
      * @return the corresponding value of the key.
      * <br>
@@ -336,11 +344,11 @@ public:
     }
 
     /**
-     * This function gets the point of the value of a certain key.
+     * Get the point of the value of a certain key.
      * If the key doesn't exist, a nullptr will be returned instead.
      * <br><br>
      * WARNING: If the function doesn't return a nullptr, ALWAYS free
-     * the memory whenever you don't need it.
+     * the memory whenever you don't need it to avoid memory leak.
      * @param key
      * @return the point of the value of a certain key.
      * <br>
@@ -374,6 +382,11 @@ public:
         }
     }
 
+    /**
+     * Get all the key-value pair in the list.
+     * @return the <code>std::vector</code> class containing all the
+     * <code>Node</code>s in the list
+     */
     std::vector<Node> Traverse() {
         std::vector<Node> values; // can be optimized
         MainNode_ mainNode;
@@ -393,6 +406,10 @@ public:
         return std::move(values);
     }
 
+    /**
+     * Flush to make everything in the buffer stored in the file
+     * @return reference of the current class
+     */
     FileUnrolledLinkedList& Flush() {
         list_.flush();
         return *this;

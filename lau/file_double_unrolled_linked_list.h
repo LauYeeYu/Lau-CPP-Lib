@@ -75,14 +75,11 @@ public:
     ~FileDoubleUnrolledLinkedList() = default;
 
     /**
-     * This function inserts a new key-value pair.
-     * <br><br>
-     * WARNING: the new node to be inserted CANNOT be the same of the
-     * node in the unrolled linked list, or it may cause severe and
-     * unexpected problem.
+     * Insert a new key-value pair.
      * @param key1 the new key1
      * @param key2 the new key2
      * @param value the value of the new key
+     * @return whether the operation is valid or not
      */
     FileDoubleUnrolledLinkedList& Insert(const KeyType1& key1, const KeyType2& key2, const ValueType& value) {
         // Search the place to accommodate to new pair
@@ -172,6 +169,12 @@ public:
         return true;
     }
 
+    /**
+     * Erase the corresponding key-value pair of the input key.
+     * @param key1
+     * @param key2
+     * @return whether the operation is valid or not
+     */
     bool Erase(const KeyType1& key1, const KeyType2& key2) {
         // De-cache the node if it is really in cache
         if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
@@ -226,6 +229,13 @@ public:
         return true;
     }
 
+    /**
+     * Modify the value of an existing key-value pair.
+     * @param key1
+     * @param key2
+     * @param value
+     * @return whether the operation is valid or not
+     */
     bool Modify(const KeyType1& key1, const KeyType2& key2, const ValueType& value) {
         // Change cache the node if it is really in cache
         if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
@@ -258,9 +268,11 @@ public:
     }
 
     /**
-     * The function clears all the data in the unrolled linked list
+     * Clear all the data in the unrolled linked list
+     * @return reference of the current class
      */
     FileDoubleUnrolledLinkedList& Clear() {
+        head_.nextGarbage = head_.next;
         head_.next = 0;
         head_.pre = 0;
         list_.seekp(0);
@@ -270,8 +282,7 @@ public:
     }
 
     /**
-     * This function tells whether there exists a node with a certain key
-     * or not.
+     * Tell whether there exists a node with a certain key or not.
      * @param key1
      * @param key2
      * @return The boolean of whether there exists a node with a certain key
@@ -310,9 +321,8 @@ public:
     }
 
     /**
-     * This function returns the corresponding value of the key.  If there is
-     * no such node, it will return the default value (using the default
-     * constructor).
+     * Get the corresponding value of the key.  If there is no such node,
+     * it will return the default value (using the default constructor).
      * @param key1
      * @param key2
      * @return the corresponding value of the key.
@@ -353,11 +363,11 @@ public:
     }
 
     /**
-     * This function gets the point of the value of a certain key pair.
+     * Get the point of the value of a certain key pair.
      * If the key pair doesn't exist, a nullptr will be returned instead.
      * <br><br>
      * WARNING: If the function doesn't return a nullptr, ALWAYS free
-     * the memory whenever you don't need it.
+     * the memory whenever you don't need it to avoid memory leak.
      * @param key1
      * @param key2
      * @return the point of the value of a certain key.
@@ -395,6 +405,11 @@ public:
         }
     }
 
+    /**
+     * Get all the key-value pair in the list.
+     * @return the <code>std::vector</code> class containing all the
+     * <code>Node</code>s in the list
+     */
     std::vector<Node> Traverse() {
         std::vector<Node> values; // can be optimized
         MainNode_ mainNode;
@@ -414,6 +429,12 @@ public:
         return std::move(values);
     }
 
+    /**
+     * Get all the key-value pair with a certain key1.
+     * @param key1
+     * @return the <code>std::vector</code> class containing all the
+     * <code>Node</code>s with key1
+     */
     std::vector<Node> Traverse(const KeyType1& key1) {
         std::vector<Node> values; // can be optimized
 
@@ -462,6 +483,10 @@ public:
         return std::move(values);
     }
 
+    /**
+     * Flush to make everything in the buffer stored in the file
+     * @return reference of the current class
+     */
     FileDoubleUnrolledLinkedList& Flush() {
         list_.flush();
         return *this;
