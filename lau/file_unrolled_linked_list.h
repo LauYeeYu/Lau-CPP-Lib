@@ -83,7 +83,7 @@ public:
      * Insert a new key-value pair.
      * @param key the new key
      * @param value the value of the new key
-     * @return whether the operation is valid or not
+     * @return whether the operation is successful or not
      */
     bool Insert(const KeyType& key, const ValueType& value) {
         // Search the place to accommodate to new pair
@@ -172,7 +172,7 @@ public:
     /**
      * Erase the corresponding key-value pair of the input key.
      * @param key
-     * @return whether the operation is valid or not
+     * @return whether the operation is successful or not
      */
     bool Erase(const KeyType& key) {
         // De-cache the node if it is really in cache
@@ -231,7 +231,7 @@ public:
      * Modify the value of an existing key-value pair.
      * @param key
      * @param value
-     * @return whether the operation is valid or not
+     * @return whether the operation is successful or not
      */
     bool Modify(const KeyType& key, const ValueType& value) {
         // Change cache the node if it is really in cache
@@ -421,6 +421,14 @@ public:
     FileUnrolledLinkedList& Flush() {
         list_.flush();
         return *this;
+    }
+
+    /**
+     * Tell whether the list is empty.
+     * @return the boolean of whether the list is empty
+     */
+    bool Empty() {
+        return (head_.next == 0);
     }
 
 private:

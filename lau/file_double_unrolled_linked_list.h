@@ -46,7 +46,7 @@ public:
         ValueType value;
     };
 
-    explicit FileDoubleUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 316) noexcept
+    explicit FileDoubleUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 500) noexcept
         : list_(fileName), head_{0, 0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
         list_.seekp(0);
@@ -59,7 +59,7 @@ public:
         }
     }
 
-    explicit FileDoubleUnrolledLinkedList(const char* fileName, SizeT nodeSize = 316) noexcept
+    explicit FileDoubleUnrolledLinkedList(const char* fileName, SizeT nodeSize = 500) noexcept
         : list_(fileName), head_{0, 0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
         list_.seekp(0);
@@ -87,7 +87,7 @@ public:
      * @param key1 the new key1
      * @param key2 the new key2
      * @param value the value of the new key
-     * @return whether the operation is valid or not
+     * @return whether the operation is successful or not
      */
     bool Insert(const KeyType1& key1, const KeyType2& key2, const ValueType& value) {
         // Search the place to accommodate to new pair
@@ -181,7 +181,7 @@ public:
      * Erase the corresponding key-value pair of the input key.
      * @param key1
      * @param key2
-     * @return whether the operation is valid or not
+     * @return whether the operation is successful or not
      */
     bool Erase(const KeyType1& key1, const KeyType2& key2) {
         // De-cache the node if it is really in cache
@@ -242,7 +242,7 @@ public:
      * @param key1
      * @param key2
      * @param value
-     * @return whether the operation is valid or not
+     * @return whether the operation is successful or not
      */
     bool Modify(const KeyType1& key1, const KeyType2& key2, const ValueType& value) {
         // Change cache the node if it is really in cache
@@ -498,6 +498,14 @@ public:
     FileDoubleUnrolledLinkedList& Flush() {
         list_.flush();
         return *this;
+    }
+
+    /**
+     * Tell whether the list is empty.
+     * @return the boolean of whether the list is empty
+     */
+    bool Empty() {
+        return (head_.next == 0);
     }
 
 private:
