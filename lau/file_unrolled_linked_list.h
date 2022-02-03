@@ -24,6 +24,7 @@ template <class KeyType, class ValueType>
 class FileUnrolledLinkedList {
 public:
     typedef long Ptr;
+    typedef long SizeT;
 
     /**
      * @struct Node{key, value}
@@ -31,11 +32,11 @@ public:
      * This is the Node to store data.
      */
     struct Node {
-        KeyType key;
+        KeyType   key;
         ValueType value;
     };
 
-    explicit FileUnrolledLinkedList(const std::string& fileName, int nodeSize = 316) noexcept
+    explicit FileUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 316) noexcept
         : list_(fileName), head_{0, 0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
         list_.seekp(0);
@@ -48,7 +49,7 @@ public:
         }
     }
 
-    explicit FileUnrolledLinkedList(const char* fileName, int nodeSize = 316) noexcept
+    explicit FileUnrolledLinkedList(const char* fileName, SizeT nodeSize = 316) noexcept
         : list_(fileName), head_{0, 0, 0, nodeSize, 2 * nodeSize} {
         list_.seekg(0);
         list_.seekp(0);
@@ -396,7 +397,7 @@ public:
             list_.seekg(mainPtr);
             list_.read(reinterpret_cast<char*>(&mainNode), sizeof(MainNode_));
             values.emplace_back(Node{mainNode.key, mainNode.value});
-            for (int i = 0; i < mainNode.count; ++i) {
+            for (SizeT i = 0; i < mainNode.count; ++i) {
                 list_.seekg(mainNode.target + i * sizeof(Node_));
                 list_.read(reinterpret_cast<char*>(&node), sizeof(Node_));
                 values.emplace_back(node);
@@ -424,11 +425,11 @@ private:
      * This is the node to pointer to the data, and metadata of the list
      */
     struct FirstNode_ {
-        Ptr next; // the first main node
-        Ptr pre; // the last main node
-        Ptr nextGarbage; // the first garbage node
-        int nodeSize;
-        int maxNodeSize;
+        Ptr   next; // the first main node
+        Ptr   pre; // the last main node
+        Ptr   nextGarbage; // the first garbage node
+        SizeT nodeSize;
+        SizeT maxNodeSize;
     };
 
     /**
@@ -438,12 +439,12 @@ private:
      * link other main nodes.
      */
     struct MainNode_ {
-        KeyType key;
+        KeyType   key;
         ValueType value;
-        Ptr target;
-        int count;
-        Ptr next;
-        Ptr pre;
+        Ptr       target;
+        SizeT     count;
+        Ptr       next;
+        Ptr       pre;
     };
 
     /**
@@ -456,7 +457,7 @@ private:
      * @param key
      * @return a pair of the pointer to the main node and the offset (0-based)
      */
-    std::pair<Ptr, int> Find_(const KeyType& key) {
+    std::pair<Ptr, SizeT> Find_(const KeyType& key) {
         if (head_.next == 0) return std::make_pair(0, -1);
         MainNode_ tmp;
         Ptr Ptr = head_.pre;
@@ -477,7 +478,7 @@ private:
         if (key == tmp.key || tmp.count == 0) return std::make_pair(Ptr, -1);
 
         Node_ tmpNode;
-        int leftIndex = 0, rightIndex = tmp.count - 1;
+        SizeT leftIndex = 0, rightIndex = tmp.count - 1;
 
         // the case that the key is between the main node and the first node
         list_.seekg(tmp.target);
@@ -508,7 +509,7 @@ private:
      * @param key
      * @return a pair of the pointer to the main node and the offset
      */
-    std::pair<Ptr, int> FindExact_(const KeyType& key) {
+    std::pair<Ptr, SizeT> FindExact_(const KeyType& key) {
         if (head_.next == 0) return std::make_pair(-1, -1);
 
         MainNode_ tmp;
@@ -532,7 +533,7 @@ private:
         if (tmp.count == 0) return std::make_pair(-1, -1);
 
         Node_ tmpNode;
-        int leftIndex = 0, rightIndex = tmp.count - 1;
+        SizeT leftIndex = 0, rightIndex = tmp.count - 1;
 
         // the case that the key is between the main node and the first node
         list_.seekg(tmp.target);
@@ -768,7 +769,7 @@ private:
     Ptr Split_(MainNode_& mainNode, Ptr mainNodePtr) {
         // Copy the extra string of nodes
         auto* nodeBuffer = new Node_[mainNode.count - head_.nodeSize];
-        for (int i = 0; i < mainNode.count - head_.nodeSize; ++i) {
+        for (SizeT i = 0; i < mainNode.count - head_.nodeSize; ++i) {
             list_.seekg(mainNode.target + sizeof(Node_) * (head_.nodeSize + i));
             list_.read(reinterpret_cast<char*>(&nodeBuffer[i]), sizeof(Node_));
         }
@@ -794,7 +795,7 @@ private:
 
         // write the extra string of nodes
         list_.seekp(newMainNode.target);
-        for (int i = 1; i <= newMainNode.count; ++i) {
+        for (SizeT i = 1; i <= newMainNode.count; ++i) {
             list_.write(reinterpret_cast<char*>(&nodeBuffer[i]), sizeof(Node_));
         }
         delete[] nodeBuffer;
@@ -807,7 +808,7 @@ private:
      * @param length
      * @return a pointer to the string
      */
-    char* Read_(Ptr target, int length) {
+    char* Read_(Ptr target, SizeT length) {
         char* buffer = new char[length];
         list_.seekg(target);
         list_.read(buffer, length);
@@ -820,16 +821,16 @@ private:
      * @param target the place to place the data
      * @param length
      */
-    void Write_(char* source, Ptr target, int length) {
+    void Write_(char* source, Ptr target, SizeT length) {
         list_.seekp(target);
         list_.write(source, length);
     }
 
-    std::fstream list_;
-    FirstNode_ head_;
-    Node_ emptyNode_;
+    std::fstream  list_;
+    FirstNode_    head_;
+    Node_         emptyNode_;
     mutable Node_ cachedNode_;
-    mutable bool cached = false;
+    mutable bool  cached = false;
 };
 
 }
