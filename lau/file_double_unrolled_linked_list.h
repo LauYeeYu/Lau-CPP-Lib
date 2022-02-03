@@ -504,7 +504,7 @@ public:
      * Tell whether the list is empty.
      * @return the boolean of whether the list is empty
      */
-    bool Empty() {
+    [[nodiscard]] bool Empty() {
         return (head_.next == 0);
     }
 
