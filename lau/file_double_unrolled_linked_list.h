@@ -290,7 +290,7 @@ public:
     }
 
     /**
-     * Tell whether there exists a node with a certain key or not.
+     * Check whether there exists a node with a certain key or not.
      * @param key1
      * @param key2
      * @return The boolean of whether there exists a node with a certain key
