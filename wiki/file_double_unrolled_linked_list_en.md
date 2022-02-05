@@ -45,6 +45,7 @@ public:
     // Constructors
     explicit FileDoubleUnrolledLinkedList(const char* fileName, SizeT nodeSize = 500) noexcept;
     explicit FileDoubleUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 500) noexcept;
+    FileDoubleUnrolledLinkedList(FileDoubleUnrolledLinkedList&&) noexcept;
     FileDoubleUnrolledLinkedList(const FileDoubleUnrolledLinkedList&) = delete;
 
     // Assignment Operators
