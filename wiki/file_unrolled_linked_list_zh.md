@@ -39,8 +39,10 @@ public:
     };
 
     // 構造函數
-    explicit FileUnrolledLinkedList(const char* fileName, SizeT nodeSize = 500) noexcept;
-    explicit FileUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 500) noexcept;
+    explicit FileUnrolledLinkedList(const char* fileName,
+                                    SizeT nodeSize = 500) noexcept;
+    explicit FileUnrolledLinkedList(const std::string& fileName,
+                                    SizeT nodeSize = 500) noexcept;
     FileUnrolledLinkedList(FileUnrolledLinkedList&&) noexcept;
     FileUnrolledLinkedList(const FileUnrolledLinkedList&) = delete;
 
@@ -61,15 +63,15 @@ public:
     FileUnrolledLinkedList& Flush();
 
     // 容量
-    [[nodiscard]] bool Empty();
+    [[nodiscard]] bool Empty() const;
 
     // 尋找
-    [[nodiscard]] bool Exist(const KeyType& key);
-    [[nodiscard]] ValueType Get(const KeyType& key);
-    [[nodiscard]] ValueType* GetWithPointer(const KeyType& key);
+    [[nodiscard]] bool Exist(const KeyType& key) const;
+    [[nodiscard]] ValueType Get(const KeyType& key) const;
+    [[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const;
 
     // 遍歷
-    std::vector<Node> Traverse();
+    std::vector<Node> Traverse() const;
 };
 } // namespace lau
 ```
@@ -175,17 +177,17 @@ public:
     的詳情。
 
 ### <span id="Empty">Empty</span>
-- `[[nodiscard]] bool Empty();`
+- `[[nodiscard]] bool Empty() const;`
   - 檢視此列表是否爲空。
 
 ### <span id="Exist">Exist</span>
-- `[[nodiscard]] bool Exist(const KeyType& key);`
+- `[[nodiscard]] bool Exist(const KeyType& key) const;`
   - 檢查一個含有特定鍵之節點是否存在。
   - 若存在此節點，此節點將會被載入快取，因此不必擔心同時使用 `Exist` 和 `Get`
     成員函數會帶來時間損失。建議在使用 `Get` 前先使用 `Exist` 以檢查是否存在該節點。
 
 ### <span id="Get">Get</span>
-- `[[nodiscard]] ValueType Get(const KeyType& key);`
+- `[[nodiscard]] ValueType Get(const KeyType& key) const;`
   - 獲取特定鍵對應值。
   - 若不存在該節點，將會返回 `ValueType` 之默認構造函數。
   - 爲避免不存在該節點之情況，建議在使用此函數前先行使用
@@ -193,14 +195,14 @@ public:
     獲取更多訊息。
 
 ### <span id="GetWithPointer">GetWithPointer</span>
-- `[[nodiscard]] ValueType* GetWithPointer(const KeyType& key);`
+- `[[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const;`
   - 獲取特定鍵對應值之指針。
   - 如若該節點不存在，將會返回空指針。
   - 注意：修改此指針所指對象并不會修改節點中的內容。
   - 爲避免記憶體流失，若函數并不返回空指針，請一定在不需要此數據後釋放此空間。
 
 ### <span id="Traverse">Traverse</span>
-- `std::vector<Node> Traverse();`
+- `std::vector<Node> Traverse() const;`
   - 獲得所有列表中的節點。
   - 此函數將返回一個包含所有列表中內容的
     `std::vector<lau::FileUnrolledLinkedList::Node>`。

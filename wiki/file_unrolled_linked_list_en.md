@@ -4,7 +4,8 @@ included in header `lau/file_unrolled_linked_list.h` and
 
 ```c++
 namespace lau {
-template<class KeyType, class ValueType>
+template<class KeyType,
+         class ValueType>
 class FileUnrolledLinkedList;
 } // namespace lau
 ```
@@ -34,7 +35,8 @@ Garbage collection is also available in this class.
 ## Overview
 ```c++
 namespace lau {
-template<class KeyType, class ValueType>
+template<class KeyType,
+         class ValueType>
 class FileUnrolledLinkedList {
 public:
     // Types
@@ -46,8 +48,10 @@ public:
     };
 
     // Constructors
-    explicit FileUnrolledLinkedList(const char* fileName, SizeT nodeSize = 500) noexcept;
-    explicit FileUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 500) noexcept;
+    explicit FileUnrolledLinkedList(const char* fileName,
+                                    SizeT nodeSize = 500) noexcept;
+    explicit FileUnrolledLinkedList(const std::string& fileName,
+                                    SizeT nodeSize = 500) noexcept;
     FileUnrolledLinkedList(FileUnrolledLinkedList&&) noexcept;
     FileUnrolledLinkedList(const FileUnrolledLinkedList&) = delete;
 
@@ -68,15 +72,15 @@ public:
     FileUnrolledLinkedList& Flush();
 
     // Capacity
-    [[nodiscard]] bool Empty();
+    [[nodiscard]] bool Empty() const;
 
     // Lookup
-    [[nodiscard]] bool Exist(const KeyType& key);
-    [[nodiscard]] ValueType Get(const KeyType& key);
-    [[nodiscard]] ValueType* GetWithPointer(const KeyType& key);
+    [[nodiscard]] bool Exist(const KeyType& key) const;
+    [[nodiscard]] ValueType Get(const KeyType& key) const;
+    [[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const;
 
     // Traversal
-    std::vector<Node> Traverse();
+    std::vector<Node> Traverse() const;
 };
 } // namespace lau
 ```
@@ -197,11 +201,11 @@ Time complexity:
     about `std::fstream::flush()` that this function uses.
 
 ### <span id="Empty">Empty</span>
-- `[[nodiscard]] bool Empty();`
+- `[[nodiscard]] bool Empty() const;`
   - Tell whether the list is empty.
 
 ### <span id="Exist">Exist</span>
-- `[[nodiscard]] bool Exist(const KeyType& key);`
+- `[[nodiscard]] bool Exist(const KeyType& key) const;`
   - Check whether there exists a node with a certain key or not.
   - If a node is found existing, this node will be cached, so don't worry
     that using `Exist` and `Get`  member functions together will waste time.
@@ -209,7 +213,7 @@ Time complexity:
     and then use `Get` member function to get the value of the node.
 
 ### <span id="Get">Get</span>
-- `[[nodiscard]] ValueType Get(const KeyType& key);`
+- `[[nodiscard]] ValueType Get(const KeyType& key) const;`
   - Get the corresponding value of a certain key.
   - If there is no such node, it will return the default value (using the
     default constructor).
@@ -219,7 +223,7 @@ Time complexity:
     [`Exist` member function](#Exist) for more detail.
 
 ### <span id="GetWithPointer">GetWithPointer</span>
-- `[[nodiscard]] ValueType* GetWithPointer(const KeyType& key);`
+- `[[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const;`
   - Get the point of the value of a certain key.
   - If the node doesn't exist, a nullptr will be returned instead.
   - Note that modifying the content this pointer is pointing **won't**
@@ -228,7 +232,7 @@ Time complexity:
     free the memory (by using `delete` operator) whenever you don't need it.
 
 ### <span id="Traverse">Traverse</span>
-- `std::vector<Node> Traverse();`
+- `std::vector<Node> Traverse() const;`
   - Get all the key-value pair in the list.
   - Return a `std::vector<lau::FileUnrolledLinkedList::Node>` containing
     all the Nodes in the list.
