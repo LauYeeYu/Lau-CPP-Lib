@@ -4,7 +4,9 @@ included in header `lau/file_double_unrolled_linked_list.h` and
 
 ```c++
 namespace lau {
-template<class KeyType1, class KeyType2, class ValueType>
+template<class KeyType1,
+         class KeyType2,
+         class ValueType>
 class FileDoubleUnrolledLinkedList;
 } // namespace lau
 ```
@@ -34,7 +36,9 @@ Garbage collection is also available in this class.
 ## Overview
 ```c++
 namespace lau {
-template<class KeyType1, class KeyType2, class ValueType>
+template<class KeyType1,
+         class KeyType2,
+         class ValueType>
 class FileDoubleUnrolledLinkedList {
 public:
     // Types
@@ -47,8 +51,10 @@ public:
     };
 
     // Constructors
-    explicit FileDoubleUnrolledLinkedList(const char* fileName, SizeT nodeSize = 500) noexcept;
-    explicit FileDoubleUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 500) noexcept;
+    explicit FileDoubleUnrolledLinkedList(const char* fileName,
+                                          SizeT nodeSize = 500) noexcept;
+    explicit FileDoubleUnrolledLinkedList(const std::string& fileName,
+                                          SizeT nodeSize = 500) noexcept;
     FileDoubleUnrolledLinkedList(FileDoubleUnrolledLinkedList&&) noexcept;
     FileDoubleUnrolledLinkedList(const FileDoubleUnrolledLinkedList&) = delete;
 
@@ -61,24 +67,32 @@ public:
 
     // Modifiers
     FileDoubleUnrolledLinkedList& Clear();
-    bool Erase(const KeyType1& key1, const KeyType2& key2);
-    bool Insert(const KeyType1& key1, const KeyType2& key2, const ValueType& value);
-    bool Modify(const KeyType1& key1, const KeyType2& key2, const ValueType& value);
+    bool Erase(const KeyType1& key1,
+               const KeyType2& key2);
+    bool Insert(const KeyType1& key1,
+                const KeyType2& key2,
+                const ValueType& value);
+    bool Modify(const KeyType1& key1,
+                const KeyType2& key2,
+                const ValueType& value);
 
     // Operation
     FileDoubleUnrolledLinkedList& Flush();
 
     // Capacity
-    [[nodiscard]] bool Empty();
+    [[nodiscard]] bool Empty() const;
 
     // Lookup
-    [[nodiscard]] bool Exist(const KeyType1& key1, const KeyType2& key2);
-    [[nodiscard]] ValueType Get(const KeyType1& key1, const KeyType2& key2);
-    [[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2);
+    [[nodiscard]] bool Exist(const KeyType1& key1,
+                             const KeyType2& key2) const;
+    [[nodiscard]] ValueType Get(const KeyType1& key1,
+                                const KeyType2& key2) const;
+    [[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1,
+                                            const KeyType2& key2) const;
 
     // Traversal
-    std::vector<Node> Traverse();
-    std::vector<Node> Traverse(const KeyType1& key1);
+    std::vector<Node> Traverse() const;
+    std::vector<Node> Traverse(const KeyType1& key1) const;
 };
 } // namespace lau
 ```
@@ -200,11 +214,11 @@ Time complexity:
     about `std::fstream::flush()` that this function uses.
 
 ### <span id="Empty">Empty</span>
-- `[[nodiscard]] bool Empty();`
+- `[[nodiscard]] bool Empty() const;`
   - Tell whether the list is empty.
 
 ### <span id="Exist">Exist</span>
-- `[[nodiscard]] bool Exist(const KeyType1& key1, const KeyType2& key2);`
+- `[[nodiscard]] bool Exist(const KeyType1& key1, const KeyType2& key2) const;`
   - Check whether there exists a node with a certain key pair or not.
   - If a node is found existing, this node will be cached, so don't worry
     that using `Exist` and `Get`  member functions together will waste time.
@@ -212,7 +226,7 @@ Time complexity:
     and then use `Get` member function to get the value of the node.
 
 ### <span id="Get">Get</span>
-- `[[nodiscard]] ValueType Get(const KeyType1& key1, const KeyType2& key2);`
+- `[[nodiscard]] ValueType Get(const KeyType1& key1, const KeyType2& key2) const;`
   - Get the corresponding value of a certain key pair.
   - If there is no such node, it will return the default value (using the
     default constructor).
@@ -222,7 +236,7 @@ Time complexity:
     [`Exist` member function](#Exist) for more detail.
 
 ### <span id="GetWithPointer">GetWithPointer</span>
-- `[[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2);`
+- `[[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2) const;`
   - Get the point of the value of a certain key pair.
   - If the node doesn't exist, a nullptr will be returned instead.
   - Note that modifying the content this pointer is pointing **won't**
@@ -231,12 +245,12 @@ Time complexity:
     free the memory (by using `delete` operator) whenever you don't need it.
 
 ### <span id="Traverse">Traverse</span>
-- `std::vector<Node> Traverse();`
+- `std::vector<Node> Traverse() const;`
   - Get all the key-value pair in the list.
   - Return a `std::vector<lau::FileDoubleUnrolledLinkedList::Node>` containing
     all the Nodes in the list.
 
-- `std::vector<Node> Traverse(const KeyType1& key1);`
+- `std::vector<Node> Traverse(const KeyType1& key1) const;`
   - Get all the key-value pair with a certain key1.
   - Return a `std::vector<lau::FileDoubleUnrolledLinkedList::Node>` containing
     all the Nodes with key1.

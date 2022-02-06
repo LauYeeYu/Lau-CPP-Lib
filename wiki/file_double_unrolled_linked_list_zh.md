@@ -42,8 +42,10 @@ public:
     };
 
     // 構造函數
-    explicit FileDoubleUnrolledLinkedList(const char* fileName, SizeT nodeSize = 500) noexcept;
-    explicit FileDoubleUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 500) noexcept;
+    explicit FileDoubleUnrolledLinkedList(const char* fileName,
+                                          SizeT nodeSize = 500) noexcept;
+    explicit FileDoubleUnrolledLinkedList(const std::string& fileName,
+                                          SizeT nodeSize = 500) noexcept;
     FileDoubleUnrolledLinkedList(FileDoubleUnrolledLinkedList&&) noexcept;
     FileDoubleUnrolledLinkedList(const FileDoubleUnrolledLinkedList&) = delete;
 
@@ -56,24 +58,32 @@ public:
 
     // 修改
     FileDoubleUnrolledLinkedList& Clear();
-    bool Erase(const KeyType1& key1, const KeyType2& key2);
-    bool Insert(const KeyType1& key1, const KeyType2& key2, const ValueType& value);
-    bool Modify(const KeyType1& key1, const KeyType2& key2, const ValueType& value);
+    bool Erase(const KeyType1& key1,
+               const KeyType2& key2);
+    bool Insert(const KeyType1& key1,
+                const KeyType2& key2,
+                const ValueType& value);
+    bool Modify(const KeyType1& key1,
+                const KeyType2& key2,
+                const ValueType& value);
 
     // 操作
     FileDoubleUnrolledLinkedList& Flush();
 
     // 容量
-    [[nodiscard]] bool Empty();
+    [[nodiscard]] bool Empty() const;
 
     // 尋找
-    [[nodiscard]] bool Exist(const KeyType1& key1, const KeyType2& key2);
-    [[nodiscard]] ValueType Get(const KeyType1& key1, const KeyType2& key2);
-    [[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2);
+    [[nodiscard]] bool Exist(const KeyType1& key1,
+                             const KeyType2& key2) const;
+    [[nodiscard]] ValueType Get(const KeyType1& key1,
+                                const KeyType2& key2) const;
+    [[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1,
+                                            const KeyType2& key2) const;
 
     // 遍歷
-    std::vector<Node> Traverse();
-    std::vector<Node> Traverse(const KeyType1& key1);
+    std::vector<Node> Traverse() const;
+    std::vector<Node> Traverse(const KeyType1& key1) const;
 };
 } // namespace lau
 ```
@@ -179,17 +189,17 @@ public:
     的詳情。
 
 ### <span id="Empty">Empty</span>
-- `[[nodiscard]] bool Empty();`
+- `[[nodiscard]] bool Empty() const;`
   - 檢視此列表是否爲空。
 
 ### <span id="Exist">Exist</span>
-- `[[nodiscard]] bool Exist(const KeyType1& key1, const KeyType2& key2);`
+- `[[nodiscard]] bool Exist(const KeyType1& key1, const KeyType2& key2) const;`
   - 檢查一個含有特定鍵之節點是否存在。
   - 若存在此節點，此節點將會被載入快取，因此不必擔心同時使用 `Exist` 和 `Get`
     成員函數會帶來時間損失。建議在使用 `Get` 前先使用 `Exist` 以檢查是否存在該節點。
 
 ### <span id="Get">Get</span>
-- `[[nodiscard]] ValueType Get(const KeyType1& key1, const KeyType2& key2);`
+- `[[nodiscard]] ValueType Get(const KeyType1& key1, const KeyType2& key2) const;`
   - 獲取特定鍵對應值。
   - 若不存在該節點，將會返回 `ValueType` 之默認構造函數。
   - 爲避免不存在該節點之情況，建議在使用此函數前先行使用
@@ -197,19 +207,19 @@ public:
     獲取更多訊息。
 
 ### <span id="GetWithPointer">GetWithPointer</span>
-- `[[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2);`
+- `[[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2) const;`
   - 獲取特定鍵對應值之指針。
   - 如若該節點不存在，將會返回空指針。
   - 注意：修改此指針所指對象并不會修改節點中的內容。
   - 爲避免記憶體流失，若函數并不返回空指針，請一定在不需要此數據後釋放此空間。
 
 ### <span id="Traverse">Traverse</span>
-- `std::vector<Node> Traverse();`
+- `std::vector<Node> Traverse() const;`
   - 獲得所有列表中的節點。
   - 此函數將返回一個包含所有列表中內容的
     `std::vector<lau::FileDoubleUnrolledLinkedList::Node>`。
 
-- `std::vector<Node> Traverse(const KeyType1& key1);`
+- `std::vector<Node> Traverse(const KeyType1& key1) const;`
   - 獲得所有列表中包含特定第一鍵的鍵值對。
   - 此函數將返回一個包含所有特定第一鍵之節點的
     `std::vector<lau::FileDoubleUnrolledLinkedList::Node>`。
