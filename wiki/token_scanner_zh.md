@@ -10,7 +10,7 @@ class TokenScanner;
 此類將一特定字符串以客製化分隔符掃描並分割爲多個字段。分割有兩種方式。連續方式 (multiple)
 將連續分隔符視作與一個相同。逐一方式 (single) 將字符串以每個單獨的分隔符隔開。
 
-## Overview
+## 概覽
 ```c++
 namespace lau {
 class TokenScanner {

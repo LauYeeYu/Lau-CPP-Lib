@@ -1,8 +1,7 @@
-# lau/all.h
+# lau/file_data_structure.h
 
-`lau/all.h` 標頭檔包含了所有 Lau CPP Library 中的內容。
+`lau/file_data_structure.h` 標頭檔包含所有在 Lau CPP Library 中基於儲存空間的數據結構。
 
 ## 類（以字母順序排列）
-- [TokenScanner](token_scanner_zh.md)：掃描並分割一個字符串中的字段
 - [FileDoubleUnrolledLinkedList](file_double_unrolled_linked_list_zh.md)：基於儲存空間、使用塊狀鏈結串列的雙鍵映射表
 - [FileUnrolledLinkedList](file_unrolled_linked_list_zh.md)：基於儲存空間、使用塊狀鏈結串列的單鍵映射表

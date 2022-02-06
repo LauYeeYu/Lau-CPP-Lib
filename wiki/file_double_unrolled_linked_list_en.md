@@ -12,9 +12,13 @@ class FileDoubleUnrolledLinkedList;
 This template class is intended to preform as a double key map list on disk
 storage that can keep the data even if the program is closed. This class
 allows you to store and access data in programs that might be closed and
-opened for several times.  It uses the data structure called unrolled linked
-list to reduce the time consumption on accessing and writing.  Garbage
-collection is also available in this class.
+opened for several times.
+
+This class uses the data structure called unrolled linked list to reduce
+the time consumption on accessing and writing.  For more details, please
+go to [the introduction part of the unrolled linked list](#Data_Structure).
+
+Garbage collection is also available in this class.
 
 <span id="Notice">Notice:</span>
 1. The two key type **must** have valid operator< and operator==.
@@ -162,7 +166,7 @@ Time complexity:
 
 ### <span id="Clear">Clear</span>
 - `FileDoubleUnrolledLinkedList& Clear();`
-  - Clear all the data in the unrolled linked list
+  - Clear all the data in the unrolled linked list.
 
 ### <span id="Erase">Erase</span>
 - `bool Erase(const KeyType1& key1, const KeyType2& key2);`
@@ -174,7 +178,7 @@ Time complexity:
 
 ### <span id="Insert">Insert</span>
 - `bool Insert(const KeyType1& key1, const KeyType2& key2, const ValueType& value);`
-  - Insert a new key-value pair
+  - Insert a new key-value pair.
   - If there is no such nodes with the same key (then this operation is
     successful), this function will return true;
   - If there exist a node with exactly the same key, it will abort this
@@ -221,6 +225,8 @@ Time complexity:
 - `[[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2);`
   - Get the point of the value of a certain key pair.
   - If the node doesn't exist, a nullptr will be returned instead.
+  - Note that modifying the content this pointer is pointing **won't**
+    actually modify the contents in this list.
   - To avoid memory leak, if the function doesn't return a nullptr, always
     free the memory (by using `delete` operator) whenever you don't need it.
 
