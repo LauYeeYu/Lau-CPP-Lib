@@ -282,7 +282,7 @@ public:
      * @return The boolean of whether there exists a node with a certain key
      * or not
      */
-    [[nodiscard]] bool Exist(const KeyType& key) {
+    [[nodiscard]] bool Exist(const KeyType& key) const {
         // Check if it is cached
         if (cached && cachedNode_.key == key) {
             return true;
@@ -321,7 +321,7 @@ public:
      * If there is no such node, it will return the default value (calling the
      * default constructor).
      */
-    [[nodiscard]] ValueType Get(const KeyType& key) {
+    [[nodiscard]] ValueType Get(const KeyType& key) const {
         // Check if it is cached
         if (cached && cachedNode_.key == key) {
             return cachedNode_.value;
@@ -362,7 +362,7 @@ public:
      * <br>
      * If the key doesn't exist, a nullptr will be returned instead.
      */
-    [[nodiscard]] ValueType* GetWithPointer(const KeyType& key) {
+    [[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const {
         // Check if it is cached
         if (cached && cachedNode_.key == key) {
             return new ValueType(cachedNode_.value);
@@ -395,7 +395,7 @@ public:
      * @return the <code>std::vector</code> class containing all the
      * <code>Node</code>s in the list
      */
-    std::vector<Node> Traverse() {
+    std::vector<Node> Traverse() const {
         std::vector<Node> values; // can be optimized
         MainNode_ mainNode;
         Node node;
@@ -472,7 +472,7 @@ private:
      * @param key
      * @return a pair of the pointer to the main node and the offset (0-based)
      */
-    std::pair<Ptr, SizeT> Find_(const KeyType& key) {
+    std::pair<Ptr, SizeT> Find_(const KeyType& key) const {
         if (head_.next == 0) return std::make_pair(0, -1);
         MainNode_ tmp;
         Ptr Ptr = head_.pre;
@@ -524,7 +524,7 @@ private:
      * @param key
      * @return a pair of the pointer to the main node and the offset
      */
-    std::pair<Ptr, SizeT> FindExact_(const KeyType& key) {
+    std::pair<Ptr, SizeT> FindExact_(const KeyType& key) const {
         if (head_.next == 0) return std::make_pair(-1, -1);
 
         MainNode_ tmp;
@@ -841,11 +841,11 @@ private:
         list_.write(source, length);
     }
 
-    std::fstream  list_;
-    FirstNode_    head_;
-    Node_         emptyNode_;
+    mutable std::fstream  list_;
+    FirstNode_ head_;
+    Node_ emptyNode_;
     mutable Node_ cachedNode_;
-    mutable bool  cached = false;
+    mutable bool cached = false;
 };
 
 }

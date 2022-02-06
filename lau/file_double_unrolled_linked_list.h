@@ -296,7 +296,7 @@ public:
      * @return The boolean of whether there exists a node with a certain key
      * or not
      */
-    [[nodiscard]] bool Exist(const KeyType1& key1, const KeyType2& key2) {
+    [[nodiscard]] bool Exist(const KeyType1& key1, const KeyType2& key2) const {
         // Check if it is cached
         if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
             return true;
@@ -338,7 +338,7 @@ public:
      * If there is no such node, it will return the default value (calling the
      * default constructor).
      */
-    [[nodiscard]] ValueType Get(const KeyType1& key1, const KeyType2& key2) {
+    [[nodiscard]] ValueType Get(const KeyType1& key1, const KeyType2& key2) const {
         // Check if it is cached
         if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
             return cachedNode_.value;
@@ -382,7 +382,7 @@ public:
      * <br>
      * If there is no such node, a nullptr will be returned instead.
      */
-    [[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2) {
+    [[nodiscard]] ValueType* GetWithPointer(const KeyType1& key1, const KeyType2& key2) const {
         // Check if it is cached
         if (cached && cachedNode_.key1 == key1 && cachedNode_.key2 == key2) {
             return new ValueType(cachedNode_.value);
@@ -418,7 +418,7 @@ public:
      * @return the <code>std::vector</code> class containing all the
      * <code>Node</code>s in the list
      */
-    std::vector<Node> Traverse() {
+    std::vector<Node> Traverse() const {
         std::vector<Node> values; // can be optimized
         MainNode_ mainNode;
         Node node;
@@ -443,7 +443,7 @@ public:
      * @return the <code>std::vector</code> class containing all the
      * <code>Node</code>s with key1
      */
-    std::vector<Node> Traverse(const KeyType1& key1) {
+    std::vector<Node> Traverse(const KeyType1& key1) const {
         std::vector<Node> values; // can be optimized
 
         auto [mainNodePtr, offset] = SingleFind_(key1);
@@ -551,7 +551,7 @@ private:
      * @param key
      * @return a pair of the pointer to the main node and the offset
      */
-    std::pair<Ptr, SizeT> Find_(const KeyType1& key1, const KeyType2& key2) {
+    std::pair<Ptr, SizeT> Find_(const KeyType1& key1, const KeyType2& key2) const {
         if (head_.next == 0) return std::make_pair(0, -1);
 
         MainNode_ tmp;
@@ -612,7 +612,7 @@ private:
      * @param key2
      * @return a pair of the pointer to the main node and the offset
      */
-    std::pair<Ptr, SizeT> FindExact_(const KeyType1& key1, const KeyType2& key2) {
+    std::pair<Ptr, SizeT> FindExact_(const KeyType1& key1, const KeyType2& key2) const {
         if (head_.next == 0) return std::make_pair(-1, -1);
 
         MainNode_ tmp;
@@ -676,7 +676,7 @@ private:
      * @param key2
      * @return a pair of the pointer to the main node and the offset
      */
-    std::pair<Ptr, SizeT> SingleFind_(const KeyType1& key1) {
+    std::pair<Ptr, SizeT> SingleFind_(const KeyType1& key1) const {
         if (head_.next == 0) return std::make_pair(-1, -1);
 
         MainNode_ tmp;
@@ -1024,11 +1024,11 @@ private:
         list_.write(source, length);
     }
 
-    FirstNode_    head_;
-    std::fstream  list_;
-    Node_         emptyNode_;
+    mutable std::fstream list_;
+    FirstNode_ head_;
+    Node_ emptyNode_;
     mutable Node_ cachedNode_;
-    mutable bool  cached = false;
+    mutable bool cached = false;
 };
 
 }
