@@ -1,5 +1,7 @@
 # lau/file_data_structure.h
 
+切換到其他語言： [English](file_data_structure_en.md)
+
 `lau/file_data_structure.h` 標頭檔包含所有在 Lau CPP Library 中基於儲存空間的數據結構。
 
 ## 類（以字母順序排列）

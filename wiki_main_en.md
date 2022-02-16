@@ -1,5 +1,7 @@
 # Wiki
 
+Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
+
 ## Headers (in Alphabetical Order)
 - [all.h](wiki/all_en.md): all elements in Lau CPP Library.
 - [file_data_structure.h](wiki/file_data_structure_en.md): all data

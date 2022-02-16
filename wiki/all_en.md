@@ -1,5 +1,7 @@
 # lau/all.h
 
+Switch to Other Languages: [繁體中文（香港）](all_zh.md)
+
 The `lau/all.h` header file includes all the elements in Lau CPP Library.
 
 ## Classes (in Alphabetical Order)

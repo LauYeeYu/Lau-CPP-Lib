@@ -1,4 +1,7 @@
 # lau::TokenScanner
+
+Switch to Other Languages: [繁體中文（香港）](token_scanner_zh.md)
+
 included in header `lau/token_scanner.h` and `lau/utility.h`.
 
 ```c++

@@ -1,4 +1,7 @@
 # lau::TokenScanner
+
+切換到其他語言： [English](token_scanner_en.md)
+
 包含於標頭檔 `lau/token_scanner.h` 和 `lau/utility.h`中。
 
 ```c++

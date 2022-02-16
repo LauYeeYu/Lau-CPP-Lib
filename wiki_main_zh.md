@@ -1,5 +1,7 @@
 # Wiki
 
+切換到其他語言： [English](wiki_main_en.md)
+
 ## 標頭檔（以字母順序排列）
 - [all.h](wiki/all_zh.md)：包含所有 Lau CPP Library 中的內容
 - [file_data_structure.h](wiki/file_data_structure_zh.md)：包含所有 Lau CPP Library

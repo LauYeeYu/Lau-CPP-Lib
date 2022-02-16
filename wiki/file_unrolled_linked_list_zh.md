@@ -1,4 +1,7 @@
 # lau::FileUnrolledLinkedList
+
+切換到其他語言： [English](file_unrolled_linked_list_en.md)
+
 包含於標頭檔 `lau/file_double_unrolled_linked_list.h` 和
 `lau/file_data_structure.h` 中。
 

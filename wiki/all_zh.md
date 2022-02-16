@@ -1,5 +1,7 @@
 # lau/all.h
 
+切換到其他語言： [English](all_en.md)
+
 `lau/all.h` 標頭檔包含了所有 Lau CPP Library 中的內容。
 
 ## 類（以字母順序排列）
