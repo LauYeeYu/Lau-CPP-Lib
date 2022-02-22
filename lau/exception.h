@@ -49,6 +49,7 @@ public:
 };
 
 class RuntimeError : public Exception {
+public:
     explicit RuntimeError(const char* message = "Runtime Error") : Exception(message) {}
 
     ~RuntimeError() override = default;
@@ -57,6 +58,7 @@ class RuntimeError : public Exception {
 };
 
 class InvalidIterator : public Exception {
+public:
     explicit InvalidIterator(const char* message = "Invalid Iterator") : Exception(message) {}
 
     ~InvalidIterator() override = default;
@@ -65,6 +67,7 @@ class InvalidIterator : public Exception {
 };
 
 class EmptyContainer : public Exception {
+public:
     explicit EmptyContainer(const char* message = "Empty Container") : Exception(message) {}
 
     ~EmptyContainer() override = default;
