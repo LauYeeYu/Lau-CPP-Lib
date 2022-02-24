@@ -379,10 +379,12 @@ public:
 
     Iterator Begin() { return Iterator(target_ + beginIndex_, this); }
     Iterator begin() { return Begin(); }
+
     ConstIterator ConstBegin() const { return ConstIterator(target_ + beginIndex_, this); }
 
     Iterator End() { return Iterator(target_ + beginIndex_ + size_, this); }
     Iterator end() { return End(); }
+
 	ConstIterator ConstEnd() const { return ConstIterator(target_ + beginIndex_ + size_, this); }
 
 	/**
@@ -512,6 +514,7 @@ public:
         }
         return *this;
     }
+
 	/**
 	 * Remove the last element from the end.  If <code>size() == 0</code>, a
 	 * container_is_empty will be thrown.
@@ -654,10 +657,24 @@ public:
         return *this;
     }
 
+    /**
+     * Get the capacity of the vector.  Please note that since its vector can
+     * be popped from the front, so the maximum of the vector might be less
+     * than the value.
+     * @return the capacity of the vector
+     */
     [[nodiscard]] SizeT Capacity() { return capacity_; }
 
+    /**
+     * Get a copy of the allocator.
+     * @return a copy of the allocator
+     */
     [[nodiscard]] AllocatorType GetAllocator() { return allocator_; }
 
+    /**
+     * Get the maximum size of the vector.
+     * @return the maximum size of the vector
+     */
     [[nodiscard]] long MaxSize() {
         return std::allocator_traits<Allocator>::max_size(allocator_);
     }
@@ -671,6 +688,10 @@ private:
     SizeT     beginIndex_ = 0;
     Allocator allocator_;
 
+    /**
+     * Enlarge the vector for the case that the vector is right at its biggest
+     * capacity.
+     */
     void Enlarge_() {
         if (capacity_ == 0) {
             Reserve(4);
@@ -679,13 +700,20 @@ private:
         }
     }
 
+    /// Check whether a vector needs enlarging.
     bool NeedEnlarging_() { return (capacity_ == beginIndex_ + size_); }
 
 };
 
+/**
+ * Swap the content of two vectors of one certain type.
+ * @tparam T the type of value in vector
+ * @param vector1
+ * @param vector2
+ */
 template<class T>
 void Swap(Vector<T>& vector1, Vector<T>& vector2) { vector1.Swap(vector2); }
 
-}
+} // namespace lau
 
 #endif // LAU_CPP_LIB_LAU_VECTOR_H
