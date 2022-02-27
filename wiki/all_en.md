@@ -9,6 +9,6 @@ The `lau/all.h` header file includes all the elements in Lau CPP Library.
   input string
 - [FileDoubleUnrolledLinkedList](file_double_unrolled_linked_list_en.md):
   a double key map on disk storage using the data structure called unrolled
-  linked list.
+  linked list
 - [FileUnrolledLinkedList](file_unrolled_linked_list_en.md):
-  a map on disk storage using the data structure called unrolled linked list.
+  a map on disk storage using the data structure called unrolled linked list
