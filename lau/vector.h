@@ -267,7 +267,7 @@ public:
 
 	Vector& operator=(const Vector& obj) {
         if (&obj == this) return *this;
-        this->clear();
+        this->Clear();
         capacity_ = obj.size_;
         size_ = obj.size_;
         beginIndex_ = 0;
@@ -280,7 +280,7 @@ public:
     }
 
     Vector& operator=(Vector&& obj) noexcept {
-        this->clear();
+        this->Clear();
         capacity_ = obj.capacity_;
         size_ = obj.size_;
         beginIndex_ = obj.beginIndex_;
@@ -291,11 +291,11 @@ public:
         obj.beginIndex_ = 0;
     }
 
-    ~Vector() { this->clear(); }
+    ~Vector() { this->Clear(); }
 
 	/**
 	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an index_out_of_bound will be thrown.
+	 * [0, size), an <code>lau::IndexOutOfBound</code> will be thrown.
 	 * @param index
 	 * @return a reference to the element at the input index
 	 */
@@ -306,7 +306,7 @@ public:
 
     /**
 	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an index_out_of_bound will be thrown.
+	 * [0, size), an <code>lau::IndexOutOfBound</code> will be thrown.
 	 * @param index
 	 * @return a const reference to the element at the input index
 	 */
@@ -317,7 +317,7 @@ public:
 
 	/**
 	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an index_out_of_bound will be thrown.
+	 * [0, size), an <code>lau::IndexOutOfBound</code> will be thrown.
 	 * @param index
 	 * @return a reference to the element at the input index
 	 */
@@ -328,7 +328,7 @@ public:
 
     /**
      * assign specified element with bounds checking.  If pos is not in range
-     * [0, size) , a index_out_of_bound will be thrown.
+     * [0, size) , a <code>lau::IndexOutOfBound</code> will be thrown.
      * @param index
      * @return a const reference to the element at the input index
      */
@@ -339,7 +339,7 @@ public:
 
 	/**
 	 * Access the first element.  If the container is empty, a
-	 * container_is_empty will be thrown.
+	 * <code>lau::EmptyContainer</code> will be thrown.
 	 * @return a constant reference to the first element
 	 */
 	const T& Front() const {
@@ -349,7 +349,7 @@ public:
 
 	/**
 	 * Access the last element.  If the container is empty, a
-	 * container_is_empty will be thrown.
+	 * <code>lau::EmptyContainer</code> will be thrown.
 	 * @return a const reference to the last element
 	 */
 	const T& Back() const {
@@ -359,7 +359,7 @@ public:
 
     /**
 	 * Access the first element.  If the container is empty, a
-	 * container_is_empty will be thrown.
+	 * <code>lau::EmptyContainer</code> will be thrown.
 	 * @return a reference to the first element
 	 */
     T& Front() {
@@ -369,7 +369,7 @@ public:
 
     /**
      * Access the last element.  If the container is empty, a
-     * container_is_empty will be thrown.
+     * <code>lau::EmptyContainer</code> will be thrown.
      * @return a reference to the last element
      */
     T& Back() {
@@ -424,8 +424,8 @@ public:
 
 	/**
 	 * Insert value at index.  If <code>index > size</code>, an
-	 * index_out_of_bound will be thrown.  After this operation,
-	 * <code>this->at(ind)</code> will be <code>value</code>.
+	 * <code>lau::IndexOutOfBound</code> will be thrown.  After this
+	 * operation, <code>this->at(ind)</code> will be <code>value</code>.
 	 * @return an iterator pointing to the inserted value
 	 */
 	Iterator Insert(SizeT index, const T& value) {
@@ -457,7 +457,7 @@ public:
 
 	/**
 	 * Erase the element at index.  If <code>index >= size</code>, an
-	 * index_out_of_bound will be thrown.
+	 * <code>lau::IndexOutOfBound</code> will be thrown.
 	 * @return an iterator pointing to the following element
 	 */
 	Iterator Erase(SizeT index) {
@@ -517,7 +517,7 @@ public:
 
 	/**
 	 * Remove the last element from the end.  If <code>size() == 0</code>, a
-	 * container_is_empty will be thrown.
+	 * <code>lau::EmptyContainer</code> will be thrown.
      * @return a reference to the current class
 	 */
     Vector& PopBack() {
@@ -531,7 +531,8 @@ public:
 
     /**
      * Remove the first element from the beginning.  If
-     * <code>size() == 0</code>, a container_is_empty will be thrown.
+     * <code>size() == 0</code>, a <code>lau::EmptyContainer</code> will be
+     * thrown.
      * @return a reference to the current class
      */
     Vector& PopFront() {
@@ -675,7 +676,7 @@ public:
      * Get the maximum size of the vector.
      * @return the maximum size of the vector
      */
-    [[nodiscard]] long MaxSize() {
+    [[nodiscard]] long MaxSize() const {
         return std::allocator_traits<Allocator>::max_size(allocator_);
     }
 
