@@ -295,45 +295,45 @@ public:
 
 	/**
 	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an <code>lau::IndexOutOfBound</code> will be thrown.
+	 * [0, size), an <code>lau::OutOfRange</code> will be thrown.
 	 * @param index
 	 * @return a reference to the element at the input index
 	 */
 	T& At(SizeT index) {
-        if (index >= size_ || index < 0) throw IndexOutOfBound();
+        if (index >= size_ || index < 0) throw OutOfRange();
         return *target_[index + beginIndex_];
     }
 
     /**
 	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an <code>lau::IndexOutOfBound</code> will be thrown.
+	 * [0, size), an <code>lau::OutOfRange</code> will be thrown.
 	 * @param index
 	 * @return a const reference to the element at the input index
 	 */
 	const T& At(SizeT index) const {
-        if (index >= size_ || index < 0) throw IndexOutOfBound();
+        if (index >= size_ || index < 0) throw OutOfRange();
         return *target_[index + beginIndex_];
     }
 
 	/**
 	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an <code>lau::IndexOutOfBound</code> will be thrown.
+	 * [0, size), an <code>lau::OutOfRange</code> will be thrown.
 	 * @param index
 	 * @return a reference to the element at the input index
 	 */
 	T& operator[](SizeT index) {
-        if (index >= size_ || index < 0) throw IndexOutOfBound();
+        if (index >= size_ || index < 0) throw OutOfRange();
         return *target_[index + beginIndex_];
     }
 
     /**
      * assign specified element with bounds checking.  If pos is not in range
-     * [0, size) , a <code>lau::IndexOutOfBound</code> will be thrown.
+     * [0, size) , a <code>lau::OutOfRange</code> will be thrown.
      * @param index
      * @return a const reference to the element at the input index
      */
 	const T& operator[](SizeT index) const {
-        if (index >= size_ || index < 0) throw IndexOutOfBound();
+        if (index >= size_ || index < 0) throw OutOfRange();
         return *target_[index + beginIndex_];
     }
 
@@ -425,12 +425,12 @@ public:
 
 	/**
 	 * Insert value at index.  If <code>index > size</code>, a
-	 * <code>lau::IndexOutOfBound</code> will be thrown.  After this
+	 * <code>lau::OutOfRange</code> will be thrown.  After this
 	 * operation, <code>this->at(ind)</code> will be <code>value</code>.
 	 * @return an iterator pointing to the inserted value
 	 */
 	Iterator Insert(SizeT index, const T& value) {
-        if (index > size_) throw IndexOutOfBound();
+        if (index > size_) throw OutOfRange();
         if (index == 0) {
             PushFront(value);
             return Begin();
@@ -458,11 +458,11 @@ public:
 
 	/**
 	 * Erase the element at index.  If <code>index >= size</code>, a
-	 * <code>lau::IndexOutOfBound</code> will be thrown.
+	 * <code>lau::OutOfRange</code> will be thrown.
 	 * @return an iterator pointing to the following element
 	 */
 	Iterator Erase(SizeT index) {
-        if (index >= size_) throw IndexOutOfBound();
+        if (index >= size_) throw OutOfRange();
         --size_;
         if (index == 0) {
             target_[beginIndex_]->~T();

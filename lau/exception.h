@@ -39,11 +39,11 @@ protected:
     const char* message_;
 };
 
-class IndexOutOfBound : public Exception {
+class OutOfRange : public Exception {
 public:
-    explicit IndexOutOfBound(const char* message = "Index Out of Bound") : Exception(message) {}
+    explicit OutOfRange(const char* message = "Out of Range") : Exception(message) {}
 
-    ~IndexOutOfBound() override = default;
+    ~OutOfRange() override = default;
 
     [[nodiscard]] const char* what() const noexcept override { return message_; }
 };
