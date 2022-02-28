@@ -47,8 +47,6 @@ public:
 
         using SizeT             = long;
 
-        Iterator(T** objPtr, const Vector<T>* vectorPtr) : objPtr_(objPtr), vectorPtr_(vectorPtr) {}
-
 		Iterator operator+(SizeT n) const { return Iterator(objPtr_ + n, vectorPtr_); }
 
 		Iterator operator-(SizeT n) const { return Iterator(objPtr_ - n, vectorPtr_); }
@@ -111,6 +109,8 @@ public:
     private:
         T** objPtr_;
         const Vector<T>* vectorPtr_;
+
+        Iterator(T** objPtr, const Vector<T>* vectorPtr) : objPtr_(objPtr), vectorPtr_(vectorPtr) {}
 	};
 
 	class ConstIterator {
@@ -132,8 +132,6 @@ public:
 		using iterator_category = std::output_iterator_tag;
 
         using SizeT             = long;
-
-        ConstIterator(T** objPtr, const Vector<T>* vectorPtr) : objPtr_(objPtr), vectorPtr_(vectorPtr) {}
 
         ConstIterator operator+(SizeT n) const { return ConstIterator(objPtr_ + n, vectorPtr_); }
 
@@ -202,6 +200,8 @@ public:
     private:
         T** objPtr_;
         const Vector<T>* vectorPtr_;
+
+        ConstIterator(T** objPtr, const Vector<T>* vectorPtr) : objPtr_(objPtr), vectorPtr_(vectorPtr) {}
 	};
 
 	Vector() noexcept(noexcept(Allocator())) = default;
@@ -377,15 +377,15 @@ public:
         return *target_[size_ + beginIndex_ - 1];
     }
 
-    Iterator Begin() { return Iterator(target_ + beginIndex_, this); }
-    Iterator begin() { return Begin(); }
+    [[nodiscard]] Iterator Begin() const { return Iterator(target_ + beginIndex_, this); }
+    [[nodiscard]] Iterator begin() const { return Begin(); }
 
-    ConstIterator ConstBegin() const { return ConstIterator(target_ + beginIndex_, this); }
+    [[nodiscard]] ConstIterator ConstBegin() const { return ConstIterator(target_ + beginIndex_, this); }
 
-    Iterator End() { return Iterator(target_ + beginIndex_ + size_, this); }
-    Iterator end() { return End(); }
+    [[nodiscard]] Iterator End() const { return Iterator(target_ + beginIndex_ + size_, this); }
+    [[nodiscard]] Iterator end() const { return End(); }
 
-	ConstIterator ConstEnd() const { return ConstIterator(target_ + beginIndex_ + size_, this); }
+    [[nodiscard]] ConstIterator ConstEnd() const { return ConstIterator(target_ + beginIndex_ + size_, this); }
 
 	/**
 	 * Check whether the container is empty.
@@ -400,7 +400,7 @@ public:
     /**
      * Clear the whole vector class.
      */
-	void Clear() {
+	Vector& Clear() {
         for (SizeT i = 0; i < size_; ++i) {
             target_[i + beginIndex_]->~T();
             allocator_.deallocate(target_[i + beginIndex_], 1);
@@ -411,6 +411,7 @@ public:
         capacity_ = 0;
         size_ = 0;
         beginIndex_ = 0;
+        return *this;
     }
 
 	/**
@@ -423,7 +424,7 @@ public:
     }
 
 	/**
-	 * Insert value at index.  If <code>index > size</code>, an
+	 * Insert value at index.  If <code>index > size</code>, a
 	 * <code>lau::IndexOutOfBound</code> will be thrown.  After this
 	 * operation, <code>this->at(ind)</code> will be <code>value</code>.
 	 * @return an iterator pointing to the inserted value
@@ -456,7 +457,7 @@ public:
     }
 
 	/**
-	 * Erase the element at index.  If <code>index >= size</code>, an
+	 * Erase the element at index.  If <code>index >= size</code>, a
 	 * <code>lau::IndexOutOfBound</code> will be thrown.
 	 * @return an iterator pointing to the following element
 	 */
@@ -493,7 +494,7 @@ public:
     }
 
     /**
-	 * Add an element to the beginning.
+	 * Add an element to the front.
 	 * @param value
      * @return a reference to the current class
 	 */
@@ -612,7 +613,7 @@ public:
      * Resize the container to contain count elements.  If the current size
      * is greater than count, the container is reduced to its first count
      * elements.  If the current size is less than count, additional
-     * default-inserted elements are appended.
+     * default elements are appended.
      * @param count
      * @return a reference to the current class
      */
@@ -637,7 +638,7 @@ public:
      * Resize the container to contain count elements.  If the current size
      * is greater than count, the container is reduced to its first count
      * elements.  If the current size is less than count, additional
-     * default-inserted elements are appended.
+     * value elements are appended.
      * @param count
      * @return a reference to the current class
      */
@@ -664,13 +665,13 @@ public:
      * than the value.
      * @return the capacity of the vector
      */
-    [[nodiscard]] SizeT Capacity() { return capacity_; }
+    [[nodiscard]] SizeT Capacity() const { return capacity_; }
 
     /**
      * Get a copy of the allocator.
      * @return a copy of the allocator
      */
-    [[nodiscard]] AllocatorType GetAllocator() { return allocator_; }
+    [[nodiscard]] AllocatorType GetAllocator() const { return allocator_; }
 
     /**
      * Get the maximum size of the vector.
