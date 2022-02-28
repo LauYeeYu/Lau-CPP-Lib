@@ -27,6 +27,8 @@
 #include <fstream>
 #include <vector>
 
+#include "type_trait.h"
+
 namespace lau {
 
 /**
@@ -47,7 +49,6 @@ template <class KeyType, class ValueType>
 class FileUnrolledLinkedList {
 public:
     typedef long Ptr;
-    typedef long SizeT;
 
     /**
      * @struct Node{key, value}

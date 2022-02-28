@@ -28,9 +28,7 @@ template<class T,
 class Vector {
 public:
     // Types
-    using SizeT         = long;
     using AllocatorType = Allocator;
-
     class Iterator;
 	class ConstIterator;
 
@@ -109,7 +107,6 @@ void Swap(Vector<T>& vector1, Vector<T>& vector2);
 - `Allocator`: the type of allocator (`std::allocator` is default).
 
 ## Member Type
-- `SizeT`: `long`, the type of size
 - `AllocatorType`: the type of allocator, the same as `Allocator`
 - [`Iterator`](#iterator): The type of iterator in `lau::vector`
 - [`ConstIterator`](#iterator): the type of constant iterator in `lau::Vector`

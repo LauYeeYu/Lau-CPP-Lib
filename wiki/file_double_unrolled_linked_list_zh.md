@@ -37,7 +37,6 @@ class FileDoubleUnrolledLinkedList {
 public:
     // 類型
     typedef long Ptr;
-    typedef long SizeT;
     struct Node {
         KeyType1  key1;
         KeyType2  key2;
@@ -93,7 +92,6 @@ public:
 
 ## 成員類型
 - `Ptr`： `long` 函數指針之類型
-- `SizeT`： `long`, 表徵大小之類型
 - `Node`：一個包含鍵值對的結構體
     - `KeyType1 key1`
     - `keyType2 key2`

@@ -44,7 +44,6 @@ class FileUnrolledLinkedList {
 public:
     // Types
     typedef long Ptr;
-    typedef long SizeT;
     struct Node {
         KeyType   key;
         ValueType value;
@@ -90,7 +89,6 @@ public:
 
 ## Member Type
 - `Ptr`: `long`, the type of file pointers
-- `SizeT`: `long`, the type of size
 - `Node`: a `struct` making the key-value pair
     - `keyType key`
     - `ValueType value`

@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "exception.h"
+#include "type_trait.h"
 
 namespace lau {
 
@@ -21,7 +22,6 @@ namespace lau {
 template<class T, class Allocator = std::allocator<T>>
 class Vector {
 public:
-    using SizeT         = long;
     using AllocatorType = Allocator;
 
     class Iterator;

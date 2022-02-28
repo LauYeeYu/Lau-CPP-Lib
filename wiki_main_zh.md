@@ -12,6 +12,7 @@
 - file_unrolled_linked_list.h：包含類
   [`FileUnrolledLinkedList`](wiki/file_unrolled_linked_list_zh.md).
 - token_scanner.h：包含類 [`TokenScanner`](wiki/token_scanner_zh.md)
+- [type_trait.h](wiki/type_trait_en.md)：包含所有 Lau CPP Library 中的類型特性
 - [utility.h](wiki/utility_zh.md)：包含用以提昇效率的工具
 - vector.h：包含類 [`Vector`](wiki/vector_zh.md)
 

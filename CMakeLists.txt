@@ -11,6 +11,7 @@ add_executable(test
         lau/file_unrolled_linked_list.h
         lau/token_scanner.h
         lau/token_scanner.cpp
+        lau/type_trait.h
         lau/utility.h
         lau/utility.cpp
         lau/vector.h

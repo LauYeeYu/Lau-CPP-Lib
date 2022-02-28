@@ -25,7 +25,6 @@ template<class T,
 class Vector {
 public:
     // 類型
-    using SizeT         = long;
     using AllocatorType = Allocator;
 
     class Iterator;
@@ -106,7 +105,6 @@ void Swap(Vector<T>& vector1, Vector<T>& vector2);
 - `Allocator`：記憶體分配器（默認爲 `std::allocator`）。
 
 ## 成員類型
-- `SizeT`： `long`，表徵大小之類型
 - `AllocatorType`：記憶體分配器類型，與 `Allocator` 一致
 - [`Iterator`](#iterator)：迭代器 `lau::vector` 之類型
 - [`ConstIterator`](#iterator)：常量迭代器 `lau::Vector` 之類型
