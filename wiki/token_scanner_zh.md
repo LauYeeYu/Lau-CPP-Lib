@@ -203,7 +203,7 @@ first second third fourth ...
 ### <span id="TotalLength">TotalLength</span>
 - `long lau::TokenScanner::TotalLength() noexcept;`
     - 返回輸入串的長度。
-    - 鑒於 [Lau Yee-Yu's C++ Style Guide](https://github.com/LauYeeYu/Code-Style)，
+    - 鑒於 [Lau Yee-Yu's C++ Style Guide](https://github.com/LauYeeYu/Code-Style) ，
       此函數并不會以 `std::string::length()` 的返回類型 (`size_t`) 返回。而是以有符號的 `long` 返回。
 
 ### <span id="ChangeMode">ChangeMode</span>

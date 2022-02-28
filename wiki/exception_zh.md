@@ -6,7 +6,7 @@
 
 ## 類（以字母順序排列）
 - [Exception](#Exception)：專門處理異常的基類
-- [IndexOutOfBound](#IndexOutOfBound)：表明下標越界
+- [OutOfRange](#OutOfRange)：表明操作越界
 - [RuntimeError](#RuntimeError)：表明運行時發成錯誤
 - [InvalidIterator](#InvalidIterator)：表明非法迭代器
 - [EmptyContainer](#EmptyContainer)：表明此爲空容器
@@ -34,18 +34,18 @@ protected:
 } // namespace lau
 ```
 
-### <span id="IndexOutOfBound">lau::IndexOutOfBound</span>
+### <span id="OutOfRange">lau::OutOfRange</span>
 此類用以表明此操作由於下標越界而非法。
 
 概覽：
 ```c++
 namespace lau {
 
-class IndexOutOfBound : public Exception {
+class OutOfRange : public Exception {
 public:
-    explicit IndexOutOfBound(const char* message = "Index Out of Bound") : Exception(message) {}
+    explicit OutOfRange(const char* message = "Index Out of Bound") : Exception(message) {}
 
-    ~IndexOutOfBound() override = default;
+    ~OutOfRange() override = default;
 
     [[nodiscard]] const char* what() const noexcept override { return message_; }
 };
