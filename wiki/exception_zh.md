@@ -110,3 +110,20 @@ public:
 
 } // namespace lau
 ```
+
+### <span id="InvalidArgument">lau::InvalidArgument</span>
+此類用於表明存在非法參數。
+
+概覽：
+```c++
+namespace lau {
+class InvalidArgument : public Exception {
+public:
+    explicit InvalidArgument(const char* message = "Invalid Argument") : Exception(message){}
+
+    ~InvalidArgument() override = default;
+
+    [[nodiscard]] const char* what() const noexcept override { return message_; }
+};
+} // namespace lau
+```
