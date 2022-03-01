@@ -10,6 +10,7 @@ The `lau/eception.h` header file is intended to process exceptions.
 - [RuntimeError](#RuntimeError): indicate a runtime error occurs
 - [InvalidIterator](#InvalidIterator): indicate this is an invalid iterator
 - [EmptyContainer](#EmptyContainer): indicate this is an empty container
+- [InvalidArgument](#InvalidArgument): indicate there is an invalid argument
 
 ## Details
 ### <span id="Exception">lau::Exception</span>

@@ -12,6 +12,7 @@ The `lau/all.h` header file includes all the elements in Lau CPP Library.
   linked list
 - [FileUnrolledLinkedList](file_unrolled_linked_list_en.md):
   a map on disk storage using the data structure called unrolled linked list
+- [InvalidArgument](exception_en.md): indicate there is an invalid argument
 - [InvalidIterator](exception_en.md): indicate this is an invalid iterator
 - [OutOfRange](exception_en.md): indicate that the operation is out of
   range

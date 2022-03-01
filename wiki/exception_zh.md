@@ -10,6 +10,7 @@
 - [RuntimeError](#RuntimeError)：表明運行時發成錯誤
 - [InvalidIterator](#InvalidIterator)：表明非法迭代器
 - [EmptyContainer](#EmptyContainer)：表明此爲空容器
+- - [InvalidArgument](#InvalidArgument)：表明存在非法參數
 
 ## 細節
 ### <span id="Exception">lau::Exception</span>

@@ -9,6 +9,7 @@
 - [Exception](exception_zh.md)：專門處理異常的基類
 - [FileDoubleUnrolledLinkedList](file_double_unrolled_linked_list_zh.md)：基於儲存空間、使用塊狀鏈結串列的雙鍵映射表
 - [FileUnrolledLinkedList](file_unrolled_linked_list_zh.md)：基於儲存空間、使用塊狀鏈結串列的單鍵映射表
+- [InvalidArgument](exception_zh.md)：表明存在非法參數
 - [InvalidIterator](exception_zh.md)：表明非法迭代器
 - [OutOfRange](exception_zh.md)：表明操作越界
 - [RuntimeError](exception_zh.md)：表明運行時發成錯誤

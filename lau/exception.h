@@ -75,6 +75,15 @@ public:
     [[nodiscard]] const char* what() const noexcept override { return message_; }
 };
 
+class InvalidArgument : public Exception {
+public:
+    explicit InvalidArgument(const char* message = "Invalid Argument") : Exception(message){}
+
+    ~InvalidArgument() override = default;
+
+    [[nodiscard]] const char* what() const noexcept override { return message_; }
+};
+
 }
 
 #endif // LAU_CPP_LIB_LAU_EXCEPTION_H

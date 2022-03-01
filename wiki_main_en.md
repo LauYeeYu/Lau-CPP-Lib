@@ -24,6 +24,7 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
   linked list
 - [FileUnrolledLinkedList](wiki/file_unrolled_linked_list_en.md):
   a map on disk storage using the data structure called unrolled linked list
+- [InvalidArgument](wiki/exception_en.md): indicate there is an invalid argument
 - [InvalidIterator](wiki/exception_en.md): indicate this is an invalid iterator
 - [OutOfRange](wiki/exception_en.md): indicate that the operation is out of
   range
