@@ -50,7 +50,7 @@ namespace lau {
 template<class KeyType1, class KeyType2, class ValueType>
 class FileDoubleUnrolledLinkedList {
 public:
-    typedef long Ptr;
+    using Ptr = long;
 
     /**
      * @struct Node{key1, key2, value}

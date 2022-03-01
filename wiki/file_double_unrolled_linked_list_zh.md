@@ -36,7 +36,7 @@ template<class KeyType1,
 class FileDoubleUnrolledLinkedList {
 public:
     // 類型
-    typedef long Ptr;
+    using Ptr = long;
     struct Node {
         KeyType1  key1;
         KeyType2  key2;

@@ -48,7 +48,7 @@ namespace lau {
 template <class KeyType, class ValueType>
 class FileUnrolledLinkedList {
 public:
-    typedef long Ptr;
+    using Ptr = long;
 
     /**
      * @struct Node{key, value}

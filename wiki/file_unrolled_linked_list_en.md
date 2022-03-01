@@ -43,7 +43,7 @@ template<class KeyType,
 class FileUnrolledLinkedList {
 public:
     // Types
-    typedef long Ptr;
+    using Ptr = long;
     struct Node {
         KeyType   key;
         ValueType value;
