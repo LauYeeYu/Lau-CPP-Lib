@@ -9,10 +9,11 @@ add_executable(test
         lau/file_data_structure.h
         lau/file_double_unrolled_linked_list.h
         lau/file_unrolled_linked_list.h
+        lau/sparse_table.h
         lau/token_scanner.h
         lau/token_scanner.cpp
         lau/type_trait.h
         lau/utility.h
         lau/utility.cpp
         lau/vector.h
-        test.cpp )
+        test.cpp)
