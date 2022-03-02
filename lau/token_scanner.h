@@ -26,6 +26,8 @@
 
 #include <string>
 
+#include "type_trait.h"
+
 namespace lau {
 
 class TokenScanner {
@@ -75,7 +77,7 @@ public:
      * Tell the length of the input string.
      * @return the total length of the input string
      */
-    long TotalLength() noexcept;
+    SizeT TotalLength() noexcept;
 
     /**
      * Tell whether there remains token(s) or not.

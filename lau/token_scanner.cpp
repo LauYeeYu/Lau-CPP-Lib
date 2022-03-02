@@ -26,6 +26,8 @@
 #include <iostream>
 #include <string>
 
+#include "type_trait.h"
+
 std::string lau::TokenScanner::NextToken() noexcept {
     if (mode_ == multiple) {
         // Skip delimiter
@@ -80,7 +82,7 @@ lau::TokenScanner& lau::TokenScanner::NewLine() noexcept {
     return *this;
 }
 
-long lau::TokenScanner::TotalLength() noexcept {
+SizeT lau::TokenScanner::TotalLength() noexcept {
     return buffer_.length();
 }
 
