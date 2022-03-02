@@ -130,110 +130,144 @@ Time complexity:
 - Searching: $O\left(\sqrt{n}\cdot\log n\right)$
 
 ### <span id="Constructors">Constructors</span>
-- `explicit lau::FileUnrolledLinkedList(const char* fileName, lau::FileUnrolledLinkedListSizeT nodeSize = 500) noexcept;`
-    - Construct the list that is linked to the file with `fileName`.  Please
-      **make sure** that this file **does exist**, or **undefined behaviour**
-      will be encountered.
-    - The number of array members is set as `nodeSize`.
-    - Then it will check whether this file is empty or not.  If it is empty,
-      a header will be created. If it isn't empty, then header will be loaded.
-      For the sake of compatibility, the size of array might be set according
-      to the header.  Therefore, the node size may not be `nodeSize`.
-    - Please also read the [notice](#Notice) to avoid unexpected situation.
+```c++
+explicit FileUnrolledLinkedList(const char* fileName,
+                                SizeT nodeSize = 500) noexcept;
+```
+- Construct the list that is linked to the file with `fileName`.  Please
+**make sure** that this file **does exist**, or **undefined behaviour**
+  will be encountered.
+- The number of array members is set as `nodeSize`.
+- Then it will check whether this file is empty or not.  If it is empty,
+  a header will be created. If it isn't empty, then header will be loaded.
+  For the sake of compatibility, the size of array might be set according
+  to the header.  Therefore, the node size may not be `nodeSize`.
+- Please also read the [notice](#Notice) to avoid unexpected situation.
 
-- `explicit FileUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 500) noexcept;`
-    - Construct the list that is linked to the file with `fileName`.  Please
-      **make sure** that this file **does exist**, or **undefined behaviour**
-      will be encountered.
-    - The number of array members is set as `nodeSize`.
-    - Then it will check whether this file is empty or not.  If it is empty,
-      a header will be created. If it isn't empty, then header will be loaded.
-      For the sake of compatibility, the size of array might be set according
-      to the header.  Therefore, the node size may not be `nodeSize`.
-    - Please also read the [notice](#Notice) to avoid unexpected situation.
+```c++
+explicit FileUnrolledLinkedList(const std::string& fileName,
+                                SizeT nodeSize = 500) noexcept;
+```
+- Construct the list that is linked to the file with `fileName`.  Please
+  **make sure** that this file **does exist**, or **undefined behaviour**
+  will be encountered.
+- The number of array members is set as `nodeSize`.
+- Then it will check whether this file is empty or not.  If it is empty,
+  a header will be created. If it isn't empty, then header will be loaded.
+  For the sake of compatibility, the size of array might be set according
+  to the header.  Therefore, the node size may not be `nodeSize`.
+- Please also read the [notice](#Notice) to avoid unexpected situation.
 
-- `FileUnrolledLinkedList(FileUnrolledLinkedList&&) noexcept;`
-    - Construct the class with a rvalue.
+```c++
+FileUnrolledLinkedList(FileUnrolledLinkedList&&) noexcept;
+```
+- Construct the class with a rvalue.
 
-- `FileUnrolledLinkedList(const FileUnrolledLinkedList&) = delete;`
-  - Since opening the same file in two place will cause undefined behaviour,
-    the copy constructor is explicitly set invalid.
+```c++
+FileUnrolledLinkedList(const FileUnrolledLinkedList&) = delete;
+```
+- Since opening the same file in two place will cause undefined behaviour,
+  the copy constructor is explicitly set invalid.
 
 ### <span id="operator=">`operator=`</span>
-- `FileUnrolledLinkedList& operator=(FileUnrolledLinkedList&&) noexcept;`
-  - See details about [constructors](#Constructors) for more information.
+```c++
+FileUnrolledLinkedList& operator=(FileUnrolledLinkedList&&) noexcept;
+```
+- See details about [constructors](#Constructors) for more information.
 
-- `FileUnrolledLinkedList& operator=(const FileUnrolledLinkedList&) = delete;`
-  - See details about [constructors](#Constructors) for more information.
+```c++
+FileUnrolledLinkedList& operator=(const FileUnrolledLinkedList&) = delete;
+```
+- See details about [constructors](#Constructors) for more information.
 
 ### <span id="Clear">Clear</span>
-- `FileUnrolledLinkedList& Clear();`
-  - Clear all the data in the unrolled linked list
+```c++
+FileUnrolledLinkedList& Clear();
+```
+- Clear all the data in the unrolled linked list
 
 ### <span id="Erase">Erase</span>
-- `bool Erase(const KeyType& key);`
-  - Erase the corresponding key-value pair of the input key.
-  - If there exists such a node, this function will erase the pair and return
-    true;
-  - If there is no such nodes, then it will abort this operation and return
-    false.
+```c++
+bool Erase(const KeyType& key);
+```
+- Erase the corresponding key-value pair of the input key.
+- If there exists such a node, this function will erase the pair and return
+  true;
+- If there is no such nodes, then it will abort this operation and return
+  false.
 
 ### <span id="Insert">Insert</span>
-- `bool Insert(const KeyType& key, const ValueType& value);`
-  - Insert a new key-value pair.
-  - If there is no such nodes with the same key (then this operation is
-    successful), this function will return true;
-  - If there exist a node with exactly the same key, it will abort this
-    insert operation and return false.
+```c++
+bool Insert(const KeyType& key, const ValueType& value);
+```
+- Insert a new key-value pair.
+- If there is no such nodes with the same key (then this operation is
+  successful), this function will return true;
+- If there exist a node with exactly the same key, it will abort this
+  insert operation and return false.
 
 ### <span id="Modify">Modify</span>
-- `bool Modify(const KeyType& key, const ValueType& value);`
-  - Modify the value of an existing key-value pair.
-  - If there exists such a node with the input key (both must match), this
-    function will modify the value of such node and return true;
-  - If there is no such nodes, then it will abort this operation and return
-    false.
+```c++
+bool Modify(const KeyType& key, const ValueType& value);
+```
+- Modify the value of an existing key-value pair.
+- If there exists such a node with the input key (both must match), this
+  function will modify the value of such node and return true;
+- If there is no such nodes, then it will abort this operation and return
+  false.
 
 ### <span id="Flush">Flush</span>
-- `FileUnrolledLinkedList& Flush();`
-  - Writes uncommitted changes to make everything in the buffer stored in the
-    file.
-  - See [more details](https://en.cppreference.com/w/cpp/io/basic_ostream/flush)
-    about `std::fstream::flush()` that this function uses.
+```c++
+FileUnrolledLinkedList& Flush();
+```
+- Write uncommitted changes to make everything in the buffer stored in the
+  file.
+- See [more details](https://en.cppreference.com/w/cpp/io/basic_ostream/flush)
+  about `std::fstream::flush()` that this function uses.
 
 ### <span id="Empty">Empty</span>
-- `[[nodiscard]] bool Empty() const;`
-  - Tell whether the list is empty.
+```c++
+[[nodiscard]] bool Empty() const;
+```
+- Tell whether the list is empty.
 
 ### <span id="Exist">Exist</span>
-- `[[nodiscard]] bool Exist(const KeyType& key) const;`
-  - Check whether there exists a node with a certain key or not.
-  - If a node is found existing, this node will be cached, so don't worry
-    that using `Exist` and `Get`  member functions together will waste time.
-    It's recommended to use `Exist` first to check whether such node exists
-    and then use `Get` member function to get the value of the node.
+```c++
+[[nodiscard]] bool Exist(const KeyType& key) const;
+```
+- Check whether there exists a node with a certain key or not.
+- If a node is found existing, this node will be cached, so don't worry
+  that using `Exist` and `Get`  member functions together will waste time.
+  It's recommended to use `Exist` first to check whether such node exists
+  and then use `Get` member function to get the value of the node.
 
 ### <span id="Get">Get</span>
-- `[[nodiscard]] ValueType Get(const KeyType& key) const;`
-  - Get the corresponding value of a certain key.
-  - If there is no such node, it will return the default value (using the
-    default constructor).
-  - To avoid the case of not existing such a node, it's advisable to use
-    `Exist` member function before using this function.  In this procedure,
-    finding the node will only happen once.  View
-    [`Exist` member function](#Exist) for more detail.
+```c++
+[[nodiscard]] ValueType Get(const KeyType& key) const;
+```
+- Get the corresponding value of a certain key.
+- If there is no such node, it will return the default value (using the
+  default constructor).
+- To avoid the case of not existing such a node, it's advisable to use
+  `Exist` member function before using this function.  In this procedure,
+  finding the node will only happen once.  View
+  [`Exist` member function](#Exist) for more detail.
 
 ### <span id="GetWithPointer">GetWithPointer</span>
-- `[[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const;`
-  - Get the point of the value of a certain key.
-  - If the node doesn't exist, a nullptr will be returned instead.
-  - Note that modifying the content this pointer is pointing **won't**
-    actually modify the contents in this list.
-  - To avoid memory leak, if the function doesn't return a nullptr, always
-    free the memory (by using `delete` operator) whenever you don't need it.
+```c++
+[[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const;
+```
+- Get the point of the value of a certain key.
+- If the node doesn't exist, a nullptr will be returned instead.
+- Note that modifying the content this pointer is pointing **won't**
+  actually modify the contents in this list.
+- To avoid memory leak, if the function doesn't return a nullptr, always
+  free the memory (by using `delete` operator) whenever you don't need it.
 
 ### <span id="Traverse">Traverse</span>
-- `std::vector<Node> Traverse() const;`
-  - Get all the key-value pair in the list.
-  - Return a `std::vector<lau::FileUnrolledLinkedList::Node>` containing
-    all the Nodes in the list.
+```c++
+std::vector<Node> Traverse() const;
+```
+- Get all the key-value pair in the list.
+- Return a `std::vector<lau::FileUnrolledLinkedList::Node>` containing
+  all the Nodes in the list.

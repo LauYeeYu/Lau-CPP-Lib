@@ -121,89 +121,123 @@ public:
 - 搜尋： $O\left(\sqrt{n}\cdot\log n\right)$
 
 ### <span id="Constructors">構造函數</span>
-- `explicit lau::FileUnrolledLinkedList(const char* fileName, lau::FileUnrolledLinkedListSizeT nodeSize = 500) noexcept;`
-    - 構造與以 `fileName` 爲名的檔案相關聯的類。注意：請**確保**檔案存在，否則將導致未定義行爲。
-    - 數組大小被定爲 `nodeSize`。
-    - 此後，將會檢查檔案是否爲空。如果爲空，一個標頭將會在檔案的最初位置被創建；若不爲空，標頭會被加載。爲保證相容性，數組的大小會依照標頭確定，因此其未必是
-      `nodeSize`。
-    - 請閲讀此類的[注意事項](#Notice)以避免意料之外的情況。
+```c++
+explicit FileUnrolledLinkedList(const char* fileName,
+                                tSizeT nodeSize = 500) noexcept;
+```
+- 構造與以 `fileName` 爲名的檔案相關聯的類。注意：請**確保**檔案存在，否則將導致未定義行爲。
+- 數組大小被定爲 `nodeSize`。
+- 此後，將會檢查檔案是否爲空。如果爲空，一個標頭將會在檔案的最初位置被創建；若不爲空，標頭會被加載。爲保證相容性，數組的大小會依照標頭確定，因此其未必是
+  `nodeSize`。
+- 請閲讀此類的[注意事項](#Notice)以避免意料之外的情況。
 
-- `explicit FileUnrolledLinkedList(const std::string& fileName, SizeT nodeSize = 500) noexcept;`
-    - 構造與以 `fileName` 爲名的檔案相關聯的類。注意：請**確保**檔案存在，否則將導致未定義行爲。
-    - 數組大小被定爲 `nodeSize`。
-    - 此後，將會檢查檔案是否爲空。如果爲空，一個標頭將會在檔案的最初位置被創建；若不爲空，標頭會被加載。爲保證相容性，數組的大小會依照標頭確定，因此其未必是
-      `nodeSize`。
-    - 請閲讀此類的[注意事項](#Notice)以避免意料之外的情況。
+```c++
+explicit FileUnrolledLinkedList(const std::string& fileName,
+                                SizeT nodeSize = 500) noexcept;
+```
+- 構造與以 `fileName` 爲名的檔案相關聯的類。注意：請**確保**檔案存在，否則將導致未定義行爲。
+- 數組大小被定爲 `nodeSize`。
+- 此後，將會檢查檔案是否爲空。如果爲空，一個標頭將會在檔案的最初位置被創建；若不爲空，標頭會被加載。爲保證相容性，數組的大小會依照標頭確定，因此其未必是
+  `nodeSize`。
+- 請閲讀此類的[注意事項](#Notice)以避免意料之外的情況。
 
-- `FileUnrolledLinkedList(FileUnrolledLinkedList&&) noexcept;`
-    - 從右值構造此類。
+```c++
+FileUnrolledLinkedList(FileUnrolledLinkedList&&) noexcept;
+```
+- 從右值構造此類。
 
-- `FileUnrolledLinkedList(const FileUnrolledLinkedList&) = delete;`
-  - 由於在兩個對象中讀寫數據係未定義行爲，複製構造函數被禁止使用。
+```c++
+FileUnrolledLinkedList(const FileUnrolledLinkedList&) = delete;
+```
+- 由於在兩個對象中讀寫數據係未定義行爲，複製構造函數被禁止使用。
 
 ### <span id="operator=">`operator=`</span>
-- `FileUnrolledLinkedList& operator=(FileUnrolledLinkedList&&) noexcept;`
-  - 檢視有關[構造函數](#Constructors)的內容以獲取更多訊息。
+```c++
+FileUnrolledLinkedList& operator=(FileUnrolledLinkedList&&) noexcept;
+```
+- 檢視有關[構造函數](#Constructors)的內容以獲取更多訊息。
 
-- `FileUnrolledLinkedList& operator=(const FileUnrolledLinkedList&) = delete;`
-  - 檢視有關[構造函數](#Constructors)的內容以獲取更多訊息。
+```c++
+FileUnrolledLinkedList& operator=(const FileUnrolledLinkedList&) = delete;
+```
+- 檢視有關[構造函數](#Constructors)的內容以獲取更多訊息。
 
 ### <span id="Clear">Clear</span>
-- `FileUnrolledLinkedList& Clear();`
-  - 清除鏈結串列中的全部內容。
+```c++
+FileUnrolledLinkedList& Clear();
+```
+- 清除鏈結串列中的全部內容。
 
 ### <span id="Erase">Erase</span>
-- `bool Erase(const KeyType& key);`
-  - 移除輸入鍵所對應之節點。
-  - 如若存在該點，則會移除對應之節點並返回真；
-  - 如若不存在該點，則會放棄此次操作並返回假。
+```c++
+bool Erase(const KeyType& key);
+```
+- 移除輸入鍵所對應之節點。
+- 如若存在該點，則會移除對應之節點並返回真；
+- 如若不存在該點，則會放棄此次操作並返回假。
 
 ### <span id="Insert">Insert</span>
-- `bool Insert(const KeyType& key, const ValueType& value);`
-  - 插入一個新的鍵值對。
-  - 如若不存在與其鍵值相同之節點（即操作成功），則返回值爲真；
-  - 如若存在與其鍵值相同之節點，則會放棄此次插入操作並返回假。
+```c++
+bool Insert(const KeyType& key, const ValueType& value);
+```
+- 插入一個新的鍵值對。
+- 如若不存在與其鍵值相同之節點（即操作成功），則返回值爲真；
+- 如若存在與其鍵值相同之節點，則會放棄此次插入操作並返回假。
 
 ### <span id="Modify">Modify</span>
-- `bool Modify(const KeyType& key, const ValueType& value);`
-  - 修改既有鍵值對。
-  - 如若存在與其鍵值相同之節點，則會以 `value` 修改對應節點之值並返回真；
-  - 如若不存在與其鍵值相同之節點，則會放棄此次操作並返回假。
+```c++
+bool Modify(const KeyType& key, const ValueType& value);
+```
+- 修改既有鍵值對。
+- 如若存在與其鍵值相同之節點，則會以 `value` 修改對應節點之值並返回真；
+- 如若不存在與其鍵值相同之節點，則會放棄此次操作並返回假。
 
 ### <span id="Flush">Flush</span>
-- `FileUnrolledLinkedList& Flush();`
-  - 將爲寫入儲存的緩衝區中之內容寫入與之關聯之檔案內。
-  - 鑒於本函數使用 `std::fstream::flush()` ，請檢視更多關於
-    [`std::fstream::flush()`](https://zh.cppreference.com/w/cpp/io/basic_ostream/flush)
-    的詳情。
+```c++
+FileUnrolledLinkedList& Flush();
+```
+- 將爲寫入儲存的緩衝區中之內容寫入與之關聯之檔案內。
+- 鑒於本函數使用 `std::fstream::flush()` ，請檢視更多關於
+  [`std::fstream::flush()`](https://zh.cppreference.com/w/cpp/io/basic_ostream/flush)
+  的詳情。
 
 ### <span id="Empty">Empty</span>
-- `[[nodiscard]] bool Empty() const;`
-  - 檢視此列表是否爲空。
+```c++
+[[nodiscard]] bool Empty() const;
+```
+- 檢視此列表是否爲空。
 
 ### <span id="Exist">Exist</span>
-- `[[nodiscard]] bool Exist(const KeyType& key) const;`
-  - 檢查一個含有特定鍵之節點是否存在。
-  - 若存在此節點，此節點將會被載入快取，因此不必擔心同時使用 `Exist` 和 `Get`
-    成員函數會帶來時間損失。建議在使用 `Get` 前先使用 `Exist` 以檢查是否存在該節點。
+```c++
+[[nodiscard]] bool Exist(const KeyType& key) const;
+```
+- 檢查一個含有特定鍵之節點是否存在。
+- 若存在此節點，此節點將會被載入快取，因此不必擔心同時使用 `Exist` 和 `Get`
+  成員函數會帶來時間損失。建議在使用 `Get` 前先使用 `Exist` 以檢查是否存在該節點。
 
 ### <span id="Get">Get</span>
-- `[[nodiscard]] ValueType Get(const KeyType& key) const;`
-  - 獲取特定鍵對應值。
-  - 若不存在該節點，將會返回 `ValueType` 之默認構造函數。
-  - 爲避免不存在該節點之情況，建議在使用此函數前先行使用
-    `Exist` 函數檢查是否存在該節點。在此過程中，搜尋工作僅會執行一次。請檢視[成員函數 `Exist`](#Exist)
-    獲取更多訊息。
+```c++
+[[nodiscard]] ValueType Get(const KeyType& key) const;
+```
+- 獲取特定鍵對應值。
+- 若不存在該節點，將會返回 `ValueType` 之默認構造函數。
+- 爲避免不存在該節點之情況，建議在使用此函數前先行使用
+  `Exist` 函數檢查是否存在該節點。在此過程中，搜尋工作僅會執行一次。請檢視[成員函數 `Exist`](#Exist)
+  獲取更多訊息。
 
 ### <span id="GetWithPointer">GetWithPointer</span>
-- `[[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const;`
-  - 獲取特定鍵對應值之指針。
-  - 如若該節點不存在，將會返回空指針。
-  - 注意：修改此指針所指對象并不會修改節點中的內容。
-  - 爲避免記憶體流失，若函數并不返回空指針，請一定在不需要此數據後釋放此空間。
+```c++
+[[nodiscard]] ValueType* GetWithPointer(const KeyType& key) const;
+```
+- 獲取特定鍵對應值之指針。
+- 如若該節點不存在，將會返回空指針。
+- 注意：修改此指針所指對象并不會修改節點中的內容。
+- 爲避免記憶體流失，若函數并不返回空指針，請一定在不需要此數據後釋放此空間。
 
 ### <span id="Traverse">Traverse</span>
-- `std::vector<Node> Traverse() const;`
-  - 獲得所有列表中的節點。
-  - 此函數將返回一個包含所有列表中內容的
-    `std::vector<lau::FileUnrolledLinkedList::Node>`。
+```c++
+std::vector<Node> Traverse() const;
+```
+- 獲得所有列表中的節點。
+- 此函數將返回一個包含所有列表中內容的
+  `std::vector<lau::FileUnrolledLinkedList::Node>`。

@@ -11,6 +11,7 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
   [`FileDoubleUnrolledLinkedList`](wiki/file_double_unrolled_linked_list_en.md)
 - file_unrolled_linked_list.h: the class
   [`FileUnrolledLinkedList`](wiki/file_unrolled_linked_list_en.md)
+- sparse_table.h: the class [`SparseTable`](wiki/sparse_table_en.md)
 - token_scanner.h: the class [`TokenScanner`](wiki/token_scanner_en.md)
 - [type_trait.h](wiki/type_trait_en.md): all the type traits in Lau CPP Library
 - [utility.h](wiki/utility_en.md): some useful tools to boost efficiency
@@ -29,6 +30,8 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
 - [OutOfRange](wiki/exception_en.md): indicate that the operation is out of
   range
 - [RuntimeError](wiki/exception_en.md): indicate a runtime error occurs
+- [SparseTable](wiki/sparse_table_en.md): a sparse table that preprocess data
+  to boost the efficiency of repeatable contribution questions
 - [TokenScanner](wiki/token_scanner_en.md): scan and separate the token(s) of
   an input string
 - [Vector](wiki/vector_en.md): linear container (dynamic array)

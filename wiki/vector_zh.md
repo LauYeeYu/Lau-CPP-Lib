@@ -17,7 +17,7 @@ class Vector;
 
 如欲瞭解更多訊息，請檢視[數據結構詳情](#DataStructure)。
 
-## Overview
+## 概覽
 ```c++
 namespace lau {
 template<class T,
@@ -163,221 +163,332 @@ void Swap(Vector<T>& vector1, Vector<T>& vector2);
 - 移除： $O(n)$
 
 ### <span id="Constructors">構造函數</span>
-- `Vector() noexcept(noexcept(Allocator()));`
-  - 默認構造函數
-  - 使用默認記憶體分配器構造空容器。
-- `explicit Vector(const Allocator& allocator);`
-  - 使用指定記憶體分配器構造空容器。
-- `Vector(SizeT count, const T& value, const Allocator& allocator = Allocator());`
-  - 使用指定記憶體分配器或默認記憶體分配器（如缺省）構造一個含有 `count` 個 `value` 的容器。
-- `explicit Vector(SizeT count, const Allocator& allocator = Allocator());`
-  - 使用指定記憶體分配器或默認記憶體分配器（如缺省）構造一個含有 `count` 個默認元素的容器。
-- `template<class InputIterator> Vector(const InputIterator& first, const InputIterator& last, const Allocator& allocator = Allocator());`
-  - 使用指定記憶體分配器或默認記憶體分配器（如缺省）構造一個含有位於 [first, end) 內元素的容器。
-- `Vector(const Vector& obj);`
-  - 複製構造函數
-  - 構造一個與 `obj` 含有相同元素的容器。
-- `Vector(Vector&& obj) noexcept;`
-  - 移動構造函數
-  - 從右值構造一個與 `obj` 含有相同元素的容器。
-- `Vector(std::initializer_list<T> init, const Allocator& allocator = Allocator());`
-  - 使用指定記憶體分配器或默認記憶體分配器（如缺省）從 `std::initializer_list<T>` 構造一個容器。
+```c++
+Vector() noexcept(noexcept(Allocator()));
+```
+- 默認構造函數
+- 使用默認記憶體分配器構造空容器。
+
+```c++
+explicit Vector(const Allocator& allocator);
+```
+- 使用指定記憶體分配器構造空容器。
+
+```c++
+Vector(SizeT count,
+       const T& value,
+       const Allocator& allocator = Allocator());
+```
+- 使用指定記憶體分配器或默認記憶體分配器（如缺省）構造一個含有 `count` 個 `value` 的容器。
+
+```c++
+explicit Vector(SizeT count,
+                const Allocator& allocator = Allocator());
+```
+- 使用指定記憶體分配器或默認記憶體分配器（如缺省）構造一個含有 `count` 個默認元素的容器。
+
+```c++
+template<class InputIterator>
+Vector(const InputIterator& first,
+       const InputIterator& last,
+       const Allocator& allocator = Allocator());
+```
+- 使用指定記憶體分配器或默認記憶體分配器（如缺省）構造一個含有位於 [first, end) 內元素的容器。
+
+```c++
+Vector(const Vector& obj);
+```
+- 複製構造函數
+- 構造一個與 `obj` 含有相同元素的容器。
+
+```c++
+Vector(Vector&& obj) noexcept;
+```
+- 移動構造函數
+- 從右值構造一個與 `obj` 含有相同元素的容器。
+
+```c++
+Vector(std::initializer_list<T> init,
+       const Allocator& allocator = Allocator());
+```
+- 使用指定記憶體分配器或默認記憶體分配器（如缺省）從 `std::initializer_list<T>` 構造一個容器。
 
 ### <span id="operator=">`operator=`</span>
-- `Vector& operator=(const Vector& obj);`
-  - 以 `obj` 賦值到此容器。
-- `Vector& operator=(Vector&& obj) noexcept;`
-  - 以右值 `obj` 賦值到此容器。
+```c++
+Vector& operator=(const Vector& obj);
+```
+- 以 `obj` 賦值到此容器。
+
+```c++
+Vector& operator=(Vector&& obj) noexcept;
+```
+- 以右值 `obj` 賦值到此容器。
 
 ### <span id="GetAllocator">`GetAllocator`</span>
-- `[[nodiscard]] AllocatorType GetAllocator() const;`
-  - 獲取此類中記憶體分配器的副本。
+```c++
+[[nodiscard]] AllocatorType GetAllocator() const;
+```
+- 獲取此類中記憶體分配器的副本。
 
 ### <span id="At">`At`</span>
-- `T& At(SizeT index);`
-  - 以下標訪問元素。
-  - 如果下標并不在範圍 [0, size) 中，將抛出 `lau::OutOfRange` 異常類。
-  - 你可以讀寫此元素。
-  - 時間複雜度： $O(1)$。
-- `const T& At(SizeT index) const;`
-  - 以下標訪問元素。
-  - 如果下標并不在範圍 [0, size) 中，將抛出 `lau::OutOfRange` 異常類。
-  - 你僅可以讀取此元素。
-  - 時間複雜度： $O(1)$。
+```c++
+T& At(SizeT index);
+```
+- 以下標訪問元素。
+- 如果下標并不在範圍 [0, size) 中，將抛出 `lau::OutOfRange` 異常類。
+- 你可以讀寫此元素。
+- 時間複雜度： $O(1)$。
+
+```c++
+const T& At(SizeT index) const;
+```
+- 以下標訪問元素。
+- 如果下標并不在範圍 [0, size) 中，將抛出 `lau::OutOfRange` 異常類。
+- 你僅可以讀取此元素。
+- 時間複雜度： $O(1)$。
 
 ### <span id="operator[]">`operator[]`</span>
-- `T& operator[](SizeT index);`
-  - 以下標訪問元素。
-  - 如果下標并不在範圍 [0, size) 中，將抛出 `lau::OutOfRange` 異常類。
-  - 你可以讀寫此元素。
-  - 時間複雜度： $O(1)$。
-- `const T& operator[](SizeT index) const;`
-  - 以下標訪問元素。
-  - 如果下標并不在範圍 [0, size) 中，將抛出 `lau::OutOfRange` 異常類。
-  - 你僅可以讀取此元素。
-  - 時間複雜度： $O(1)$。
+```c++
+T& operator[](SizeT index);
+```
+- 以下標訪問元素。
+- 如果下標并不在範圍 [0, size) 中，將抛出 `lau::OutOfRange` 異常類。
+- 你可以讀寫此元素。
+- 時間複雜度： $O(1)$。
+
+```c++
+const T& operator[](SizeT index) const;
+```
+- 以下標訪問元素。
+- 如果下標并不在範圍 [0, size) 中，將抛出 `lau::OutOfRange` 異常類。
+- 你僅可以讀取此元素。
+- 時間複雜度： $O(1)$。
 
 ### <span id="Front">`Front`</span>
-- `T& Front();`
-  - 訪問首個元素。
-  - 如果此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
-  - 你可以讀寫此元素。
-  - 時間複雜度： $O(1)$。
-- `const T& Front() const;`
-  - 訪問首個元素。
-  - 如果此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
-  - 你僅可以讀取此元素。
-  - 時間複雜度： $O(1)$。
+```c++
+T& Front();
+```
+- 訪問首個元素。
+- 如果此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
+- 你可以讀寫此元素。
+- 時間複雜度： $O(1)$。
+
+```c++
+const T& Front() const;
+```
+- 訪問首個元素。
+- 如果此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
+- 你僅可以讀取此元素。
+- 時間複雜度： $O(1)$。
 
 ### <span id="Back">`Back`</span>
-- `T& Back();`
-  - 訪問最後元素。
-  - 如果此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
-  - 你可以讀寫此元素。
-  - 時間複雜度： $O(1)$。
-- `const T& Back() const;`
-  - 訪問最後元素。
-  - 如果此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
-  - 你僅可以讀取此元素。
-  - 時間複雜度： $O(1)$。
+```c++
+T& Back();
+```
+- 訪問最後元素。
+- 如果此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
+- 你可以讀寫此元素。
+- 時間複雜度： $O(1)$。
+
+```c++
+const T& Back() const;
+```
+- 訪問最後元素。
+- 如果此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
+- 你僅可以讀取此元素。
+- 時間複雜度： $O(1)$。
 
 ### <span id="Begin">`Begin`</span>
-- `[[nodiscard]] Iterator Begin() const;`
-  - 獲取首迭代器。
+```c++
+[[nodiscard]] Iterator Begin() const;
+```
+- 獲取首迭代器。
 
 ### <span id="begin">`begin`</span>
-- `[[nodiscard]] Iterator Begin() const;`
-  - 獲取首迭代器。
+```c++
+[[nodiscard]] Iterator Begin() const;
+```
+- 獲取首迭代器。
 
 ### <span id="ConstBegin">`ConstBegin`</span>
-- `[[nodiscard]] ConstIterator ConstBegin() const;`
-  - 獲取首常量迭代器。
+```c++
+[[nodiscard]] ConstIterator ConstBegin() const;
+```
+- 獲取首常量迭代器。
 
 ### <span id="End">`End`</span>
-- `[[nodiscard]] Iterator End() const;`
-  - 獲取末迭代器。
-  - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
+```c++
+[[nodiscard]] Iterator End() const;
+```
+- 獲取末迭代器。
+- 請注意：此迭代器是最後一個元素對應迭代器的後一個。
 
 ### <span id="end">`end`</span>
-- `[[nodiscard]] Iterator end() const;`
-  - 獲取末迭代器。
-  - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
+```c++
+[[nodiscard]] Iterator end() const;
+```
+- 獲取末迭代器。
+- 請注意：此迭代器是最後一個元素對應迭代器的後一個。
 
 ### <span id="ConstEnd">`ConstEnd`</span>
-- `[[nodiscard]] ConstIterator ConstEnd() const;`
-  - 獲取末常量迭代器。
-  - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
+```c++
+[[nodiscard]] ConstIterator ConstEnd() const;
+```
+- 獲取末常量迭代器。
+- 請注意：此迭代器是最後一個元素對應迭代器的後一個。
 
 ### <span id="Capacity">`Capacity`</span>
-- `[[nodiscard]] SizeT Capacity();`
-  - 獲取容器的容量。
-  - 請注意：由於此容器可以從前部移除元素，因此可用空間可能比此結果小。
+```c++
+[[nodiscard]] SizeT Capacity();
+```
+- 獲取容器的容量。
+- 請注意：由於此容器可以從前部移除元素，因此可用空間可能比此結果小。
 
 ### <span id="Empty">`Empty`</span>
-- `[[nodiscard]] bool Empty() const;`
-  - 檢查容器是否爲空。
+```c++
+[[nodiscard]] bool Empty() const;
+```
+- 檢查容器是否爲空。
 
 ### <span id="MaxSize">`MaxSize`</span>
-- `[[nodiscard]] long MaxSize() const;`
-  - 獲取此容器的最大容量。
+```c++
+[[nodiscard]] long MaxSize() const;
+```
+- 獲取此容器的最大容量。
 
 ### <span id="Size">`Size`</span>
-- `[[nodiscard]] SizeT Size() const;`
+```c++
+[[nodiscard]] SizeT Size() const;
+```
 - 獲取容器中的元素個數。
 
 ### <span id="ShrinkToFit">`ShrinkToFit`</span>
-- `Vector& ShrinkToFit();`
-  - 將容量減少到最小（即元素個數）。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-  - 時間複雜度：不確定。多數情況下爲 $O(n)$。
+```c++
+Vector& ShrinkToFit();
+```
+- 將容量減少到最小（即元素個數）。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。
 
 ### <span id="Reserve">`Reserve`</span>
-- `Vector& Reserve(SizeT newCapacity);`
-  - 保留至少 `newCapacity` 的空間。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-  - 請注意：保留空間操作并**不會**構造新的元素，因此不可訪問新的空間。如需訪問新增的空間，請使用成員函數
-    [`Resize`](#Resize)。
-  - 時間複雜度：不確定。多數情況下爲 $O(n)$。
+```c++
+Vector& Reserve(SizeT newCapacity);
+```
+- 保留至少 `newCapacity` 的空間。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 請注意：保留空間操作并**不會**構造新的元素，因此不可訪問新的空間。如需訪問新增的空間，請使用成員函數
+  [`Resize`](#Resize)。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。
 
 ### <span id="Clear">`Clear`</span>
-- `Vector& Clear();`
-  - 清空容器內所有的元素。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-  - 請注意：此操作也會一並清除所有此前分配給該容器的空間。此操作后，此容器容量爲 0。
-  - 時間複雜度： $O(n)$。
+```c++
+Vector& Clear();
+```
+- 清空容器內所有的元素。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 請注意：此操作也會一並清除所有此前分配給該容器的空間。此操作后，此容器容量爲 0。
+- 時間複雜度： $O(n)$。
 
 ### <span id="Insert">`Insert`</span>
-- `Iterator Insert(const Iterator& position, const T& value);`
-  - 在對應位置前插入元素。
-  - 返回指向被插入元素的迭代器。
-  - 時間複雜度：不確定。多數情況下爲 $O(n)$。
-- `Iterator Insert(SizeT index, const T& value);`
-  - 在下標處插入元素。
-  - 如若 `index > size`，將抛出 `lau::OutOfRange` 異常類。
-  - 此操作后，`this->at(ind)` 將爲插入的值。
-  - 返回指向被插入元素的迭代器。
-  - 時間複雜度：不確定。多數情況下爲 $O(n)$。
+```c++
+Iterator Insert(const Iterator& position, const T& value);
+```
+- 在對應位置前插入元素。
+- 返回指向被插入元素的迭代器。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。
+
+```c++
+Iterator Insert(SizeT index, const T& value);
+```
+- 在下標處插入元素。
+- 如若 `index > size`，將抛出 `lau::OutOfRange` 異常類。
+- 此操作后，`this->at(ind)` 將爲插入的值。
+- 返回指向被插入元素的迭代器。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。
 
 ### <span id="Erase">`Erase`</span>
-- `Iterator Erase(const Iterator& position);`
-  - 在對應位置移除元素。
-  - 如若此迭代器爲末迭代器，將抛出 `lau::OutOfRange` 異常類。
-  - 返回指向下一元素的迭代器。
-  - 如若此迭代器指向最後一個元素，則返回 `End()` 迭代器。
-  - 時間複雜度：不確定。多數情況下爲 $O(n)$。
-- `Iterator Erase(SizeT index);`
-  - 在下標處刪除元素。
-  - 如若 `index >= size`，將抛出 `lau::OutOfRange` 異常類。
-  - 返回指向下一元素的迭代器。
-  - 如若此迭代器指向最後一個元素，則返回 `End()` 迭代器。
-  - 時間複雜度：不確定。多數情況下爲 $O(n)$。
+```c++
+Iterator Erase(const Iterator& position);
+```
+- 在對應位置移除元素。
+- 如若此迭代器爲末迭代器，將抛出 `lau::OutOfRange` 異常類。
+- 返回指向下一元素的迭代器。
+- 如若此迭代器指向最後一個元素，則返回 `End()` 迭代器。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。
+
+```c++
+Iterator Erase(SizeT index);
+```
+- 在下標處刪除元素。
+- 如若 `index >= size`，將抛出 `lau::OutOfRange` 異常類。
+- 返回指向下一元素的迭代器。
+- 如若此迭代器指向最後一個元素，則返回 `End()` 迭代器。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。
 
 ### <span id="PushBack">`PushBack`</span>
-- `Vector& PushBack(const T& value);`
-  - 將 `value` 添加至容器末尾。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-  - 時間複雜度：不確定。多數情況下爲 $O(1)$。僅當容器需要擴容時爲 $O(n)$。
+```c++
+Vector& PushBack(const T& value);
+```
+- 將 `value` 添加至容器末尾。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度：不確定。多數情況下爲 $O(1)$。僅當容器需要擴容時爲 $O(n)$。
 
 ### <span id="PushFront">`PushFront`</span>
-- `Vector& PushFront(const T& value);`
-  - 將 `value` 添加至容器頭部。Add an element (`value`) to the front.
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-  - 時間複雜度：不確定。多數情況下爲 $O(n)$。僅當容器前部有空間時爲 $O(1)$。
+```c++
+Vector& PushFront(const T& value);
+```
+- 將 `value` 添加至容器頭部。Add an element (`value`) to the front.
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。僅當容器前部有空間時爲 $O(1)$。
 
 ### <span id="PopBack">`PopBack`</span>
-- `Vector& PopBack();`
-  - 移除最後一個元素。
-  - 如若此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-  - 時間複雜度：$O(1)$。
+```c++
+Vector& PopBack();
+```
+- 移除最後一個元素。
+- 如若此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度：$O(1)$。
 
 ### <span id="PopBack">`PopBack`</span>
-- `Vector& PopFront();`
-  - 移除首個元素。
-  - 如若此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-  - 時間複雜度：$O(1)$。
+```c++
+Vector& PopFront();
+```
+- 移除首個元素。
+- 如若此爲空容器，將抛出 `lau::EmptyContainer` 異常類。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度：$O(1)$。
 
 ### <span id="Swap">`Swap`</span>
-- `Vector& Swap(Vector& other);`
-  - 交換容器内容。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+```c++
+Vector& Swap(Vector& other);
+```
+- 交換容器内容。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 
 ### <span id="Resize">`Resize`</span>
-- `Vector& Resize(SizeT count);`
-  - 將容器的元素個數調整至 `count`。
-  - 如若當前元素個數多於 `count`，容器將減少到前 `count` 個元素。
-  - 如若當前元素個數少於 `count`，容器將以默認元素添加至尾部。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-- `Vector& Resize(SizeT count, const T& value);`
-  - 將容器的元素個數調整至 `count`。
-  - 如若當前元素個數多於 `count`，容器將減少到前 `count` 個元素。
-  - 如若當前元素個數少於 `count`，容器將以 `value` 添加至尾部。
-  - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+```c++
+Vector& Resize(SizeT count);
+```
+- 將容器的元素個數調整至 `count`。
+- 如若當前元素個數多於 `count`，容器將減少到前 `count` 個元素。
+- 如若當前元素個數少於 `count`，容器將以默認元素添加至尾部。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+
+```c++
+Vector& Resize(SizeT count, const T& value);
+```
+- 將容器的元素個數調整至 `count`。
+- 如若當前元素個數多於 `count`，容器將減少到前 `count` 個元素。
+- 如若當前元素個數少於 `count`，容器將以 `value` 添加至尾部。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 
 ### <span id="SwapNonmember">`Swap`</span>
-- `template<class T> void Swap(Vector<T>& vector1, Vector<T>& vector2);`
-  - 交換兩個容器的內容。
+```c++
+template<class T>
+void Swap(Vector<T>& vector1, Vector<T>& vector2);
+```
+- 交換兩個容器的內容。
 
 ### <span id="iterator">iterator</span>
 類型：

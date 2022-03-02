@@ -17,6 +17,8 @@ The `lau/all.h` header file includes all the elements in Lau CPP Library.
 - [OutOfRange](exception_en.md): indicate that the operation is out of
   range
 - [RuntimeError](exception_en.md): indicate a runtime error occurs
+- [SparseTable](sparse_table_en.md): a sparse table that preprocess data to
+  boost the efficiency of repeatable contribution questions
 - [TokenScanner](token_scanner_en.md): scan and separate the token(s) of
   an input string
 - [Vector](vector_en.md): linear container (dynamic array)

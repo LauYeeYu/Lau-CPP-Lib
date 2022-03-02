@@ -57,10 +57,12 @@ public:
 ```
 
 ## 枚舉成員
-- `enum TokenScannerMode {multiple, single};`
-    - 兩種掃描方式
-    - `multiple`：連續分隔符視爲與一個相同
-    - `single`：以每個單獨的分隔符隔開
+```c++
+enum TokenScannerMode {multiple, single};
+```
+- 兩種掃描方式
+- `multiple`：連續分隔符視爲與一個相同
+- `single`：以每個單獨的分隔符隔開
 
 ## 成員函數
 - [（構造函數）](#Constructors)
@@ -173,83 +175,115 @@ first second third fourth ...
 
 ## 詳細訊息
 ### <span id="Constructors">構造函數</span>
-- `lau::TokenScanner();`
-    - 默認構造函數，空輸入字符串，空格爲分隔符，連續掃描模式。
+```c++
+lau::TokenScanner();
+```
+- 默認構造函數，空輸入字符串，空格爲分隔符，連續掃描模式。
 
-- `explicit lau::TokenScanner(std::string input, char delimiter = ' ', lau::TokenScanner::TokenScannerMode mode = lau::TokenScanner::multiple);`
-    - 建構一個以 `input` 爲輸入串，以 `delimiter` 爲分隔符，以 `mode` 爲分割方式的 `TokenScanner` 類。
+```c++
+explicit lau::TokenScanner(std::string input,
+                           char delimiter = ' ',
+                           TokenScannerMode mode = multiple);
+```
+- 建構一個以 `input` 爲輸入串，以 `delimiter` 爲分隔符，以 `mode` 爲分割方式的 `TokenScanner` 類。
 
 ### <span id="NextToken">NextToken</span>
-- `std::string lau::TokenScanner::NextToken() noexcept;`
-    - 掃描並獲取下一個字段， `lau::TokenScanner::NextToken` 和
-      `lau::TokenScanner::PeekNextToken` 都不在會顯示這個字段（除非調用了
-      `lau::TokenScanner::ResetState`）。
+```c++
+std::string NextToken() noexcept;
+```
+- 掃描並獲取下一個字段， `lau::TokenScanner::NextToken` 和
+  `lau::TokenScanner::PeekNextToken` 都不在會顯示這個字段（除非調用了
+  `lau::TokenScanner::ResetState`）。
 
 ### <span id="PeekNextToken">PeekNextToken</span>
-- `std::string lau::TokenScanner::PeekNextToken() noexcept;`
-    - 檢視下一個字段，但不移動掃描指針，不會造成任何宏觀影響。
+```c++
+std::string PeekNextToken() noexcept;
+```
+- 檢視下一個字段，但不移動掃描指針，不會造成任何宏觀影響。
 
 ### <span id="HasMoreToken">HasMoreToken</span>
-- `bool lau::TokenScanner::HasMoreToken() noexcept;`
-    - 表明是否有仍有未掃描到的字段。
+```c++
+bool HasMoreToken() noexcept;
+```
+- 表明是否有仍有未掃描到的字段。
 
 ### <span id="NewLine">NewLine</span>
-- `lau::TokenScanner& lau::TokenScanner::NewLine() noexcept;`
-    - 以 `std::getline` 函數從 `std::cin` 讀取一行。
-    - 鑒於此函數透過 `std::getline` 獲取一行，請參閲
-      [`std::getline`](https://en.cppreference.com/w/cpp/string/basic_string/getline)
-      瞭解更多訊息。
+```c++
+TokenScanner& NewLine() noexcept;
+```
+- 以 `std::getline` 函數從 `std::cin` 讀取一行。
+- 鑒於此函數透過 `std::getline` 獲取一行，請參閲
+  [`std::getline`](https://en.cppreference.com/w/cpp/string/basic_string/getline)
+  瞭解更多訊息。
 
 ### <span id="TotalLength">TotalLength</span>
-- `long lau::TokenScanner::TotalLength() noexcept;`
-    - 返回輸入串的長度。
-    - 鑒於 [Lau Yee-Yu's C++ Style Guide](https://github.com/LauYeeYu/Code-Style) ，
-      此函數并不會以 `std::string::length()` 的返回類型 (`size_t`) 返回。而是以有符號的 `long` 返回。
+```c++
+long TotalLength() noexcept;
+```
+- 返回輸入串的長度。
+- 鑒於 [Lau Yee-Yu's C++ Style Guide](https://github.com/LauYeeYu/Code-Style) ，
+  此函數并不會以 `std::string::length()` 的返回類型 (`size_t`) 返回。而是以有符號的 `long` 返回。
 
 ### <span id="ChangeMode">ChangeMode</span>
 - `lau::TokenScanner& lau::TokenScanner::ChangeMode(TokenScannerMode mode) noexcept;`
-    - 改變掃描方式
-    - `mode` 必須是 `TokenScanner::single` 或 `TokenScanner::multiple`。
-    - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
-    - 由於兩種掃描方式有不同的實現方式，如在掃描已經開始后更改掃描方式將導致**未定義行爲**！强烈建議使用
-      `lau::TokenScanner::SkipDelimiter()` 或 `lau::TokenScanner::ResetState()`
-      以避免意料之外的問題。
+- 改變掃描方式
+- `mode` 必須是 `TokenScanner::single` 或 `TokenScanner::multiple`。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 由於兩種掃描方式有不同的實現方式，如在掃描已經開始后更改掃描方式將導致**未定義行爲**！强烈建議使用
+  `lau::TokenScanner::SkipDelimiter()` 或 `lau::TokenScanner::ResetState()`
+  以避免意料之外的問題。
 
 ### <span id="ResetState">ResetState</span>
-- `lau::TokenScanner& lau::TokenScanner::ResetState() noexcept;`
-    - 重置掃描狀態，將掃描指針還原到字符串起點。
-    - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+```c++
+TokenScanner& ResetState() noexcept;
+```
+- 重置掃描狀態，將掃描指針還原到字符串起點。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 
 ### <span id="Read">Read</span>
-- `lau::TokenScanner& lau::TokenScanner::Read(std::string newInput) noexcept;`
-    - 讀取一個新的字符串，將掃描指針置於新串之起點。
-    - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+```c++
+TokenScanner& Read(std::string newInput) noexcept;
+```
+- 讀取一個新的字符串，將掃描指針置於新串之起點。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 
 ### <span id="SkipDelimiter">SkipDelimiter</span>
-- `lau::TokenScanner& lau::TokenScanner::SkipDelimiter() noexcept;`
-    - 掠過下一個字段前的所有間隔符。
-    - 若遇到輸入串的末尾，掃描指針將在末尾處停止。
-    - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+```c++
+TokenScanner& SkipDelimiter() noexcept;
+```
+- 掠過下一個字段前的所有間隔符。
+- 若遇到輸入串的末尾，掃描指針將在末尾處停止。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 
 ### <span id="SetDelimiter">SetDelimiter</span>
-- `lau::TokenScanner& lau::TokenScanner::SetDelimiter(char delimiter) noexcept;`
-    - 設定新的分隔符，之前的掃描會被留下。
-    - 由於兩種掃描方式有不同的實現方式，如在掃描已經開始后更改分隔符將導致**未定義行爲**！强烈建議使用
-      `lau::TokenScanner::SkipDelimiter()` 或 `lau::TokenScanner::ResetState()`
-      以避免意料之外的問題。
+```c++
+TokenScanner& SetDelimiter(char delimiter) noexcept;
+```
+- 設定新的分隔符，之前的掃描會被留下。
+- 由於兩種掃描方式有不同的實現方式，如在掃描已經開始后更改分隔符將導致**未定義行爲**！强烈建議使用
+  `lau::TokenScanner::SkipDelimiter()` 或 `lau::TokenScanner::ResetState()`
+  以避免意料之外的問題。
 
 ### <span id="GetInputString">GetInputString</span>
-- `[[nodiscard]] const std::string& GetInputString() const noexcept;`
-    - 獲取輸入字符串。
+```c++
+[[nodiscard]] const std::string& GetInputString() const noexcept;
+```
+- 獲取輸入字符串。
 
 ### <span id="GetDelimiter">GetDelimiter</span>
-- `[[nodiscard]] char GetDelimiter() const noexcept;`
-    - 獲取分隔符。
+```c++
+[[nodiscard]] char GetDelimiter() const noexcept;
+```
+- 獲取分隔符。
 
 ### <span id="GetMode">GetMode</span>
-- `[[nodiscard]] TokenScannerMode GetMode() const noexcept;`
-    - 獲取掃描方式。
+```c++
+[[nodiscard]] TokenScannerMode GetMode() const noexcept;
+```
+- 獲取掃描方式。
 
 ### <span id="operator=">operator=</span>
-- `TokenScanner& operator=(const TokenScanner& obj);`
-- `TokenScanner& operator=(TokenScanner&& obj) noexcept;`
+```c++
+TokenScanner& operator=(const TokenScanner& obj);
+TokenScanner& operator=(TokenScanner&& obj) noexcept;
+```
