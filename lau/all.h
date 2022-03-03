@@ -23,11 +23,14 @@
 #ifndef LAU_CPP_LIB_LAU_ALL_H
 #define LAU_CPP_LIB_LAU_ALL_H
 
+#include "algorithm.h"
 #include "exception.h"
 #include "file_data_structure.h"
 #include "file_double_unrolled_linked_list.h"
 #include "file_unrolled_linked_list.h"
+#include "sparse_table.h"
 #include "token_scanner.h"
+#include "type_trait.h"
 #include "utility.h"
 #include "vector.h"
 
