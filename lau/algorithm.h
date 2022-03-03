@@ -77,11 +77,11 @@ Container& PartialMatchTable(T target, SizeT size, Container& table) {
  * string; if the target string doesn't match, a -1 will be returned.
  */
 template<class T, class Container>
-[[nodiscard]] SizeT StringMatchingWithPartialTable(const T& source,
-                                                   SizeT sourceLength,
-                                                   const T& target,
-                                                   SizeT targetLength,
-                                                   const Container& table) {
+[[nodiscard]] SizeT StringMatchingWithPartialMatchTable(const T& source,
+                                                        SizeT sourceLength,
+                                                        const T& target,
+                                                        SizeT targetLength,
+                                                        const Container& table) {
     SizeT targetCursor = 0; // Target pointer
     SizeT sourceCursor = 0; // Source pointer
     while (sourceCursor < sourceLength) {
@@ -122,7 +122,9 @@ template<class T, class Allocator = std::allocator<SizeT>>
     if (targetLength == 0) return 0;
     SizeT* table = allocator.allocate(targetLength);
     PartialMatchTable(target, targetLength, table);
-    SizeT value = StringMatchingWithPartialTable(source, sourceLength, target, targetLength, table);
+    SizeT value = StringMatchingWithPartialMatchTable(source, sourceLength,
+                                                      target, targetLength,
+                                                      table);
     allocator.deallocate(table, targetLength);
     return value;
 }
@@ -149,7 +151,9 @@ template<class Allocator = std::allocator<SizeT>>
     if (targetLength == 0) return 0;
     SizeT* table = allocator.allocate(targetLength);
     PartialMatchTable(target, targetLength, table);
-    SizeT value = StringMatchingWithPartialTable(source, sourceLength, target, targetLength, table);
+    SizeT value = StringMatchingWithPartialMatchTable(source, sourceLength,
+                                                      target, targetLength,
+                                                      table);
     allocator.deallocate(table, targetLength);
     return value;
 }
@@ -176,7 +180,9 @@ template<class Allocator = std::allocator<SizeT>>
     if (targetLength == 0) return 0;
     SizeT* table = allocator.allocate(targetLength);
     PartialMatchTable(target, targetLength, table);
-    SizeT value = StringMatchingWithPartialTable(source, sourceLength, target, targetLength, table);
+    SizeT value = StringMatchingWithPartialMatchTable(source, sourceLength,
+                                                      target, targetLength,
+                                                      table);
     allocator.deallocate(table, targetLength);
     return value;
 }
