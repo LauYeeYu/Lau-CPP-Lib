@@ -4,6 +4,7 @@ project(Lau-CPP-Lib)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(test
+        lau/algorithm.h
         lau/all.h
         lau/exception.h
         lau/file_data_structure.h
