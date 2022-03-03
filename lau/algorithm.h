@@ -34,6 +34,7 @@ namespace lau {
 
 /**
  * Calculate the partial match table for Knuth-Morris-Pratt algorithm.
+ * Please make sure that the table is at least the size of target.
  * @tparam T the type that need matching
  * @tparam Container the container type to contain the table
  * @param table the container to contain the table
