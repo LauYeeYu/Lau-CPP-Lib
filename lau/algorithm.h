@@ -60,7 +60,7 @@ Container& PartialMatchTable(T target, SizeT size, Container& table) {
 }
 
 /**
- * Find the index where a target string matches the source string with a
+ * Find the first index where a target string matches the source string with a
  * partial match table that have been calculated before (You may use
  * <code>lau::PartialMatchTable</code>).  If the target string doesn't match
  * the source string, the function will return -1.
@@ -100,8 +100,9 @@ template<class T, class Container>
 }
 
 /**
- * Find the index where a target string matches the source string.  If the
- * target string doesn't match the source string, the function will return -1.
+ * Find the first index where a target string matches the source string.  If
+ * the target string doesn't match the source string, the function will return
+ * -1.
  * <br>
  * This function uses Knuth-Morris-Pratt algorithm.
  * @tparam T The type of string (MUST have operator[])
@@ -127,8 +128,9 @@ template<class T, class Allocator = std::allocator<SizeT>>
 }
 
 /**
- * Find the index where a target string matches the source string.  If the
- * target string doesn't match the source string, the function will return -1.
+ * Find the first index where a target string matches the source string.  If
+ * the target string doesn't match the source string, the function will return
+ * -1.
  * <br>
  * This function uses Knuth-Morris-Pratt algorithm.
  * @tparam Allocator the allocator type to allocate the partial match table
@@ -153,8 +155,9 @@ template<class Allocator = std::allocator<SizeT>>
 }
 
 /**
- * Find the index where a target string matches the source string.  If the
- * target string doesn't match the source string, the function will return -1.
+ * Find the first index where a target string matches the source string.  If
+ * the target string doesn't match the source string, the function will return
+ * -1.
  * <br>
  * This function uses Knuth-Morris-Pratt algorithm.
  * @tparam Allocator the allocator type to allocate the partial match table
