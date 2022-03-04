@@ -22,3 +22,10 @@ The `lau/all.h` header file includes all the elements in Lau CPP Library.
 - [TokenScanner](token_scanner_en.md): scan and separate the token(s) of
   an input string
 - [Vector](vector_en.md): linear container (dynamic array)
+
+## Functions (in Alphabetical Order)
+- [`PartialMatchTable`](algorithm_en.md): calculate the partial match table
+  for KMP algorithm
+- [`StringMatching`](algorithm_en.md): match two string (with KMP algorithm)
+- [`StringMatchingWithPartialMatchTable`](algorithm_en.md):
+  match the string with a processed partial table

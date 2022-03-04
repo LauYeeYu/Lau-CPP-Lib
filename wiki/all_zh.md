@@ -16,3 +16,10 @@
 - [SparseTable](sparse_table_zh.md)：預處理數據以減少可重複貢獻問題的稀疏表
 - [TokenScanner](token_scanner_zh.md)：以客製化分隔符掃描並分割爲多個字段
 - [Vector](vector_zh.md)：綫性容器（動態數組）
+
+## 函數（以字母順序排列）
+- [`PartialMatchTable`](#PartialMatchTable)：計算
+  KMP 算法中部分匹配表
+- [`StringMatching`](#StringMatching)：以
+  KMP 算法匹配字符串
+- [`StringMatchingWithPartialMatchTable`](#StringMatchingWithPartialMatchTable)：透過已經處理完畢的部分匹配表作字符串匹配

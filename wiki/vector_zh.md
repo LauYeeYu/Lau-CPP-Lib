@@ -153,7 +153,7 @@ void Swap(Vector<T>& vector1, Vector<T>& vector2);
 ## 非成員函數
 - [`Swap`](#SwapNonmember)：交換內容
 
-## Details
+## 詳情
 ### <span id="DataStructure">數據結構</span>
 `Vector` 即是一個動態大小之數組。
 

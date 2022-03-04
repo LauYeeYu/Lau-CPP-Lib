@@ -173,7 +173,7 @@ b now at multiple modewith delimiter [ ] and stringfirst second third fourth ...
 first second third fourth ...
 ```
 
-## 詳細訊息
+## 詳情
 ### <span id="Constructors">構造函數</span>
 ```c++
 lau::TokenScanner();

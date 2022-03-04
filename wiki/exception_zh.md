@@ -12,7 +12,7 @@
 - [EmptyContainer](#EmptyContainer)：表明此爲空容器
 - - [InvalidArgument](#InvalidArgument)：表明存在非法參數
 
-## 細節
+## 詳情
 ### <span id="Exception">lau::Exception</span>
 此類專門用於處理異常（繼承自 `std::exception`）。此庫中所有類都繼承自此類。
 

@@ -110,7 +110,7 @@ public:
 ### 遍歷
 - [`Traverse`](#Traverse)：遍歷列表
 
-## 細節
+## 詳情
 ### <span id="Data_Structure">數據結構：塊狀鏈結串列</span>
 藉由使用數組之鏈結串列，名爲塊狀鏈結串列的數據結構有著 $O\left(\sqrt{n}\right)$
 的讀寫時間複雜度。此類中，鏈結串列爲雙向鏈結串列。
