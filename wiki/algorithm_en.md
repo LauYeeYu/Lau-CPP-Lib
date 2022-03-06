@@ -44,7 +44,8 @@ Container& PartialMatchTable(const T& target, SizeT size, Container& table);
 - Calculate the partial match table for
   [Knuth-Morris-Pratt algorithm](#Knuth-Morris-Pratt_Algorithm).
 - Return the reference to the container.
-- Please make sure that the `table` is at least the size of `target`.
+- Please make sure that the `table` is at least `targetSize + 1`. (`targetSize
+  is the size of `target`)
 
 ### <span id="StringMatchingWithPartialMatchTable">`StringMatchingWithPartialMatchTable`</span>
 ```c++

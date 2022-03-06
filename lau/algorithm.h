@@ -34,7 +34,7 @@ namespace lau {
 
 /**
  * Calculate the partial match table for Knuth-Morris-Pratt algorithm.
- * Please make sure that the table is at least the size of target.
+ * Please make sure that the table is at least <code>targetSize + 1</code>.
  * @tparam T the type that need matching
  * @tparam Container the container type to contain the table
  * @param table the container to contain the table
@@ -47,7 +47,7 @@ Container& PartialMatchTable(const T& target, SizeT size, Container& table) {
     table[0] = -1;
     SizeT clue = -1;
     SizeT position = 0;
-    while (position < size - 1) {
+    while (position < size) {
         if (clue == -1 || target[position] == target[clue]) {
             ++position;
             ++clue;
@@ -121,12 +121,12 @@ template<class T, class Allocator = std::allocator<SizeT>>
                                    const T& target, SizeT targetLength,
                                    Allocator allocator = Allocator()) {
     if (targetLength == 0) return 0;
-    SizeT* table = allocator.allocate(targetLength);
+    SizeT* table = allocator.allocate(targetLength + 1);
     PartialMatchTable(target, targetLength, table);
     SizeT value = StringMatchingWithPartialMatchTable(source, sourceLength,
                                                       target, targetLength,
                                                       table);
-    allocator.deallocate(table, targetLength);
+    allocator.deallocate(table, targetLength + 1);
     return value;
 }
 
@@ -150,12 +150,12 @@ template<class Allocator = std::allocator<SizeT>>
     SizeT sourceLength = strlen(source);
     SizeT targetLength = strlen(target);
     if (targetLength == 0) return 0;
-    SizeT* table = allocator.allocate(targetLength);
+    SizeT* table = allocator.allocate(targetLength + 1);
     PartialMatchTable(target, targetLength, table);
     SizeT value = StringMatchingWithPartialMatchTable(source, sourceLength,
                                                       target, targetLength,
                                                       table);
-    allocator.deallocate(table, targetLength);
+    allocator.deallocate(table, targetLength + 1);
     return value;
 }
 
@@ -179,12 +179,12 @@ template<class Allocator = std::allocator<SizeT>>
     SizeT sourceLength = source.size();
     SizeT targetLength = target.size();
     if (targetLength == 0) return 0;
-    SizeT* table = allocator.allocate(targetLength);
+    SizeT* table = allocator.allocate(targetLength + 1);
     PartialMatchTable(target, targetLength, table);
     SizeT value = StringMatchingWithPartialMatchTable(source, sourceLength,
                                                       target, targetLength,
                                                       table);
-    allocator.deallocate(table, targetLength);
+    allocator.deallocate(table, targetLength + 1);
     return value;
 }
 

@@ -38,7 +38,7 @@ Container& PartialMatchTable(const T& target, SizeT size, Container& table);
 ```
 - 計算 [Knuth-Morris-Pratt 算法](#Knuth-Morris-Pratt_Algorithm)所需要之部分匹配表。
 - 返回容器的引用。
-- 請注意：`table` 必須不小於 `target` 的大小。
+- 請注意：`table` 必須不小於 `targetSize + 1` 的大小。
 
 ### <span id="StringMatchingWithPartialMatchTable">`StringMatchingWithPartialMatchTable`</span>
 ```c++
