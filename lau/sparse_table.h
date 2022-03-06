@@ -27,6 +27,7 @@
 #include <cmath>
 #include <functional>
 #include <type_traits>
+#include <utility>
 
 #include "exception.h"
 #include "type_trait.h"
