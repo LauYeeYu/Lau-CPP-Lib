@@ -43,7 +43,7 @@ namespace lau {
  * @return the container
  */
 template<class T, class Container>
-Container& PartialMatchTable(T target, SizeT size, Container& table) {
+Container& PartialMatchTable(const T& target, SizeT size, Container& table) {
     table[0] = -1;
     SizeT clue = -1;
     SizeT position = 0;

@@ -34,7 +34,7 @@ $O(m \times n)$）不同的是，此算法相當高效（時間複雜度爲 $O(m
 ### <span id="PartialMatchTable">`PartialMatchTable`</span>
 ```c++
 template<class T, class Container>
-Container& PartialMatchTable(T target, SizeT size, Container& table);
+Container& PartialMatchTable(const T& target, SizeT size, Container& table);
 ```
 - 計算 [Knuth-Morris-Pratt 算法](#Knuth-Morris-Pratt_Algorithm)所需要之部分匹配表。
 - 返回容器的引用。

@@ -39,7 +39,7 @@ Related content:
 ### <span id="PartialMatchTable">`PartialMatchTable`</span>
 ```c++
 template<class T, class Container>
-Container& PartialMatchTable(T target, SizeT size, Container& table);
+Container& PartialMatchTable(const T& target, SizeT size, Container& table);
 ```
 - Calculate the partial match table for
   [Knuth-Morris-Pratt algorithm](#Knuth-Morris-Pratt_Algorithm).
