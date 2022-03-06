@@ -21,8 +21,8 @@
  * Lau CPP Lib.
  */
 
-#ifndef LAU_CPP_LIB_LAU_ALGORITHM_H
-#define LAU_CPP_LIB_LAU_ALGORITHM_H
+#ifndef LAU_CPP_LIB_LAU_SPARSE_TABLE_H
+#define LAU_CPP_LIB_LAU_SPARSE_TABLE_H
 
 #include <cmath>
 #include <functional>
@@ -289,4 +289,4 @@ private:
 
 } // namespace lau
 
-#endif //LAU_CPP_LIB_LAU_ALGORITHM_H
+#endif //LAU_CPP_LIB_LAU_SPARSE_TABLE_H
