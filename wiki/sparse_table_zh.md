@@ -63,7 +63,7 @@ public:
                            std::function<T(T, T)> Function);
     
     //操作
-    T Query(SizeT beginIndex, SizeT endIndex);
+    T Query(SizeT beginIndex, SizeT endIndex) const;
 };
 } // namespace lau
 ```
@@ -200,8 +200,9 @@ template<class Iterator>
 
 ### <span id="Query">`Query`</span>
 ```c++
-T Query(SizeT beginIndex, SizeT endIndex);
+T Query(SizeT beginIndex, SizeT endIndex) const;
 ```
 - 查詢此稀疏表。
 - 如參數存在邏輯問題，將會抛出 [`lau::InvalidArgument`](exception_zh.md) 異常類。
 - 如果此表沒有數據，將會抛出 [`lau::EmptyContainer`](exception_zh.md) 異常類。
+- 返回 [beginIndex, endIndex) 範圍的答案。

@@ -192,9 +192,9 @@ public:
      * empty, a <code>lau::EmptyContainer</code> will be thrown.
      * @param beginIndex
      * @param endIndex
-     * @return
+     * @return the answer in [beginIndex, endIndex)
      */
-    T Query(SizeT beginIndex, SizeT endIndex) {
+    T Query(SizeT beginIndex, SizeT endIndex) const {
         if (beginIndex >= endIndex) {
             throw InvalidArgument("Invalid Argument: The begin index is no less than end index");
         }

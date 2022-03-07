@@ -67,7 +67,7 @@ public:
                            std::function<T(T, T)> Function);
     
     //operation
-    T Query(SizeT beginIndex, SizeT endIndex);
+    T Query(SizeT beginIndex, SizeT endIndex) const;
 };
 } // namespace lau
 ```
@@ -213,10 +213,11 @@ template<class Iterator>
 
 ### <span id="Query">`Query`</span>
 ```c++
-T Query(SizeT beginIndex, SizeT endIndex);
+T Query(SizeT beginIndex, SizeT endIndex) const;
 ```
 - Query the sparse table.
 - If the index is logically incorrect, a
   [`lau::InvalidArgument`](exception_en.md) will be thrown.
 - If the table is still empty, a [`lau::EmptyContainer`](exception_en.md)
    will be thrown.
+- Return the answer in [beginIndex, endIndex).
