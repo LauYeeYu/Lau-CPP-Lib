@@ -598,6 +598,35 @@ public:
     }
 
     /**
+     * Swap the data of two indexes
+     * @param index1
+     * @param index2
+     * @return a reference to the current class
+     */
+    Vector& SwapElement(SizeT index1, SizeT index2) {
+        if (index1 < 0 || index1 >= size_ || index2 < 0 || index2 >= size_) {
+            throw OutOfRange();
+        }
+        T* tmp = target_[index1 + beginIndex_];
+        target_[index1 + beginIndex_] = target_[index2 + beginIndex_];
+        target_[index2 + beginIndex_] = tmp;
+        return *this;
+    }
+
+    /**
+     * Swap the data of two iterators
+     * @param iterator1
+     * @param iterator2
+     * @return
+     */
+    Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2) {
+        Iterator beginIterator = this->Begin();
+        SizeT index1 = iterator1 - beginIterator;
+        SizeT index2 = iterator2 - beginIterator;
+        return SwapElement(index1, index2);
+    }
+
+    /**
      * Reduce the capacity to its size.
      * @return a reference to the current class
      */

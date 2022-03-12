@@ -91,6 +91,8 @@ public:
     Vector& PopBack();
     Vector& PopFront();
     Vector& Swap(Vector& other);
+    Vector& SwapElement(SizeT index1, SizeT index2);
+    Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
     Vector& Resize(SizeT count);
     Vector& Resize(SizeT count, const T& value);
 };
@@ -148,6 +150,7 @@ void Swap(Vector<T>& vector1, Vector<T>& vector2);
 - [`PopBack`](#PopBack)：從尾部移除元素
 - [`PopFront`](#PopFront)：從頭部移除元素
 - [`Swap`](#Swap)：交換內容
+- [`SwapElement`](#SwapElement)：交换元素
 - [`Resize`](#Resize)更改容器之元素個數
 
 ## 非成員函數
@@ -481,6 +484,19 @@ Vector& Resize(SizeT count, const T& value);
 - 將容器的元素個數調整至 `count`。
 - 如若當前元素個數多於 `count`，容器將減少到前 `count` 個元素。
 - 如若當前元素個數少於 `count`，容器將以 `value` 添加至尾部。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+
+### <span id="SwapElement">`SwapElement`</span>
+```c++
+Vector& SwapElement(SizeT index1, SizeT index2);
+```
+- 交換兩個下標對應的元素。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+-
+```c++
+Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
+```
+- 交換兩個迭代器對應的元素。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 
 ### <span id="SwapNonmember">`Swap`</span>

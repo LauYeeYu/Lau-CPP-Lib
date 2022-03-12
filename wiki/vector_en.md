@@ -93,6 +93,8 @@ public:
     Vector& PopBack();
     Vector& PopFront();
     Vector& Swap(Vector& other);
+    Vector& SwapElement(SizeT index1, SizeT index2);
+    Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
     Vector& Resize(SizeT count);
     Vector& Resize(SizeT count, const T& value);
 };
@@ -150,6 +152,7 @@ void Swap(Vector<T>& vector1, Vector<T>& vector2);
 - [`PopBack`](#PopBack): remove an element from the back
 - [`PopFront`](#PopFront): remove an element from the front
 - [`Swap`](#Swap): swap the content
+- [`SwapElement`](#SwapElement): swap two elements
 - [`Resize`](#Resize): resize the vector
 
 ## Non-member Function
@@ -503,6 +506,21 @@ Vector& Resize(SizeT count, const T& value);
   its first count elements.
 - If the current size is less than count, additional value elements are
   appended.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
+
+### <span id="SwapElement">`SwapElement`</span>
+```c++
+Vector& SwapElement(SizeT index1, SizeT index2);
+```
+- Swap the elements of two indexes.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
+- 
+```c++
+Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
+```
+- Swap the elements of two iterators.
 - To make the class visiting easier, the function returns a reference
   pointing to this class.
 
