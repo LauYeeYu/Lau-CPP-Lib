@@ -4,6 +4,7 @@
 #include <climits>
 #include <cstddef>
 #include <memory>
+#include <utility>
 
 #include "exception.h"
 #include "type_trait.h"
@@ -237,7 +238,8 @@ public:
 
 	Vector(const Vector& obj) : capacity_(obj.size_),
                                 size_(obj.size_),
-                                beginIndex_(0) {
+                                beginIndex_(0),
+                                allocator_(obj.allocator_) {
         target_ = pointerAllocator_.allocate(capacity_);
         for (SizeT i = 0; i < size_; ++i) {
             target_[i] = allocator_.allocate(1);
@@ -248,7 +250,8 @@ public:
     Vector(Vector&& obj) noexcept : capacity_(obj.capacity_),
                                     size_(obj.size_),
                                     beginIndex_(obj.beginIndex_),
-                                    target_(obj.target_) {
+                                    target_(obj.target_),
+                                    allocator_(std::move(allocator_)) {
         obj.target_ = nullptr;
         obj.capacity_ = 0;
         obj.size_ = 0;
@@ -271,6 +274,7 @@ public:
         capacity_ = obj.size_;
         size_ = obj.size_;
         beginIndex_ = 0;
+        allocator_ = obj.allocator_;
         target_ = pointerAllocator_.allocate(capacity_);
         for (SizeT i = 0; i < size_; ++i) {
             target_[i] = allocator_.allocate(1);
@@ -285,6 +289,7 @@ public:
         size_ = obj.size_;
         beginIndex_ = obj.beginIndex_;
         target_ = obj.beginIndex_;
+        allocator_ = std::move(obj.allocator_);
         obj.target_ = nullptr;
         obj.capacity_ = 0;
         obj.size_ = 0;
