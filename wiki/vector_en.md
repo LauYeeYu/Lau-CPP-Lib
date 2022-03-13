@@ -29,6 +29,7 @@ class Vector {
 public:
     // Types
     using AllocatorType = Allocator;
+    using PointerAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<T*>;
     class Iterator;
 	class ConstIterator;
 
@@ -110,6 +111,8 @@ void Swap(Vector<T>& vector1, Vector<T>& vector2);
 
 ## Member Type
 - `AllocatorType`: the type of allocator, the same as `Allocator`
+- `PointerAllocatorType`: the type of the allocator of `T*`, which is converted
+  from the allocator
 - [`Iterator`](#iterator): The type of iterator in `lau::vector`
 - [`ConstIterator`](#iterator): the type of constant iterator in `lau::Vector`
 

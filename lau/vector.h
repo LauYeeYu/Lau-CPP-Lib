@@ -46,6 +46,7 @@ template<class T, class Allocator = std::allocator<T>>
 class Vector {
 public:
     using AllocatorType = Allocator;
+    using PointerAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<T*>;
 
     class Iterator;
 	class ConstIterator;
@@ -229,10 +230,10 @@ public:
 
 	Vector() noexcept(noexcept(Allocator())) = default;
 
-    explicit Vector(const Allocator& allocator) : allocator_(allocator) {}
+    explicit Vector(const Allocator& allocator) : allocator_(allocator), pointerAllocator_(allocator) {}
 
     Vector(SizeT count, const T& value, const Allocator& allocator = Allocator())
-        : allocator_(allocator) {
+        : allocator_(allocator), pointerAllocator_(allocator) {
         this->Reserve(count);
         for (SizeT i = 0; i < count; ++i) {
             this->PushBack(value);
@@ -240,7 +241,7 @@ public:
     }
 
     explicit Vector(SizeT count, const Allocator& allocator = Allocator())
-        : allocator_(allocator) {
+        : allocator_(allocator), pointerAllocator_(allocator) {
         this->Reserve(count);
         for (SizeT i = 0; i < count; ++i) {
             this->PushBack(T());
@@ -251,7 +252,7 @@ public:
     Vector(const InputIterator& first,
            const InputIterator& last,
            const Allocator& allocator = Allocator())
-        : allocator_(allocator) {
+        : allocator_(allocator), pointerAllocator_(allocator) {
         this->Reserve(last - first);
         for (auto element = first; element != last; ++element) {
             this->PushBack(*element);
@@ -261,7 +262,8 @@ public:
 	Vector(const Vector& obj) : capacity_(obj.size_),
                                 size_(obj.size_),
                                 beginIndex_(0),
-                                allocator_(obj.allocator_) {
+                                allocator_(obj.allocator_),
+                                pointerAllocator_(obj.pointerAllocator_) {
         target_ = pointerAllocator_.allocate(capacity_);
         for (SizeT i = 0; i < size_; ++i) {
             target_[i] = allocator_.allocate(1);
@@ -273,7 +275,8 @@ public:
                                     size_(obj.size_),
                                     beginIndex_(obj.beginIndex_),
                                     target_(obj.target_),
-                                    allocator_(std::move(allocator_)) {
+                                    allocator_(std::move(allocator_)),
+                                    pointerAllocator_(std::move(obj.pointerAllocator_)){
         obj.target_ = nullptr;
         obj.capacity_ = 0;
         obj.size_ = 0;
@@ -282,7 +285,7 @@ public:
 
     Vector(std::initializer_list<T> init,
            const Allocator& allocator = Allocator())
-        : allocator_(allocator) {
+        : allocator_(allocator), pointerAllocator_(allocator) {
         this->Reserve(init.size());
         for (const auto& element : init) {
             this->PushBack(element);
@@ -297,6 +300,7 @@ public:
         size_ = obj.size_;
         beginIndex_ = 0;
         allocator_ = obj.allocator_;
+        pointerAllocator_ = obj.pointerAllocator_;
         target_ = pointerAllocator_.allocate(capacity_);
         for (SizeT i = 0; i < size_; ++i) {
             target_[i] = allocator_.allocate(1);
@@ -312,6 +316,7 @@ public:
         beginIndex_ = obj.beginIndex_;
         target_ = obj.beginIndex_;
         allocator_ = std::move(obj.allocator_);
+        pointerAllocator_ = std::move(obj.pointerAllocator_);
         obj.target_ = nullptr;
         obj.capacity_ = 0;
         obj.size_ = 0;
@@ -616,6 +621,14 @@ public:
         other.target_ = this->target_;
         this->target_ = tmpTarget;
 
+        AllocatorType tmpAllocator = other.allocator_;
+        other.allocator_ = this->allocator_;
+        this->allocator_ = other.allocator_;
+
+        PointerAllocatorType tmpPointerAllocator = other.pointerAllocator_;
+        other.pointerAllocator_ = this->pointerAllocator_;
+        this->pointerAllocator_ = other.pointerAllocator_;
+
         return *this;
     }
 
@@ -639,7 +652,7 @@ public:
      * Swap the data of two iterators
      * @param iterator1
      * @param iterator2
-     * @return
+     * @return a reference to the current class
      */
     Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2) {
         Iterator beginIterator = this->Begin();
@@ -738,13 +751,12 @@ public:
     }
 
 private:
-    typename std::allocator_traits<Allocator>::template rebind_alloc<T*> pointerAllocator_;
-
     T**       target_     = nullptr;
     SizeT     size_       = 0;
     SizeT     capacity_   = 0;
     SizeT     beginIndex_ = 0;
-    Allocator allocator_;
+    Allocator            allocator_;
+    PointerAllocatorType pointerAllocator_;
 
     /**
      * Enlarge the vector for the case that the vector is right at its biggest

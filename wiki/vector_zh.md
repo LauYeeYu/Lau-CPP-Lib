@@ -26,7 +26,7 @@ class Vector {
 public:
     // 類型
     using AllocatorType = Allocator;
-
+    using PointerAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<T*>;
     class Iterator;
 	class ConstIterator;
 
@@ -108,6 +108,7 @@ void Swap(Vector<T>& vector1, Vector<T>& vector2);
 
 ## 成員類型
 - `AllocatorType`：記憶體分配器類型，與 `Allocator` 一致
+- `PointerAllocatorType`：`T*` 的記憶體分配器類型
 - [`Iterator`](#iterator)：迭代器 `lau::vector` 之類型
 - [`ConstIterator`](#iterator)：常量迭代器 `lau::Vector` 之類型
 
