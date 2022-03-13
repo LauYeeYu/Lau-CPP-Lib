@@ -28,6 +28,7 @@
 #include "file_data_structure.h"
 #include "file_double_unrolled_linked_list.h"
 #include "file_unrolled_linked_list.h"
+#include "priority_queue.h"
 #include "sparse_table.h"
 #include "token_scanner.h"
 #include "type_trait.h"
