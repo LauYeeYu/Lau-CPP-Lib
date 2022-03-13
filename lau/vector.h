@@ -49,13 +49,13 @@ public:
     using PointerAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<T*>;
 
     class Iterator;
-	class ConstIterator;
+    class ConstIterator;
 
-	class Iterator {
+    class Iterator {
         friend ConstIterator;
         friend Vector<T>;
 
-	public:
+    public:
         // The following code is written for the C++ type_traits library.
         // Type traits is a C++ feature for describing certain properties of a type.
         // For instance, for an iterator, iterator::value_type is the type that the
@@ -63,85 +63,85 @@ public:
         // See these websites for more information:
         // https://en.cppreference.com/w/cpp/header/type_traits
         // About iterator_category: https://en.cppreference.com/w/cpp/iterator
-		using difference_type   = std::ptrdiff_t;
-		using value_type        = T;
-		using pointer           = T*;
-		using reference         = T&;
-		using iterator_category = std::output_iterator_tag;
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = T;
+        using pointer           = T*;
+        using reference         = T&;
+        using iterator_category = std::output_iterator_tag;
 
         using SizeT             = long;
 
-		Iterator operator+(SizeT n) const { return Iterator(objPtr_ + n, vectorPtr_); }
+        Iterator operator+(SizeT n) const { return Iterator(objPtr_ + n, vectorPtr_); }
 
-		Iterator operator-(SizeT n) const { return Iterator(objPtr_ - n, vectorPtr_); }
+        Iterator operator-(SizeT n) const { return Iterator(objPtr_ - n, vectorPtr_); }
 
-		 /**
-		  * Return the distance between two iterators.  If these two iterators
-		  * point to different vectors, throw invalid_iterator.
-		  * @param rhs
-		  * @return the distance between two iterators
-		  */
-		difference_type operator-(const Iterator &rhs) const {
-			if (this->vectorPtr_ != rhs.vectorPtr_) throw InvalidIterator();
+         /**
+          * Return the distance between two iterators.  If these two iterators
+          * point to different vectors, throw invalid_iterator.
+          * @param rhs
+          * @return the distance between two iterators
+          */
+        difference_type operator-(const Iterator &rhs) const {
+            if (this->vectorPtr_ != rhs.vectorPtr_) throw InvalidIterator();
             return this->objPtr_ - rhs.objPtr_;
-		}
+        }
 
-		Iterator& operator+=(SizeT n) {
-			objPtr_ += n;
+        Iterator& operator+=(SizeT n) {
+            objPtr_ += n;
             return *this;
-		}
+        }
 
-		Iterator& operator-=(SizeT n) {
-			objPtr_ -= n;
+        Iterator& operator-=(SizeT n) {
+            objPtr_ -= n;
             return *this;
-		}
+        }
 
-		Iterator operator++(int) {
+        Iterator operator++(int) {
             Iterator tmp = *this;
             ++tmp;
             return tmp;
         }
 
-		Iterator& operator++() {
+        Iterator& operator++() {
             ++objPtr_;
             return *this;
         }
 
-		Iterator operator--(int) {
+        Iterator operator--(int) {
             Iterator tmp = *this;
             --tmp;
             return tmp;
         }
 
-		Iterator& operator--() {
+        Iterator& operator--() {
             --objPtr_;
             return *this;
         }
 
-		T& operator*() const { return **objPtr_; }
+        T& operator*() const { return **objPtr_; }
         T* operator->() const { return *objPtr_; }
 
-		/**
-		 * Check whether two iterators are same (pointing to the same memory
-		 * address) or not.
-		 */
-		bool operator==(const Iterator &rhs) const { return (this->objPtr_ == rhs.objPtr_); }
-		bool operator==(const ConstIterator &rhs) const { return (this->objPtr_ == rhs.objPtr_); }
-		bool operator!=(const Iterator &rhs) const { return (this->objPtr_ != rhs.objPtr_); }
-		bool operator!=(const ConstIterator &rhs) const { return (this->objPtr_ != rhs.objPtr_); }
+        /**
+         * Check whether two iterators are same (pointing to the same memory
+         * address) or not.
+         */
+        bool operator==(const Iterator &rhs) const { return (this->objPtr_ == rhs.objPtr_); }
+        bool operator==(const ConstIterator &rhs) const { return (this->objPtr_ == rhs.objPtr_); }
+        bool operator!=(const Iterator &rhs) const { return (this->objPtr_ != rhs.objPtr_); }
+        bool operator!=(const ConstIterator &rhs) const { return (this->objPtr_ != rhs.objPtr_); }
 
     private:
         T** objPtr_;
         const Vector<T>* vectorPtr_;
 
         Iterator(T** objPtr, const Vector<T>* vectorPtr) : objPtr_(objPtr), vectorPtr_(vectorPtr) {}
-	};
+    };
 
-	class ConstIterator {
+    class ConstIterator {
         friend Iterator;
         friend Vector<T>;
 
-	public:
+    public:
         // The following code is written for the C++ type_traits library.
         // Type traits is a C++ feature for describing certain properties of a type.
         // For instance, for an iterator, iterator::value_type is the type that the
@@ -149,11 +149,11 @@ public:
         // See these websites for more information:
         // https://en.cppreference.com/w/cpp/header/type_traits
         // About iterator_category: https://en.cppreference.com/w/cpp/iterator
-		using difference_type   = std::ptrdiff_t;
-		using value_type        = T;
-		using pointer           = T*;
-		using reference         = T&;
-		using iterator_category = std::output_iterator_tag;
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = T;
+        using pointer           = T*;
+        using reference         = T&;
+        using iterator_category = std::output_iterator_tag;
 
         using SizeT             = long;
 
@@ -162,11 +162,11 @@ public:
         ConstIterator operator-(SizeT n) const { return ConstIterator(objPtr_ - n, vectorPtr_); }
 
         /**
-		  * Return the distance between two iterators.  If these two iterators
-		  * point to different vectors, throw invalid_iterator.
-		  * @param rhs
-		  * @return the distance between two iterators
-		  */
+          * Return the distance between two iterators.  If these two iterators
+          * point to different vectors, throw invalid_iterator.
+          * @param rhs
+          * @return the distance between two iterators
+          */
         difference_type operator-(const ConstIterator &rhs) const {
             if (this->vectorPtr_ != rhs.vectorPtr_) throw InvalidIterator();
             return this->objPtr_ - rhs.objPtr_;
@@ -226,9 +226,9 @@ public:
         const Vector<T>* vectorPtr_;
 
         ConstIterator(T** objPtr, const Vector<T>* vectorPtr) : objPtr_(objPtr), vectorPtr_(vectorPtr) {}
-	};
+    };
 
-	Vector() noexcept(noexcept(Allocator())) = default;
+    Vector() noexcept(noexcept(Allocator())) = default;
 
     explicit Vector(const Allocator& allocator) : allocator_(allocator), pointerAllocator_(allocator) {}
 
@@ -259,7 +259,7 @@ public:
         }
     }
 
-	Vector(const Vector& obj) : capacity_(obj.size_),
+    Vector(const Vector& obj) : capacity_(obj.size_),
                                 size_(obj.size_),
                                 beginIndex_(0),
                                 allocator_(obj.allocator_),
@@ -293,7 +293,7 @@ public:
     }
 
 
-	Vector& operator=(const Vector& obj) {
+    Vector& operator=(const Vector& obj) {
         if (&obj == this) return *this;
         this->Clear();
         capacity_ = obj.size_;
@@ -325,35 +325,35 @@ public:
 
     ~Vector() { this->Clear(); }
 
-	/**
-	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an <code>lau::OutOfRange</code> will be thrown.
-	 * @param index
-	 * @return a reference to the element at the input index
-	 */
-	T& At(SizeT index) {
+    /**
+     * Access specified element with bounds checking.  If pos is not in range
+     * [0, size), an <code>lau::OutOfRange</code> will be thrown.
+     * @param index
+     * @return a reference to the element at the input index
+     */
+    T& At(SizeT index) {
         if (index >= size_ || index < 0) throw OutOfRange();
         return *target_[index + beginIndex_];
     }
 
     /**
-	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an <code>lau::OutOfRange</code> will be thrown.
-	 * @param index
-	 * @return a const reference to the element at the input index
-	 */
-	const T& At(SizeT index) const {
+     * Access specified element with bounds checking.  If pos is not in range
+     * [0, size), an <code>lau::OutOfRange</code> will be thrown.
+     * @param index
+     * @return a const reference to the element at the input index
+     */
+    const T& At(SizeT index) const {
         if (index >= size_ || index < 0) throw OutOfRange();
         return *target_[index + beginIndex_];
     }
 
-	/**
-	 * Access specified element with bounds checking.  If pos is not in range
-	 * [0, size), an <code>lau::OutOfRange</code> will be thrown.
-	 * @param index
-	 * @return a reference to the element at the input index
-	 */
-	T& operator[](SizeT index) {
+    /**
+     * Access specified element with bounds checking.  If pos is not in range
+     * [0, size), an <code>lau::OutOfRange</code> will be thrown.
+     * @param index
+     * @return a reference to the element at the input index
+     */
+    T& operator[](SizeT index) {
         if (index >= size_ || index < 0) throw OutOfRange();
         return *target_[index + beginIndex_];
     }
@@ -364,36 +364,36 @@ public:
      * @param index
      * @return a const reference to the element at the input index
      */
-	const T& operator[](SizeT index) const {
+    const T& operator[](SizeT index) const {
         if (index >= size_ || index < 0) throw OutOfRange();
         return *target_[index + beginIndex_];
     }
 
-	/**
-	 * Access the first element.  If the container is empty, a
-	 * <code>lau::EmptyContainer</code> will be thrown.
-	 * @return a constant reference to the first element
-	 */
-	const T& Front() const {
+    /**
+     * Access the first element.  If the container is empty, a
+     * <code>lau::EmptyContainer</code> will be thrown.
+     * @return a constant reference to the first element
+     */
+    const T& Front() const {
         if (Empty()) throw EmptyContainer();
         return *target_[beginIndex_];
     }
 
-	/**
-	 * Access the last element.  If the container is empty, a
-	 * <code>lau::EmptyContainer</code> will be thrown.
-	 * @return a const reference to the last element
-	 */
-	const T& Back() const {
+    /**
+     * Access the last element.  If the container is empty, a
+     * <code>lau::EmptyContainer</code> will be thrown.
+     * @return a const reference to the last element
+     */
+    const T& Back() const {
         if (Empty()) throw EmptyContainer();
         return *target_[size_ + beginIndex_ - 1];
     }
 
     /**
-	 * Access the first element.  If the container is empty, a
-	 * <code>lau::EmptyContainer</code> will be thrown.
-	 * @return a reference to the first element
-	 */
+     * Access the first element.  If the container is empty, a
+     * <code>lau::EmptyContainer</code> will be thrown.
+     * @return a reference to the first element
+     */
     T& Front() {
         if (Empty()) throw EmptyContainer();
         return *target_[beginIndex_];
@@ -419,20 +419,20 @@ public:
 
     [[nodiscard]] ConstIterator ConstEnd() const { return ConstIterator(target_ + beginIndex_ + size_, this); }
 
-	/**
-	 * Check whether the container is empty.
-	 */
+    /**
+     * Check whether the container is empty.
+     */
     [[nodiscard]] bool Empty() const { return size_ == 0; }
 
-	/**
-	 * Return the number of elements.
-	 */
-	[[nodiscard]] SizeT Size() const { return size_; }
+    /**
+     * Return the number of elements.
+     */
+    [[nodiscard]] SizeT Size() const { return size_; }
 
     /**
      * Clear the whole vector class.
      */
-	Vector& Clear() {
+    Vector& Clear() {
         for (SizeT i = 0; i < size_; ++i) {
             target_[i + beginIndex_]->~T();
             allocator_.deallocate(target_[i + beginIndex_], 1);
@@ -446,22 +446,22 @@ public:
         return *this;
     }
 
-	/**
-	 * Insert value before position.
-	 * @return an iterator pointing to the inserted value
-	 */
-	Iterator Insert(const Iterator& position, const T& value) {
+    /**
+     * Insert value before position.
+     * @return an iterator pointing to the inserted value
+     */
+    Iterator Insert(const Iterator& position, const T& value) {
         SizeT index = position - this->begin();
         return Insert(index, value);
     }
 
-	/**
-	 * Insert value at index.  If <code>index > size</code>, a
-	 * <code>lau::OutOfRange</code> will be thrown.  After this
-	 * operation, <code>this->at(ind)</code> will be <code>value</code>.
-	 * @return an iterator pointing to the inserted value
-	 */
-	Iterator Insert(SizeT index, const T& value) {
+    /**
+     * Insert value at index.  If <code>index > size</code>, a
+     * <code>lau::OutOfRange</code> will be thrown.  After this
+     * operation, <code>this->at(ind)</code> will be <code>value</code>.
+     * @return an iterator pointing to the inserted value
+     */
+    Iterator Insert(SizeT index, const T& value) {
         if (index > size_) throw OutOfRange();
         if (index == 0) {
             PushFront(value);
@@ -478,22 +478,22 @@ public:
         return Iterator(target_ + beginIndex_ + index, this);
     }
 
-	/**
-	 * Erase the element at pos.  If the iterator pos refers the last
-	 * element, the <code>End()</code> iterator is returned.
-	 * @return an iterator pointing to the following element
-	 */
-	Iterator Erase(const Iterator& position) {
+    /**
+     * Erase the element at pos.  If the iterator pos refers the last
+     * element, the <code>End()</code> iterator is returned.
+     * @return an iterator pointing to the following element
+     */
+    Iterator Erase(const Iterator& position) {
         SizeT index = position - this->begin();
         return Erase(index);
     }
 
-	/**
-	 * Erase the element at index.  If <code>index >= size</code>, a
-	 * <code>lau::OutOfRange</code> will be thrown.
-	 * @return an iterator pointing to the following element
-	 */
-	Iterator Erase(SizeT index) {
+    /**
+     * Erase the element at index.  If <code>index >= size</code>, a
+     * <code>lau::OutOfRange</code> will be thrown.
+     * @return an iterator pointing to the following element
+     */
+    Iterator Erase(SizeT index) {
         if (index >= size_) throw OutOfRange();
         --size_;
         if (index == 0) {
@@ -512,11 +512,11 @@ public:
         return Iterator(target_ + beginIndex_ + index, this);
     }
 
-	/**
-	 * Add an element to the end.
-	 * @param value
+    /**
+     * Add an element to the end.
+     * @param value
      * @return a reference to the current class
-	 */
+     */
     Vector& PushBack(const T& value) {
         if (NeedEnlarging_()) Enlarge_();
         target_[size_ + beginIndex_] = allocator_.allocate(1);
@@ -526,10 +526,10 @@ public:
     }
 
     /**
-	 * Add an element to the front.
-	 * @param value
+     * Add an element to the front.
+     * @param value
      * @return a reference to the current class
-	 */
+     */
     Vector& PushFront(const T& value) {
         if (beginIndex_ > 0) {
             --beginIndex_;
@@ -548,11 +548,11 @@ public:
         return *this;
     }
 
-	/**
-	 * Remove the last element from the end.  If <code>size() == 0</code>, a
-	 * <code>lau::EmptyContainer</code> will be thrown.
+    /**
+     * Remove the last element from the end.  If <code>size() == 0</code>, a
+     * <code>lau::EmptyContainer</code> will be thrown.
      * @return a reference to the current class
-	 */
+     */
     Vector& PopBack() {
         if (size_ == 0) throw EmptyContainer();
         target_[size_ + beginIndex_ - 1]->~T();
