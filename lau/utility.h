@@ -26,4 +26,4 @@
 
 #include "token_scanner.h"
 
-#endif //LAU_CPP_LIB_LAU_UTILITY_H
+#endif // LAU_CPP_LIB_LAU_UTILITY_H

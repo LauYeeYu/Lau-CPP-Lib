@@ -190,4 +190,4 @@ template<class Allocator = std::allocator<SizeT>>
 
 }
 
-#endif //LAU_CPP_LIB_LAU_ALGORITHM_H
+#endif // LAU_CPP_LIB_LAU_ALGORITHM_H

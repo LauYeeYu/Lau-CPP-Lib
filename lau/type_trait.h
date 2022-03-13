@@ -26,4 +26,4 @@
 
 using SizeT = long;
 
-#endif //LAU_CPP_LIB_LAU_TYPE_TRAIT_H
+#endif // LAU_CPP_LIB_LAU_TYPE_TRAIT_H

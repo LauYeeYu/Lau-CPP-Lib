@@ -34,4 +34,4 @@
 #include "utility.h"
 #include "vector.h"
 
-#endif //LAU_CPP_LIB_LAU_ALL_H
+#endif // LAU_CPP_LIB_LAU_ALL_H

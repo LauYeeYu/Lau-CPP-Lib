@@ -290,4 +290,4 @@ private:
 
 } // namespace lau
 
-#endif //LAU_CPP_LIB_LAU_SPARSE_TABLE_H
+#endif // LAU_CPP_LIB_LAU_SPARSE_TABLE_H

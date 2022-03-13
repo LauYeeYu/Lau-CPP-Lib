@@ -170,4 +170,4 @@ private:
 
 } // namespace lau
 
-#endif //LAU_CPP_LIB_LAU_TOKEN_SCANNER_H
+#endif // LAU_CPP_LIB_LAU_TOKEN_SCANNER_H
