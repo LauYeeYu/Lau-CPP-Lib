@@ -87,8 +87,8 @@ public:
 
     template<class Iterator>
     PriorityQueue(Iterator first, Iterator last,
-                  const Allocator& allocator,
-                  const Compare& compare) : compare_(compare_), nodeAllocator_(allocator) {
+                  const Compare& compare,
+                  const Allocator& allocator) : compare_(compare_), nodeAllocator_(allocator) {
         while (first != last) {
             this->Push(*first);
             ++first;
@@ -150,7 +150,7 @@ public:
         if (size_ == 0) throw EmptyContainer("Empty Priority Queue");
         Node_* top = data_;
         data_ = MergeNode_(data_->left, data_->right);
-        top->~Node();
+        top->~Node_();
         nodeAllocator_.deallocate(top, 1);
         --size_;
         return *this;
