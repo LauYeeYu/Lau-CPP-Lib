@@ -781,8 +781,10 @@ private:
  * @param vector1
  * @param vector2
  */
-template<class T>
-void Swap(Vector<T>& vector1, Vector<T>& vector2) { vector1.Swap(vector2); }
+template<class T, class Allocator>
+void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) {
+    vector1.Swap(vector2);
+}
 
 } // namespace lau
 

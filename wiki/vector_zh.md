@@ -98,8 +98,8 @@ public:
 };
 
 // 非成員函數
-template<class T>
-void Swap(Vector<T>& vector1, Vector<T>& vector2);
+template<class T, class Allocator>
+void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2);
 } // namespace lau
 ```
 ## 模板
@@ -502,8 +502,8 @@ Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
 
 ### <span id="SwapNonmember">`Swap`</span>
 ```c++
-template<class T>
-void Swap(Vector<T>& vector1, Vector<T>& vector2);
+template<class T, class Allocator>
+void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2);
 ```
 - 交換兩個容器的內容。
 
