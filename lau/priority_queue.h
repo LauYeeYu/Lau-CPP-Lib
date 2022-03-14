@@ -72,6 +72,7 @@ public:
                   const Compare& compare = Compare()) : compare_(compare), nodeAllocator_() {
         while (first != last) {
             this->Push(*first);
+            ++first;
         }
     }
 
@@ -80,6 +81,7 @@ public:
                   const Allocator& allocator) : compare_(), nodeAllocator_(allocator) {
         while (first != last) {
             this->Push(*first);
+            ++first;
         }
     }
 
@@ -89,6 +91,7 @@ public:
                   const Compare& compare) : compare_(compare_), nodeAllocator_(allocator) {
         while (first != last) {
             this->Push(*first);
+            ++first;
         }
     }
 
