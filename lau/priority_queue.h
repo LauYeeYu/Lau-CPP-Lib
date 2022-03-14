@@ -95,10 +95,6 @@ public:
         }
     }
 
-    ~PriorityQueue() {
-        DeleteAllChildNode(data_);
-    }
-
     PriorityQueue& operator=(const PriorityQueue& obj) {
         if (this == &obj) return *this;
         DeleteAllChildNode(data_);
@@ -118,6 +114,10 @@ public:
         obj.data_ = nullptr;
         obj.size_ = 0;
         return *this;
+    }
+
+    ~PriorityQueue() {
+        DeleteAllChildNode(data_);
     }
 
     /**
@@ -190,6 +190,26 @@ public:
         other.data_ = nullptr;
         this->size_ += other.size_;
         other.size_ = 0;
+        return *this;
+    }
+
+    PriorityQueue& Swap(PriorityQueue& other) {
+        Node_* tmpNodePtr = other.data_;
+        other.data_ = this->data_;
+        this->data_ = tmpNodePtr;
+
+        SizeT tmpSize = other.size_;
+        other.size_ = this->size_;
+        this->size_ = tmpSize;
+
+        Compare tmpCompare = other.compare_;
+        other.compare_ = this->compare_;
+        this->compare_ = tmpCompare;
+
+        NodeAllocatorType tmpAllocator = other.nodeAllocator_;
+        other.nodeAllocator_ = this->nodeAllocator_;
+        this->nodeAllocator_ = tmpAllocator;
+
         return *this;
     }
 
@@ -277,6 +297,12 @@ private:
         return newNode;
     }
 };
+
+template<class T, class Compare, class Allocator>
+void Swap(PriorityQueue<T, Compare, Allocator> priorityQueue1,
+          PriorityQueue<T, Compare, Allocator> priorityQueue2) {
+    priorityQueue1.Swap(priorityQueue2);
+}
 
 } // namespace lau
 
