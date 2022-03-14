@@ -182,7 +182,10 @@ public:
 
     /**
      * Merge two PriorityQueues with complexity of O(log n).  Clear the other
-     * priority queue.
+     * priority queue.  Please note that the compare function of the two class
+     * MUST be the same. (For all elements, the same input must have the same
+     * output.
+     * @param other
      * @return the reference to the current class
      */
     PriorityQueue& Merge(PriorityQueue& other) {
@@ -193,6 +196,12 @@ public:
         return *this;
     }
 
+    /**
+     * Swap all the component of two priority queue.  Please note that the two class
+ * must have the same template parameters.
+     * @param other
+     * @return the reference to the current class
+     */
     PriorityQueue& Swap(PriorityQueue& other) {
         Node_* tmpNodePtr = other.data_;
         other.data_ = this->data_;
@@ -298,6 +307,15 @@ private:
     }
 };
 
+/**
+ * Swap the component of two priority queue.  Please note that the two class
+ * must have the same template parameters.
+ * @tparam T the type of elements
+ * @tparam Compare the compare function
+ * @tparam Allocator the allocator
+ * @param priorityQueue1
+ * @param priorityQueue2
+ */
 template<class T, class Compare, class Allocator>
 void Swap(PriorityQueue<T, Compare, Allocator> priorityQueue1,
           PriorityQueue<T, Compare, Allocator> priorityQueue2) {
