@@ -97,7 +97,7 @@ public:
 
     PriorityQueue& operator=(const PriorityQueue& obj) {
         if (this == &obj) return *this;
-        DeleteAllChildNode(data_);
+        DeleteAllChildNode_(data_);
         compare_ = obj.compare_;
         nodeAllocator_ = obj.nodeAllocator_;
         data_ = CopyNode_(obj.data_);
@@ -106,7 +106,7 @@ public:
     }
 
     PriorityQueue& operator=(PriorityQueue&& obj) noexcept {
-        DeleteAllChildNode(data_);
+        DeleteAllChildNode_(data_);
         compare_ = std::move(obj.compare_);
         nodeAllocator_ = std::move(obj.nodeAllocator_);
         data_ = obj.data_;
@@ -117,7 +117,7 @@ public:
     }
 
     ~PriorityQueue() {
-        DeleteAllChildNode(data_);
+        DeleteAllChildNode_(data_);
     }
 
     /**
@@ -222,6 +222,16 @@ public:
         return *this;
     }
 
+    /**
+     * Clear the queue.
+     * @return the reference to the current class
+     */
+    PriorityQueue& Clear() {
+        DeleteAllChildNode_(data_);
+        size_ = 0;
+        return *this;
+    }
+
 private:
     struct Node_ {
         T value;
@@ -285,15 +295,10 @@ private:
         node->distance = node->right->distance + 1;
     }
 
-    void Clear() {
-        DeleteAllChildNode(data_);
-        size_ = 0;
-    }
-
-    void DeleteAllChildNode(Node_* node) {
+    void DeleteAllChildNode_(Node_* node) {
         if (node == nullptr) return;
-        DeleteAllChildNode(node->left);
-        DeleteAllChildNode(node->right);
+        DeleteAllChildNode_(node->left);
+        DeleteAllChildNode_(node->right);
         node->~Node_();
         nodeAllocator_.deallocate(node, 1);
     }
