@@ -251,6 +251,12 @@ public:
     }
 
 private:
+    /**
+     * @struct Node_
+     *
+     * The type of node in priority queue. Includes a value, left node and
+     * right node pointer, and the distance used to keep the vague balance.
+     */
     struct Node_ {
         T value;
         Node_* left = nullptr;
@@ -276,6 +282,13 @@ private:
     Compare compare_;
     NodeAllocatorType nodeAllocator_;
 
+    /**
+     * Merge two leftist tree with the pointer of two tree.  Using recursion
+     * to handle this procedure.
+     * @param node1
+     * @param node2
+     * @return the pointer to the head node of the lefist tree
+     */
     Node_* MergeNode_(Node_* node1, Node_* node2) {
         if (node1 == nullptr) return node2;
         if (node2 == nullptr) return node1;
@@ -290,6 +303,11 @@ private:
         }
     }
 
+    /**
+     * Flush the distance value of the node, and keep the fact that left node
+     * have no less distance than the right one.
+     * @param node
+     */
     void FlushNode(Node_* node) {
         if (node->right == nullptr) {
             node->distance = 0;
@@ -311,6 +329,10 @@ private:
         node->distance = node->right->distance + 1;
     }
 
+    /**
+     * Delete all child node.  This procedure uses recursion.
+     * @param node
+     */
     void DeleteAllChildNode_(Node_* node) {
         if (node == nullptr) return;
         DeleteAllChildNode_(node->left);
@@ -319,6 +341,11 @@ private:
         nodeAllocator_.deallocate(node, 1);
     }
 
+    /**
+     * Copy all the node of the tree.  Using recursion.
+     * @param node the head node of the source tree
+     * @return the pointer of the head node of the copied tree
+     */
     Node_* CopyNode_(Node_* node) {
         Node_* newNode = nodeAllocator_.allocate(1);
         ::new(newNode) Node_(node->value, nullptr, nullptr, node->distance);
