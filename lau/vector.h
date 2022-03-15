@@ -526,6 +526,23 @@ public:
     }
 
     /**
+     * Add an element to the end.  This operation constructs a new element
+     * in place.  The constructor of the element is called with exactly the
+     * same arguments as supplied to the function.
+     * @tparam Args
+     * @param args
+     * @return a reference to the current class
+     */
+    template<class... Args>
+    Vector& EmplaceBack(Args&&... args) {
+        if (NeedEnlarging_()) Enlarge_();
+        target_[size_ + beginIndex_] = allocator_.allocate(1);
+        ::new (target_[size_ + beginIndex_]) T(args...);
+        ++size_;
+        return *this;
+    }
+
+    /**
      * Add an element to the front.
      * @param value
      * @return a reference to the current class
@@ -543,6 +560,33 @@ public:
             }
             target_[0] = allocator_.allocate(1);
             ::new (target_[0]) T(value);
+            ++size_;
+        }
+        return *this;
+    }
+
+    /**
+     * Add an element to the front.  This operation constructs a new element
+     * in place.  The constructor of the element is called with exactly the
+     * same arguments as supplied to the function.
+     * @tparam Args
+     * @param args
+     * @return a reference to the current class
+     */
+    template<class... Args>
+    Vector& EmplaceFront(Args... args) {
+        if (beginIndex_ > 0) {
+            --beginIndex_;
+            target_[beginIndex_] = allocator_.allocate(1);
+            ::new (target_[beginIndex_]) T(args...);
+            ++size_;
+        } else {
+            if (NeedEnlarging_()) Enlarge_();
+            for (SizeT i = size_; i > 0; --i) {
+                target_[i] = target_[i - 1];
+            }
+            target_[0] = allocator_.allocate(1);
+            ::new (target_[0]) T(args...);
             ++size_;
         }
         return *this;

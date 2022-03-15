@@ -87,7 +87,11 @@ public:
     Iterator Erase(const Iterator& position);
     Iterator Erase(SizeT index);
     Vector& PushBack(const T& value);
+    template<class... Args>
+    Vector& EmplaceBack(Args&&... args);
     Vector& PushFront(const T& value);
+    template<class... Args>
+    Vector& EmplaceFront(Args... args);
     Vector& PopBack();
     Vector& PopFront();
     Vector& Swap(Vector& other);
@@ -147,7 +151,9 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2);
 - [`Insert`](#Insert)：插入元素
 - [`Erase`](#Erase)：移除元素
 - [`PushBack`](#PushBack)：從尾部加入元素
+- [`EmplaceBack`](#EmplaceBack)：從尾部原位構造元素
 - [`PushFront`](#PushFront)：從頭部加入元素
+- [`EmplaceFront`](#EmplaceFront)：從頭部原位構造元素
 - [`PopBack`](#PopBack)：從尾部移除元素
 - [`PopFront`](#PopFront)：從頭部移除元素
 - [`Swap`](#Swap)：交換內容
@@ -499,6 +505,28 @@ Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
 ```
 - 交換兩個迭代器對應的元素。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+
+### <span id="EmplaceBack">`EmplaceBack`</span>
+```c++
+template<class... Args>
+Vector& EmplaceBack(Args&&... args);
+```
+- 將元素從尾部加入。
+- 將會以參數原位構造元素。
+- 構造函數與此函數提供的參數一致。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度：不確定。多數情況下爲 $O(1)$。僅當容器需要擴容時爲 $O(n)$。
+
+### <span id="EmplaceFront">`EmplaceFront`</span>
+```c++
+template<class... Args>
+Vector& EmplaceFront(Args&&... args);
+```
+- 將元素從頭部加入。
+- 將會以參數原位構造元素。
+- 構造函數與此函數提供的參數一致。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。僅當容器前部有空間時爲 $O(1)$。
 
 ### <span id="SwapNonmember">`Swap`</span>
 ```c++

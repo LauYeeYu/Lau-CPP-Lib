@@ -90,7 +90,11 @@ public:
     Iterator Erase(const Iterator& position);
     Iterator Erase(SizeT index);
     Vector& PushBack(const T& value);
+    template<class... Args>
+    Vector& EmplaceBack(Args&&... args);
     Vector& PushFront(const T& value);
+    template<class... Args>
+    Vector& EmplaceFront(Args... args);
     Vector& PopBack();
     Vector& PopFront();
     Vector& Swap(Vector& other);
@@ -151,7 +155,9 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2);
 - [`Insert`](#Insert): insert an element
 - [`Erase`](#Erase): erase the corresponding element
 - [`PushBack`](#PushBack): add an element to the back
+- [`EmplaceBack`](#EmplaceBack): add an element in-place to the back
 - [`PushFront`](#PushFront): add an element to the front
+- [`EmplaceFront`](#EmplaceFront): add an element in-place to the front
 - [`PopBack`](#PopBack): remove an element from the back
 - [`PopFront`](#PopFront): remove an element from the front
 - [`Swap`](#Swap): swap the content
@@ -526,6 +532,34 @@ Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
 - Swap the elements of two iterators.
 - To make the class visiting easier, the function returns a reference
   pointing to this class.
+
+### <span id="EmplaceBack">`EmplaceBack`</span>
+```c++
+template<class... Args>
+Vector& EmplaceBack(Args&&... args);
+```
+- Add an element to the back.
+- This operation constructs a new element in place.
+- The constructor of the element is called with exactly the same arguments
+  as supplied to the function.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
+- Complexity: Depends. In most case, it is $O(1)$.  Only if the container
+  need enlarging, it is $O(n)$.
+
+### <span id="EmplaceFront">`EmplaceFront`</span>
+```c++
+template<class... Args>
+Vector& EmplaceFront(Args&&... args);
+```
+- Add an element to the front.
+- This operation constructs a new element in place.
+- The constructor of the element is called with exactly the same arguments
+  as supplied to the function.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
+- Complexity: Depends. In most case, it is $O(n)$. Only if the container
+  have space in the front, it is $O(1)$.
 
 ### <span id="SwapNonmember">`Swap`</span>
 ```c++
