@@ -80,7 +80,7 @@ public:
     Vector& ShrinkToFit();
     Vector& Reserve(SizeT newCapacity);
 
-    // 修改器
+    // 修改
     Vector& Clear();
     Iterator Insert(const Iterator& position, const T& value);
     Iterator Insert(SizeT index, const T& value);
@@ -142,7 +142,7 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2);
 - [`ShrinkToFit`](#ShrinkToFit)：減少容量
 - [`Reserve`](#Reserve)：保留容量
 
-### 修改器
+### 修改
 - [`Clear`](#Clear)：清空容器
 - [`Insert`](#Insert)：插入元素
 - [`Erase`](#Erase)：移除元素
@@ -493,7 +493,7 @@ Vector& SwapElement(SizeT index1, SizeT index2);
 ```
 - 交換兩個下標對應的元素。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
--
+
 ```c++
 Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
 ```

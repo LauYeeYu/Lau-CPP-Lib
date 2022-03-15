@@ -143,7 +143,8 @@ public:
     }
 
     /**
-     * Delete the top element.  Throw EmptyContainer if the queue is empty.
+     * Delete the top element.  Throw <code>lau::EmptyContainer</code> if the
+     * queue is empty.
      * @return the reference to the current class
      */
     PriorityQueue& Pop() {
@@ -198,7 +199,7 @@ public:
 
     /**
      * Swap all the component of two priority queue.  Please note that the two class
- * must have the same template parameters.
+     * must have the same template parameters.
      * @param other
      * @return the reference to the current class
      */
