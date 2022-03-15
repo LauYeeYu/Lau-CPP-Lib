@@ -130,13 +130,30 @@ public:
     }
 
     /**
-     * Push new element to the priority queue.
+     * Push a new element to the priority queue.
      * @param value
      * @return the reference to the current class
      */
     PriorityQueue& Push(const T& value) {
         Node_* tmp = nodeAllocator_.allocate(1);
-        ::new(tmp) Node_(value, nullptr, nullptr, 0);
+        ::new(tmp) Node_(nullptr, nullptr, 0, value);
+        data_ = MergeNode_(data_, tmp);
+        ++size_;
+        return *this;
+    }
+
+    /**
+     * Push a new element to the priority queue.  This operation constructs a
+     * new element in place.  The constructor of the element is called with
+     * exactly the same arguments as supplied to the function.
+     * @tparam Args
+     * @param args
+     * @return the reference to the current class
+     */
+    template<class... Args>
+    PriorityQueue& Emplace(Args&&... args) {
+        Node_* tmp = nodeAllocator_.allocate(1);
+        ::new(tmp) Node_(nullptr, nullptr, 0, args...);
         data_ = MergeNode_(data_, tmp);
         ++size_;
         return *this;
@@ -240,16 +257,14 @@ private:
         Node_* right = nullptr;
         SizeT distance = 0;
 
-        explicit Node_(const T& value,
-                       Node_* left = nullptr,
-                       Node_* right = nullptr,
-                       SizeT distance = 0)
-            : left(left),
-              right(right),
-              value(value),
-              distance(distance) {}
+        explicit Node_(Node_* left, Node_* right, SizeT distance, const T& value)
+            : left(left), right(right), value(value), distance(distance) {}
 
         Node_(const Node_& obj) : left(obj.left), right(obj.right), value(obj.value), distance(obj.distance) {}
+
+        template<class... Args>
+        Node_(Node_* left, Node_* right, SizeT distance, Args&&... args)
+            : value(args...), left(left), right(right), distance(distance) {}
 
         ~Node_() = default;
     };

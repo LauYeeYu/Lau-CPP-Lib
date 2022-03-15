@@ -66,6 +66,8 @@ public:
     // 修改
     PriorityQueue& Clear();
     PriorityQueue& Push(const T& value);
+    template<class... Args>
+    PriorityQueue& Emplace(Args&&... args);
     PriorityQueue& Pop();
     PriorityQueue& Merge(PriorityQueue& other);
     PriorityQueue& Swap(PriorityQueue& other);
@@ -101,6 +103,7 @@ void Swap(PriorityQueue<T, Compare, Allocator> priorityQueue1,
 ### 修改
 - [`Clear`](#Clear)：清空所有數據
 - [`Push`](#Push)：加入新元素
+- [`Emplace`](#Emplace)：原位構造新元素
 - [`Pop`](#Pop)：移除棧頂元素
 - [`Merge`](#Merge)：與另一優先佇列合併
 - [`Swap`](#Swap)：交換内容
@@ -260,6 +263,17 @@ PriorityQueue& Swap(PriorityQueue& other);
 - 請注意：兩個類必須有相同的模板參數。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度： $O(1)$。
+
+### <span id="Emplace">`Emplace`</span>
+```c++
+template<class... Args>
+PriorityQueue& Emplace(Args&&... args);
+```
+- 將新元素加入優先佇列。
+- 在原位構造元素。
+- 構造函數與此函數提供的參數一致。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度： $O(\log n)$。
 
 ### <span id="SwapNonmember">`Swap`</span>
 ```c++

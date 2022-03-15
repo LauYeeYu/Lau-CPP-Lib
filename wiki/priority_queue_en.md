@@ -72,6 +72,8 @@ public:
     // Modifiers
     PriorityQueue& Clear();
     PriorityQueue& Push(const T& value);
+    template<class... Args>
+    PriorityQueue& Emplace(Args&&... args);
     PriorityQueue& Pop();
     PriorityQueue& Merge(PriorityQueue& other);
     PriorityQueue& Swap(PriorityQueue& other);
@@ -108,6 +110,7 @@ void Swap(PriorityQueue<T, Compare, Allocator> priorityQueue1,
 ### Modifiers
 - [`Clear`](#Clear): clear all the data
 - [`Push`](#Push): push a new element
+- [`Emplace`](#Emplace): construct a new element in-place
 - [`Pop`](#Pop): erase the top element
 - [`Merge`](#Merge): merge another priority queue into this queue
 - [`Swap`](#Swap): swap the content
@@ -285,6 +288,19 @@ PriorityQueue& Swap(PriorityQueue& other);
 - To make the class visiting easier, the function returns a reference
   pointing to this class.
 - Time complexity: $O(1)$.
+
+### <span id="Emplace">`Emplace`</span>
+```c++
+template<class... Args>
+PriorityQueue& Emplace(Args&&... args);
+```
+- Push a new element to the priority queue.
+- This operation constructs a new element in place.
+- The constructor of the element is called with exactly the same arguments
+  as supplied to the function.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
+- Time complexity: $O(\log n)$.
 
 ### <span id="SwapNonmember">`Swap`</span>
 ```c++
