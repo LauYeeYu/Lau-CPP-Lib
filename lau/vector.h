@@ -69,8 +69,6 @@ public:
         using reference         = T&;
         using iterator_category = std::output_iterator_tag;
 
-        using SizeT             = long;
-
         Iterator operator+(SizeT n) const { return Iterator(objPtr_ + n, vectorPtr_); }
 
         Iterator operator-(SizeT n) const { return Iterator(objPtr_ - n, vectorPtr_); }
@@ -155,7 +153,8 @@ public:
         using reference         = T&;
         using iterator_category = std::output_iterator_tag;
 
-        using SizeT             = long;
+        ConstIterator(const Iterator& iterator) : objPtr_(iterator.objPtr_),
+                                                  vectorPtr_(iterator.vectorPtr_) {}
 
         ConstIterator operator+(SizeT n) const { return ConstIterator(objPtr_ + n, vectorPtr_); }
 
@@ -291,7 +290,6 @@ public:
             this->PushBack(element);
         }
     }
-
 
     Vector& operator=(const Vector& obj) {
         if (&obj == this) return *this;
@@ -448,10 +446,23 @@ public:
 
     /**
      * Insert value before position.
+     * @param position
+     * @param value
      * @return an iterator pointing to the inserted value
      */
     Iterator Insert(const Iterator& position, const T& value) {
-        SizeT index = position - this->begin();
+        SizeT index = position - this->Begin();
+        return Insert(index, value);
+    }
+
+    /**
+     * Insert value before position.
+     * @param position
+     * @param value
+     * @return an iterator pointing to the inserted value
+     */
+    Iterator Insert(const ConstIterator& position, const T& value) {
+        SizeT index = position - this->ConstBegin();
         return Insert(index, value);
     }
 
@@ -459,6 +470,8 @@ public:
      * Insert value at index.  If <code>index > size</code>, a
      * <code>lau::OutOfRange</code> will be thrown.  After this
      * operation, <code>this->at(ind)</code> will be <code>value</code>.
+     * @param index
+     * @param value
      * @return an iterator pointing to the inserted value
      */
     Iterator Insert(SizeT index, const T& value) {
@@ -481,16 +494,29 @@ public:
     /**
      * Erase the element at pos.  If the iterator pos refers the last
      * element, the <code>End()</code> iterator is returned.
+     * @param position
      * @return an iterator pointing to the following element
      */
     Iterator Erase(const Iterator& position) {
-        SizeT index = position - this->begin();
+        SizeT index = position - this->Begin();
+        return Erase(index);
+    }
+
+    /**
+     * Erase the element at pos.  If the iterator pos refers the last
+     * element, the <code>End()</code> iterator is returned.
+     * @param position
+     * @return an iterator pointing to the following element
+     */
+    Iterator Erase(const ConstIterator& position) {
+        SizeT index = position - this->ConstBegin();
         return Erase(index);
     }
 
     /**
      * Erase the element at index.  If <code>index >= size</code>, a
      * <code>lau::OutOfRange</code> will be thrown.
+     * @param index
      * @return an iterator pointing to the following element
      */
     Iterator Erase(SizeT index) {
@@ -753,6 +779,7 @@ public:
      * elements.  If the current size is less than count, additional
      * value elements are appended.
      * @param count
+     * @param value
      * @return a reference to the current class
      */
     Vector& Resize(SizeT count, const T& value) {

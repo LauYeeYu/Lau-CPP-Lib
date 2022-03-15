@@ -86,8 +86,10 @@ public:
     // Modifiers
     Vector& Clear();
     Iterator Insert(const Iterator& position, const T& value);
+    Iterator Insert(const ConstIterator& position, const T& value);
     Iterator Insert(SizeT index, const T& value);
     Iterator Erase(const Iterator& position);
+    Iterator Erase(const ConstIterator& position);
     Iterator Erase(SizeT index);
     Vector& PushBack(const T& value);
     template<class... Args>
@@ -417,6 +419,13 @@ Iterator Insert(const Iterator& position, const T& value);
 - Complexity: Depends. In most case, it is $O(n)$.
 
 ```c++
+Iterator Insert(const ConstIterator& position, const T& value);
+```
+- Insert value before position.
+- Return an iterator pointing to the inserted value.
+- Complexity: Depends. In most case, it is $O(n)$.
+
+```c++
 Iterator Insert(SizeT index, const T& value);
 ```
 - Insert value at index.
@@ -428,6 +437,16 @@ Iterator Insert(SizeT index, const T& value);
 ### <span id="Erase">`Erase`</span>
 ```c++
 Iterator Erase(const Iterator& position);
+```
+- Erase the element at pos.
+- If it is an `End()` iterator, a `lau::OutOfRange` will be thrown.
+- Return an iterator pointing to the following element.
+- If the iterator pos refers the last element, the `End()` iterator is
+  returned.
+- Complexity: Depends. In most case, it is $O(n)$.
+
+```c++
+Iterator Erase(const ConstIterator& position);
 ```
 - Erase the element at pos.
 - If it is an `End()` iterator, a `lau::OutOfRange` will be thrown.

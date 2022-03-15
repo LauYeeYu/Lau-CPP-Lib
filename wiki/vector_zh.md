@@ -83,8 +83,10 @@ public:
     // 修改
     Vector& Clear();
     Iterator Insert(const Iterator& position, const T& value);
+    Iterator Insert(const ConstIterator& position, const T& value);
     Iterator Insert(SizeT index, const T& value);
     Iterator Erase(const Iterator& position);
+    Iterator Erase(const ConstIterator& position);
     Iterator Erase(SizeT index);
     Vector& PushBack(const T& value);
     template<class... Args>
@@ -408,6 +410,13 @@ Iterator Insert(const Iterator& position, const T& value);
 - 時間複雜度：不確定。多數情況下爲 $O(n)$。
 
 ```c++
+Iterator Insert(const ConstIterator& position, const T& value);
+```
+- 在對應位置前插入元素。
+- 返回指向被插入元素的迭代器。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。
+
+```c++
 Iterator Insert(SizeT index, const T& value);
 ```
 - 在下標處插入元素。
@@ -417,6 +426,15 @@ Iterator Insert(SizeT index, const T& value);
 - 時間複雜度：不確定。多數情況下爲 $O(n)$。
 
 ### <span id="Erase">`Erase`</span>
+```c++
+Iterator Erase(const Iterator& position);
+```
+- 在對應位置移除元素。
+- 如若此迭代器爲末迭代器，將抛出 `lau::OutOfRange` 異常類。
+- 返回指向下一元素的迭代器。
+- 如若此迭代器指向最後一個元素，則返回 `End()` 迭代器。
+- 時間複雜度：不確定。多數情況下爲 $O(n)$。
+
 ```c++
 Iterator Erase(const Iterator& position);
 ```
