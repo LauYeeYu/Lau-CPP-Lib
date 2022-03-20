@@ -165,6 +165,8 @@ PriorityQueue(const PriorityQueue& obj);
 ```
 - Copy constructor
 - Construct the class from another priority queue.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - Time complexity: $O(n)$.
 
 ```c++
@@ -181,6 +183,8 @@ PriorityQueue(Iterator first, Iterator last,
 ```
 - Construct the class with the data from a certain iterator, with default
   (if omitted) or customized compare class, and default allocator.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - Time complexity: $O(n\cdot \log n)$.
 
 ```c++
@@ -190,6 +194,8 @@ PriorityQueue(Iterator first, Iterator last,
 ```
 - Construct the class with the data from a certain iterator, with default
   compare class, and customized allocator.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - Time complexity: $O(n\cdot \log n)$.
 
 ```c++
@@ -200,6 +206,8 @@ PriorityQueue(Iterator first, Iterator last,
 ```
 - Construct the class with the data from a certain iterator, with customized
   compare class, and customized allocator.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - Time complexity: $O(n\cdot \log n)$.
 
 ### <span id="operator=">`operator=`</span>
@@ -207,6 +215,8 @@ PriorityQueue(Iterator first, Iterator last,
 PriorityQueue& operator=(const PriorityQueue& obj);
 ```
 - Assign the class with the `obj` class.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 
 ```c++
 PriorityQueue& operator=(PriorityQueue&& obj) noexcept;
@@ -246,6 +256,8 @@ const T& Top() const;
 PriorityQueue& Clear();
 ```
 - Clear the queue.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - Time complexity: $O(n)$.
 
 ### <span id="Push">`Push`</span>
@@ -253,6 +265,8 @@ PriorityQueue& Clear();
 PriorityQueue& Push(const T& value);
 ```
 - Push new element to the priority queue.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - To make the class visiting easier, the function returns a reference
   pointing to this class.
 - Time complexity: $O(\log n)$.
@@ -262,6 +276,8 @@ PriorityQueue& Push(const T& value);
 PriorityQueue& Pop();
 ```
 - Delete the top element.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - Throw `lau::EmptyContainer` if the queue is empty.
 - To make the class visiting easier, the function returns a reference
   pointing to this class.
@@ -273,6 +289,8 @@ PriorityQueue& Merge(PriorityQueue& other);
 ```
 - Merge other priority queue into the current one.
 - Clear the other priority queue.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - Please note that the compare function of the two class *must* be the same.
   (For all elements, the same input must have the same output.)
 - To make the class visiting easier, the function returns a reference
@@ -298,6 +316,8 @@ PriorityQueue& Emplace(Args&&... args);
 - This operation constructs a new element in place.
 - The constructor of the element is called with exactly the same arguments
   as supplied to the function.
+- This operation includes recursion, so please make sure that there is enough
+  memory space for the stack.
 - To make the class visiting easier, the function returns a reference
   pointing to this class.
 - Time complexity: $O(\log n)$.

@@ -20,7 +20,7 @@ class PriorityQueue;
 
 此類使用左偏樹作爲數據結構。如需瞭解更多相關的信息，請檢視數據結構詳情頁[數據結構詳情頁](#DataStructure)。
 
-請注意：鑒於此類絕大多數操作使用遞歸函數，請爲此類的函數保留足夠多的空間以避免棧空間溢出。
+請注意：鑒於此類絕大多數操作使用遞迴函數，請爲此類的函數保留足夠多的空間以避免棧空間溢出。
 
 ## 概覽
 ```c++
@@ -149,6 +149,7 @@ PriorityQueue(const PriorityQueue& obj);
 ```
 - 複製構造函數
 - 從另一優先佇列複製内容。
+- 採用遞迴，請確保足夠棧空間。
 - 時間複雜度： $O(n)$。
 
 ```c++
@@ -164,6 +165,7 @@ PriorityQueue(Iterator first, Iterator last,
               const Compare& compare = Compare());
 ```
 - 以迭代器中元素作爲初始數據，並以默認（如果缺省）或指定比較類，默認記憶體分配器構造此優先佇列。
+- 採用遞迴，請確保足夠棧空間。
 - 時間複雜度： $O(n\cdot \log n)$。
 
 ```c++
@@ -172,6 +174,7 @@ PriorityQueue(Iterator first, Iterator last,
               const Allocator& allocator);
 ```
 - 以迭代器中元素作爲初始數據，並以默認比較類，指定記憶體分配器構造此優先佇列。
+- 採用遞迴，請確保足夠棧空間。
 - 時間複雜度： $O(n\cdot \log n)$。
 
 ```c++
@@ -181,6 +184,7 @@ PriorityQueue(Iterator first, Iterator last,
               const Allocator& allocator);
 ```
 - 以迭代器中元素作爲初始數據，並以指定比較類，指定記憶體分配器構造此優先佇列。
+- 採用遞迴，請確保足夠棧空間。
 - 時間複雜度： $O(n\cdot \log n)$。
 
 ### <span id="operator=">`operator=`</span>
@@ -188,6 +192,7 @@ PriorityQueue(Iterator first, Iterator last,
 PriorityQueue& operator=(const PriorityQueue& obj);
 ```
 - 以 `obj` 向此優先佇列賦值。
+- 採用遞迴，請確保足夠棧空間。
 
 ```c++
 PriorityQueue& operator=(PriorityQueue&& obj) noexcept;
@@ -226,6 +231,7 @@ const T& Top() const;
 PriorityQueue& Clear();
 ```
 - 清空佇列。
+- 採用遞迴，請確保足夠棧空間。
 - 時間複雜度： $O(n)$。
 
 ### <span id="Push">`Push`</span>
@@ -233,6 +239,7 @@ PriorityQueue& Clear();
 PriorityQueue& Push(const T& value);
 ```
 - 將新元素加入優先佇列。
+- 採用遞迴，請確保足夠棧空間。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度： $O(\log n)$。
 
@@ -241,6 +248,7 @@ PriorityQueue& Push(const T& value);
 PriorityQueue& Pop();
 ```
 - 移除頂部元素。
+- 採用遞迴，請確保足夠棧空間。
 - 如果佇列爲空，將會抛出 `lau::EmptyContainer`。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度： $O(\log n)$。
@@ -251,6 +259,7 @@ PriorityQueue& Merge(PriorityQueue& other);
 ```
 - 將另一優先佇列合併到此處。
 - 另一優先佇列之元素將會被清除。
+- 採用遞迴，請確保足夠棧空間。
 - 請注意：兩個類的比較類**必須**相同。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度： $O(\log n)$。
@@ -272,6 +281,7 @@ PriorityQueue& Emplace(Args&&... args);
 - 將新元素加入優先佇列。
 - 在原位構造元素。
 - 構造函數與此函數提供的參數一致。
+- 採用遞迴，請確保足夠棧空間。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度： $O(\log n)$。
 
