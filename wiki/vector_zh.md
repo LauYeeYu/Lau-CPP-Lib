@@ -68,9 +68,11 @@ public:
     [[nodiscard]] Iterator Begin() const;
     [[nodiscard]] Iterator begin() const;
     [[nodiscard]] ConstIterator ConstBegin() const;
+    [[nodiscard]] ConstIterator cbegin() const;
     [[nodiscard]] Iterator End() const;
     [[nodiscard]] Iterator end() const;
     [[nodiscard]] ConstIterator ConstEnd() const;
+    [[nodiscard]] ConstIterator cend() const;
 
     // 容量
     [[nodiscard]] SizeT Capacity() const;
@@ -136,9 +138,11 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2);
 - [`Begin`](#Begin)：獲取首迭代器
 - [`begin`](#begin)：獲取首迭代器
 - [`ConstBegin`](#ConstBegin)：獲取首常量迭代器
+- [`cbegin`](#cbegin)：獲取首常量迭代器
 - [`End`](#End)：獲取末迭代器
 - [`end`](#end)：獲取末迭代器
 - [`ConstEnd`](#ConstEnd)：獲取末常量迭代器
+- [`cend`](#cend)：獲取末常量迭代器
 
 ### 容量
 - [`Capacity`](#Capacity)：獲取容量
@@ -328,6 +332,12 @@ const T& Back() const;
 ```
 - 獲取首常量迭代器。
 
+### <span id="cbegin">`cbegin`</span>
+```c++
+[[nodiscard]] ConstIterator cbegin() const;
+```
+- 獲取首常量迭代器。
+
 ### <span id="End">`End`</span>
 ```c++
 [[nodiscard]] Iterator End() const;
@@ -345,6 +355,13 @@ const T& Back() const;
 ### <span id="ConstEnd">`ConstEnd`</span>
 ```c++
 [[nodiscard]] ConstIterator ConstEnd() const;
+```
+- 獲取末常量迭代器。
+- 請注意：此迭代器是最後一個元素對應迭代器的後一個。
+
+### <span id="cend">`cend`</span>
+```c++
+[[nodiscard]] ConstIterator cend() const;
 ```
 - 獲取末常量迭代器。
 - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
