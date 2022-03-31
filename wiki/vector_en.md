@@ -39,8 +39,8 @@ public:
     Vector(SizeT count, const T& value, const Allocator& allocator = Allocator());
     explicit Vector(SizeT count, const Allocator& allocator = Allocator());
     template<class InputIterator>
-    Vector(const InputIterator& first,
-           const InputIterator& last,
+    Vector(const InputIterator& begin,
+           const InputIterator& end,
            const Allocator& allocator = Allocator());
     Vector(const Vector& obj);
     Vector(Vector&& obj) noexcept;
@@ -206,11 +206,11 @@ explicit Vector(SizeT count, const Allocator& allocator = Allocator());
 - Construct a vector with default element, size `count` and an allocator.
 ```c++
 template<class InputIterator>
-Vector(const InputIterator& first,
-       const InputIterator& last,
+Vector(const InputIterator& begin,
+       const InputIterator& end,
        const Allocator& allocator = Allocator());
 ```
-- Construct a vector with iterator in [first, end) and an allocator.
+- Construct a vector with iterator in [begin, end) and an allocator.
 
 ```c++
 Vector(const Vector& obj);

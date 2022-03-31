@@ -248,12 +248,12 @@ public:
     }
 
     template<class InputIterator>
-    Vector(const InputIterator& first,
-           const InputIterator& last,
+    Vector(const InputIterator& begin,
+           const InputIterator& end,
            const Allocator& allocator = Allocator())
         : allocator_(allocator), pointerAllocator_(allocator) {
-        this->Reserve(last - first);
-        for (auto element = first; element != last; ++element) {
+        this->Reserve(end - begin);
+        for (auto element = begin; element != end; ++element) {
             this->PushBack(*element);
         }
     }

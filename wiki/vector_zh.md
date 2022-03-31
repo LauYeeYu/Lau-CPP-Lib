@@ -36,8 +36,8 @@ public:
     Vector(SizeT count, const T& value, const Allocator& allocator = Allocator());
     explicit Vector(SizeT count, const Allocator& allocator = Allocator());
     template<class InputIterator>
-    Vector(const InputIterator& first,
-           const InputIterator& last,
+    Vector(const InputIterator& begin,
+           const InputIterator& end,
            const Allocator& allocator = Allocator());
     Vector(const Vector& obj);
     Vector(Vector&& obj) noexcept;
@@ -205,11 +205,11 @@ explicit Vector(SizeT count,
 
 ```c++
 template<class InputIterator>
-Vector(const InputIterator& first,
-       const InputIterator& last,
+Vector(const InputIterator& begin,
+       const InputIterator& end,
        const Allocator& allocator = Allocator());
 ```
-- 使用指定記憶體分配器或默認記憶體分配器（如缺省）構造一個含有位於 [first, end) 內元素的容器。
+- 使用指定記憶體分配器或默認記憶體分配器（如缺省）構造一個含有位於 [begin, end) 內元素的容器。
 
 ```c++
 Vector(const Vector& obj);
