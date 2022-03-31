@@ -380,7 +380,12 @@ public:
                                                   size_(0),
                                                   allocator_(allocator) {}
 
-    RBTree(const Compare& compare, const Allocator& allocator) : head_(nullptr), first_(nullptr), compare_(compare), size_(0), allocator_(allocator) {}
+    RBTree(const Compare& compare,
+           const Allocator& allocator) : head_(nullptr),
+                                         first_(nullptr),
+                                         compare_(compare),
+                                         size_(0),
+                                         allocator_(allocator) {}
 
     template<class InputIterator>
     RBTree(InputIterator begin, InputIterator end) : head_(nullptr),
