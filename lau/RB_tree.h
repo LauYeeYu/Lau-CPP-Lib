@@ -680,7 +680,7 @@ public:
      * Clear the class.
      * @return the reference to this class
      */
-    RBTree& Clear() {
+    RBTree& Clear() noexcept {
         DeleteChildNode_(head_);
         first_ = nullptr;
         head_ = nullptr;
@@ -690,6 +690,14 @@ public:
 
     [[nodiscard]] SizeT Size()  const noexcept { return size_; }
     [[nodiscard]] bool  Empty() const noexcept { return size_ == 0; }
+
+    /**
+     * Get the maximum size of the class.
+     * @return the maximum size of the class
+     */
+    [[nodiscard]] long MaxSize() const noexcept {
+        return std::allocator_traits<Allocator>::max_size(allocator_);
+    }
 
     /**
      * Get a copy of the allocator.
@@ -1292,11 +1300,11 @@ private:
         return newNode;
     }
 
-#ifdef LAU_TEST
     /**
      * Print all the detail of the node and its child node.
      * @param node the head node to be printed
      */
+#ifdef LAU_TEST
     void PrintDetail_(Node* node) {
         std::cout << "node" << node << " [label=\"" << node->value.first << "\",color=";
         if (node->colour == red) std::cout << "red,fontcolor=white]" << std::endl;
