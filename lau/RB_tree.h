@@ -554,9 +554,9 @@ public:
      * prevents this insertion, and the second one is false.
      */
     pair<Iterator, bool> Insert(const T& value) {
-        Node* newNode = allocator_.allocate(1);
-        ::new(newNode) Node(value);
         if (head_ == nullptr) {
+            Node* newNode = allocator_.allocate(1);
+            ::new(newNode) Node(value);
             newNode->colour = black;
             head_ = newNode;
             first_ = newNode;
@@ -579,8 +579,6 @@ public:
         }
 
         if (!direction && !compare_(place->value, value)) { // the case of same value
-            newNode->~Node();
-            allocator_.deallocate(newNode, 1);
             return pair<Iterator, bool>(Iterator(place, this), false);
         }
 
@@ -595,12 +593,12 @@ public:
                 direction = false;
             }
             if (!direction && !compare_(place->value, value)) {
-                newNode->~Node();
-                allocator_.deallocate(newNode, 1);
                 return pair<Iterator, bool>(Iterator(place, this), false);
             }
         }
 
+        Node* newNode = allocator_.allocate(1);
+        ::new(newNode) Node(value);
         ++size_;
         if (min) first_ = newNode;
         newNode->parent = place;
