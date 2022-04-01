@@ -34,7 +34,9 @@
 
 namespace lau {
 
-template<class T, class Compare = std::less<T>, class Allocator = std::allocator<T>>
+template<class T,
+         class Compare = std::less<T>,
+         class Allocator = std::allocator<T>>
 class RBTree {
     friend class Iterator;
     friend class ConstIterator;
@@ -565,7 +567,7 @@ public:
      * if such node exists, the first one is the iterator of the node that
      * prevents this insertion, and the second one is false.
      */
-    pair<Iterator, bool> Insert(const T& value) {
+    Pair<Iterator, bool> Insert(const T& value) {
         if (head_ == nullptr) {
             Node* newNode = allocator_.allocate(1);
             ::new(newNode) Node(value);
@@ -573,7 +575,7 @@ public:
             head_ = newNode;
             first_ = newNode;
             ++size_;
-            return pair<Iterator, bool>(Iterator(newNode, this), true);
+            return Pair<Iterator, bool>(Iterator(newNode, this), true);
         }
 
         // Find the place to insert
@@ -591,7 +593,7 @@ public:
         }
 
         if (!direction && !compare_(place->value, value)) { // the case of same value
-            return pair<Iterator, bool>(Iterator(place, this), false);
+            return Pair<Iterator, bool>(Iterator(place, this), false);
         }
 
         while (tmp != nullptr) {
@@ -605,7 +607,7 @@ public:
                 direction = false;
             }
             if (!direction && !compare_(place->value, value)) {
-                return pair<Iterator, bool>(Iterator(place, this), false);
+                return Pair<Iterator, bool>(Iterator(place, this), false);
             }
         }
 
@@ -617,7 +619,7 @@ public:
         if (direction) place->left = newNode;
         else place->right = newNode;
 
-        if (place->colour == black) return pair<Iterator, bool>(Iterator(newNode, this), true);
+        if (place->colour == black) return Pair<Iterator, bool>(Iterator(newNode, this), true);
 
         place = newNode;
 
@@ -643,7 +645,99 @@ public:
             }
         }
         head_->colour = black;
-        return pair<Iterator, bool>(Iterator(newNode, this), true);
+        return Pair<Iterator, bool>(Iterator(newNode, this), true);
+    }
+
+    /**
+     * Insert a value into the tree.
+     * @param value
+     * @return a pair of Iterator and a bool.
+     * <br><br>
+     * If such node doesn't exist, the first one is the iterator of the new
+     * node, and the second one is true;
+     * <br>
+     * if such node exists, the first one is the iterator of the node that
+     * prevents this insertion, and the second one is false.
+     */
+    Pair<Iterator, bool> Insert(T&& value) {
+        if (head_ == nullptr) {
+            Node* newNode = allocator_.allocate(1);
+            ::new(newNode) Node(value);
+            newNode->colour = black;
+            head_ = newNode;
+            first_ = newNode;
+            ++size_;
+            return Pair<Iterator, bool>(Iterator(newNode, this), true);
+        }
+
+        // Find the place to insert
+        Node* place = head_;
+        Node* uncle;
+        bool direction = true; // true for left and right for right
+        bool min = true;
+        Node* tmp;
+        if (compare_(value, place->value)) {
+            tmp = place->left;
+        } else {
+            min = false;
+            tmp = place->right;
+            direction = false;
+        }
+
+        if (!direction && !compare_(place->value, value)) { // the case of same value
+            return Pair<Iterator, bool>(Iterator(place, this), false);
+        }
+
+        while (tmp != nullptr) {
+            place = direction ? place->left : place->right;
+            if (compare_(value, place->value)) {
+                tmp = place->left;
+                direction = true;
+            } else {
+                min = false;
+                tmp = place->right;
+                direction = false;
+            }
+            if (!direction && !compare_(place->value, value)) {
+                return Pair<Iterator, bool>(Iterator(place, this), false);
+            }
+        }
+
+        Node* newNode = allocator_.allocate(1);
+        ::new(newNode) Node(value);
+        ++size_;
+        if (min) first_ = newNode;
+        newNode->parent = place;
+        if (direction) place->left = newNode;
+        else place->right = newNode;
+
+        if (place->colour == black) return Pair<Iterator, bool>(Iterator(newNode, this), true);
+
+        place = newNode;
+
+        while (place->parent != nullptr && place->parent->colour == red) {
+            // Must have its grandparent, because the parent is red (red node
+            // cannot be the head node.)
+            uncle = place->Uncle();
+            if (uncle == nullptr || uncle->colour == black) {
+                if (place->IsLeftNode()) {
+                    if (place->parent->IsLeftNode()) LLRotate_(place);
+                    else RLRotate_(place);
+                } else {
+                    if (place->parent->IsLeftNode()) LRRotate_(place);
+                    else RRRotate_(place);
+                }
+                break;
+            } else {
+                place = place->parent;
+                place->colour = black;
+                uncle->colour = black;
+                place = place->parent;
+                place->colour = red;
+            }
+        }
+        head_->colour = black;
+        return Pair<Iterator, bool>(Iterator(newNode, this), true);
     }
 
     /**
