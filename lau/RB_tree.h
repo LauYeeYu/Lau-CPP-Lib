@@ -20,8 +20,8 @@
  * This is a external header file, including a red black tree class.
  */
 
-#ifndef LAU_CPP_LIB__LAU_RB_TREE_H
-#define LAU_CPP_LIB__LAU_RB_TREE_H
+#ifndef LAU_CPP_LIB_LAU_RB_TREE_H
+#define LAU_CPP_LIB_LAU_RB_TREE_H
 
 #include <cstddef>
 #include <functional>
@@ -1333,4 +1333,4 @@ private:
 
 }
 
-#endif // LAU_CPP_LIB__LAU_RB_TREE_H
+#endif // LAU_CPP_LIB_LAU_RB_TREE_H
