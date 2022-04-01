@@ -763,7 +763,9 @@ public:
     }
 
     /**
-     * Erase the node at the position.
+     * Erase the node at the position.  Throw <code>lau::InvalidIterator</code>
+     * if the iterator doesn't belong to this tree or the iterator is the end
+     * iterator.
      * @param position the iterator whose target is to be deleted
      * @return the reference to this class
      */
