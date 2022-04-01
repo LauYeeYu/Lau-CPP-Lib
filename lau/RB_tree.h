@@ -131,7 +131,7 @@ public:
 
         Iterator& operator=(const Iterator& obj) noexcept = default;
 
-        ~Iterator() noexcept = default;
+        ~Iterator() = default;
 
         /**
          * Get the iterator next it.  For the last iterator, it will become
@@ -267,7 +267,7 @@ public:
 
         ConstIterator& operator=(const ConstIterator& obj) noexcept = default;
 
-        ~ConstIterator() noexcept = default;
+        ~ConstIterator()  = default;
 
         /**
          * Get the iterator next it.  For the last iterator, it will become
