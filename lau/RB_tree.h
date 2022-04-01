@@ -60,6 +60,12 @@ public:
 
         ~Node() = default;
 
+        Flag Colour() const noexcept { return colour; }
+
+        const Node* Parent() const noexcept { return parent; }
+        const Node* Left()   const noexcept { return left; }
+        const Node* Right()  const noexcept { return right; }
+
         T value;
 
     private:
@@ -70,20 +76,20 @@ public:
          * Check whether the node is left node.  The node MUST have its parent
          * node.
          */
-        bool IsLeftNode() { return (this->parent->left == this); }
+        bool IsLeftNode() noexcept { return (this->parent->left == this); }
 
         /**
          * Check whether the node is right node.  The node MUST have its parent
          * node.
          */
-        bool IsRightNode() { return (this->parent->right == this); }
+        bool IsRightNode() noexcept { return (this->parent->right == this); }
 
         /**
          * Get the brother node.  The node MUST have its parent node.
          * @param node
          * @return the pointer to the brother node
          */
-        Node* Brother() {
+        Node* Brother() noexcept {
             return (IsLeftNode()) ? this->parent->right : this->parent->left;
         }
 
@@ -92,9 +98,9 @@ public:
          * @param node
          * @return the pointer to the uncle node
          */
-        Node* Uncle() { return this->parent->Brother(); }
+        Node* Uncle() noexcept { return this->parent->Brother(); }
 
-        Flag colour  = red;
+        Flag  colour = red;
         Node* parent = nullptr;
         Node* left   = nullptr;
         Node* right  = nullptr;
@@ -115,15 +121,17 @@ public:
         // https://en.cppreference.com/w/cpp/header/type_traits
         // About iterator_category: https://en.cppreference.com/w/cpp/iterator
         using difference_type   = std::ptrdiff_t;
-        using value_type        = T;
-        using pointer           = T*;
-        using reference         = T&;
+        using value_type        = Node;
+        using pointer           = Node*;
+        using reference         = Node&;
         using iterator_category = std::output_iterator_tag;
 
-        Iterator() = default;
-        Iterator(const Iterator& obj) = default;
+        Iterator() noexcept = default;
+        Iterator(const Iterator& obj) noexcept = default;
 
-        Iterator& operator=(const Iterator& obj) = default;
+        Iterator& operator=(const Iterator& obj) noexcept = default;
+
+        ~Iterator() noexcept = default;
 
         /**
          * Get the iterator next it.  For the last iterator, it will become
@@ -193,19 +201,19 @@ public:
             return *this;
         }
 
-        bool operator==(const Iterator& rhs) const {
+        bool operator==(const Iterator& rhs) const noexcept {
             return (this->tree_ == rhs.tree_ && this->target_ == rhs.target_);
         }
 
-        bool operator==(const ConstIterator& rhs) const {
+        bool operator==(const ConstIterator& rhs) const noexcept {
             return (this->tree_ == rhs.tree_ && this->target_ == rhs.target_);
         }
 
-        bool operator!=(const Iterator& rhs) const {
+        bool operator!=(const Iterator& rhs) const noexcept {
             return (this->tree_ != rhs.tree_ || this->target_ != rhs.target_);
         }
 
-        bool operator!=(const ConstIterator& rhs) const {
+        bool operator!=(const ConstIterator& rhs) const noexcept {
             return (this->tree_ != rhs.tree_ || this->target_ != rhs.target_);
         }
 
@@ -226,7 +234,7 @@ public:
     private:
         Iterator(Node* target, const RBTree* tree) : target_(target), tree_(tree) {}
 
-        Node* target_ = nullptr;
+        Node* target_       = nullptr;
         const RBTree* tree_ = nullptr;
     };
 
@@ -250,13 +258,17 @@ public:
         using reference         = T&;
         using iterator_category = std::output_iterator_tag;
 
-        ConstIterator() = default;
-        ConstIterator(const ConstIterator& obj) = default;
+        ConstIterator() noexcept = default;
+        ConstIterator(const ConstIterator& obj) noexcept = default;
 
-        ConstIterator(const Iterator& iterator) : target_(iterator.target_),
-                                                  tree_(iterator.tree_) {}
+        ConstIterator(const Iterator& iterator) noexcept
+            : target_(iterator.target_),
+              tree_(iterator.tree_) {}
 
-        ConstIterator& operator=(const ConstIterator& obj) = default;
+        ConstIterator& operator=(const ConstIterator& obj) noexcept = default;
+
+        ~ConstIterator() noexcept = default;
+
         /**
          * Get the iterator next it.  For the last iterator, it will become
          * the end iterator.  Throw <code>lau::InvalidIterator</code> if it
@@ -325,19 +337,19 @@ public:
             return *this;
         }
 
-        bool operator==(const Iterator& rhs) const {
+        bool operator==(const Iterator& rhs) const noexcept {
             return (this->tree_ == rhs.tree_ && this->target_ == rhs.target_);
         }
 
-        bool operator==(const ConstIterator& rhs) const {
+        bool operator==(const ConstIterator& rhs) const noexcept {
             return (this->tree_ == rhs.tree_ && this->target_ == rhs.target_);
         }
 
-        bool operator!=(const Iterator& rhs) const {
+        bool operator!=(const Iterator& rhs) const noexcept {
             return (this->tree_ != rhs.tree_ || this->target_ != rhs.target_);
         }
 
-        bool operator!=(const ConstIterator& rhs) const {
+        bool operator!=(const ConstIterator& rhs) const noexcept {
             return (this->tree_ != rhs.tree_ || this->target_ != rhs.target_);
         }
 
@@ -358,7 +370,7 @@ public:
     private:
         ConstIterator(Node* target, const RBTree* tree) : target_(target), tree_(tree) {}
 
-        Node* target_ = nullptr;
+        Node* target_       = nullptr;
         const RBTree* tree_ = nullptr;
     };
 
@@ -676,8 +688,20 @@ public:
         return *this;
     }
 
-    [[nodiscard]] SizeT Size() const { return size_; }
-    [[nodiscard]] bool  Empty() const { return size_ == 0; }
+    [[nodiscard]] SizeT Size()  const noexcept { return size_; }
+    [[nodiscard]] bool  Empty() const noexcept { return size_ == 0; }
+
+    /**
+     * Get a copy of the allocator.
+     * @return a copy of the allocator
+     */
+    [[nodiscard]] AllocatorType GetAllocator() const noexcept { return allocator_; }
+
+    /**
+     * Get a copy of the compare class.
+     * @return a copy of the compare class
+     */
+    [[nodiscard]] Compare GetCompare() const { return compare_; }
 
     /**
      * Check whether a node exist or not.
@@ -705,12 +729,20 @@ public:
      */
     ConstIterator Find(const T& value) const { return ConstIterator(Find_(value), this); }
 
-    Iterator Begin() { return Iterator(first_, this); }
-    Iterator begin() { return Begin(); }
-    ConstIterator ConstBegin() const { return ConstIterator(first_, this); }
+    Iterator Begin() noexcept { return Iterator(first_, this); }
+    ConstIterator Begin() const noexcept { return ConstIterator(first_, this); }
 
-    Iterator End() { return Iterator(nullptr, this); }
+    Iterator begin() { return Begin(); }
+    ConstIterator begin() const noexcept { return ConstIterator(first_, this); }
+
+    ConstIterator ConstBegin() const noexcept { return ConstIterator(first_, this); }
+
+    Iterator End() noexcept { return Iterator(nullptr, this); }
+    ConstIterator End() const noexcept { return ConstIterator(nullptr, this); }
+
     Iterator end() { return End(); }
+    ConstIterator end() const noexcept { return ConstIterator(nullptr, this); }
+
     ConstIterator ConstEnd() const { return ConstIterator(nullptr, this); }
 
 private:
@@ -857,7 +889,7 @@ private:
      * Erase the node position is pointing.  The position must be valid.
      * @param position
      */
-    void Erase_(Node* position) {
+    void Erase_(Node* position) noexcept {
         --size_;
 
         // Handling the first pointer
@@ -1234,7 +1266,7 @@ private:
      * Delete all the child node(s) of the node.
      * @param node the head node of the tree
      */
-    void DeleteChildNode_(Node* node) {
+    void DeleteChildNode_(Node* node) noexcept {
         if (node == nullptr) return;
         DeleteChildNode_(node->left);
         DeleteChildNode_(node->right);
