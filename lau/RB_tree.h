@@ -376,11 +376,11 @@ public:
         const RBTree* tree_ = nullptr;
     };
 
-    RBTree() noexcept(noexcept(Allocator())): head_(nullptr),
-                                              first_(nullptr),
-                                              compare_(),
-                                              size_(0),
-                                              allocator_() {}
+    RBTree() : head_(nullptr),
+               first_(nullptr),
+               compare_(),
+               size_(0),
+               allocator_() {}
 
     explicit RBTree(const Compare& compare) : head_(nullptr),
                                               first_(nullptr),
