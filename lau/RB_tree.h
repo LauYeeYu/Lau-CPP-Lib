@@ -1400,7 +1400,7 @@ private:
      */
 #ifdef LAU_TEST
     void PrintDetail_(Node* node) {
-        std::cout << "node" << node << " [label=\"" << node->value.first << "\",color=";
+        std::cout << "node" << node << " [label=\"" << node->value << "\",color=";
         if (node->colour == red) std::cout << "red,fontcolor=white]" << std::endl;
         else std::cout << "black,fontcolor=white]" << std::endl;
 
