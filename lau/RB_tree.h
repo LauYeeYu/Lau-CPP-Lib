@@ -453,10 +453,20 @@ public:
         }
     }
 
-    RBTree(const RBTree& obj) {
+    RBTree(const RBTree& obj) : size_(obj.size_),
+                                compare_(obj.compare_),
+                                allocator_(obj.allocator) {
         head_ = CopyChildTree_(obj.head_);
-        compare_ = obj.compare_;
-        size_ = obj.size_;
+        first_ = head_;
+        if (head_ == nullptr) return;
+        while (first_->left != nullptr) first_ = first_->left;
+    }
+
+    RBTree(const RBTree& obj, const Allocator& allocator)
+        : size_(obj.size_),
+          compare_(obj.compare_),
+          allocator_(allocator) {
+        head_ = CopyChildTree_(obj.head_);
         first_ = head_;
         if (head_ == nullptr) return;
         while (first_->left != nullptr) first_ = first_->left;
@@ -465,7 +475,19 @@ public:
     RBTree(RBTree&& obj) noexcept : head_(obj.head_),
                                     compare_(std::move(obj.compare_)),
                                     first_(obj.first_),
-                                    size_(obj.size_) {
+                                    size_(obj.size_),
+                                    allocator_(std::move(obj.allocator)) {
+        obj.head_ = nullptr;
+        obj.first_ = nullptr;
+        obj.size_ = 0;
+    }
+
+    RBTree(RBTree&& obj, const Allocator& allocator) noexcept
+        : head_(obj.head_),
+          compare_(std::move(obj.compare_)),
+          first_(obj.first_),
+          size_(obj.size_),
+          allocator_(allocator) {
         obj.head_ = nullptr;
         obj.first_ = nullptr;
         obj.size_ = 0;
