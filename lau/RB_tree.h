@@ -1823,15 +1823,20 @@ private:
         if (node == nullptr) return nullptr;
         Node* newNode = allocator_.allocate(1);
         try {
-            ::new(newNode) Node(node->value,
-                                nullptr,
-                                CopyChildTree_(node->left),
-                                CopyChildTree_(node->right),
-                                node->colour);
+            ::new(newNode) Node(node->value, nullptr, nullptr, nullptr, node->colour);
         } catch (...) {
             allocator_.deallocate(newNode, 1);
             throw;
         }
+
+        try {
+            newNode->left = CopyChildTree_(node->left);
+            newNode->right = CopyChildTree_(node->right);
+        } catch (...) {
+            DeleteChildNode_(newNode);
+            throw;
+        }
+
         if (newNode->left != nullptr) newNode->left->parent = newNode;
         if (newNode->right != nullptr) newNode->right->parent = newNode;
         return newNode;
