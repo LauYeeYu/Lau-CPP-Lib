@@ -56,6 +56,10 @@ public:
     public:
         explicit Node(const T& valueIn) : value(valueIn) {}
         explicit Node(T&& valueIn) : value(valueIn) {}
+
+        template<class... Args>
+        explicit Node(Args&... args) : value(std::forward<Args>(args)...) {}
+
         Node(const Node& obj) = default;
 
         Node& operator=(const Node& obj) = default;
@@ -153,7 +157,7 @@ public:
          */
         Iterator& operator++() {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: using ++ on an end iterator");
+                throw InvalidIterator("Invalid Iterator: using ++ on the end iterator");
             }
             if (target_->right == nullptr) {
                 while (target_->parent != nullptr && target_->IsRightNode()) {
@@ -221,14 +225,14 @@ public:
 
         T& operator*() const {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+                throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
             return target_->value;
         }
 
         T* operator->() const {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+                throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
             return &(target_->value);
         }
@@ -289,7 +293,7 @@ public:
          */
         ConstIterator& operator++() {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: using ++ on an end iterator");
+                throw InvalidIterator("Invalid Iterator: using ++ on the end iterator");
             }
             if (target_->right == nullptr) {
                 while (target_->parent != nullptr && target_->IsRightNode()) {
@@ -357,14 +361,14 @@ public:
 
         const T& operator*() const {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+                throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
             return target_->value;
         }
 
         const T* operator->() const {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+                throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
             return &(target_->value);
         }
@@ -455,7 +459,7 @@ public:
 
     RBTree(const RBTree& obj) : size_(obj.size_),
                                 compare_(obj.compare_),
-                                allocator_(obj.allocator) {
+                                allocator_(obj.allocator_) {
         head_ = CopyChildTree_(obj.head_);
         first_ = head_;
         if (head_ == nullptr) return;
@@ -465,7 +469,7 @@ public:
     RBTree(const RBTree& obj, const Allocator& allocator)
         : size_(obj.size_),
           compare_(obj.compare_),
-          allocator_(allocator) {
+          allocator_(allocator_) {
         head_ = CopyChildTree_(obj.head_);
         first_ = head_;
         if (head_ == nullptr) return;
@@ -476,18 +480,7 @@ public:
                                     compare_(std::move(obj.compare_)),
                                     first_(obj.first_),
                                     size_(obj.size_),
-                                    allocator_(std::move(obj.allocator)) {
-        obj.head_ = nullptr;
-        obj.first_ = nullptr;
-        obj.size_ = 0;
-    }
-
-    RBTree(RBTree&& obj, const Allocator& allocator) noexcept
-        : head_(obj.head_),
-          compare_(std::move(obj.compare_)),
-          first_(obj.first_),
-          size_(obj.size_),
-          allocator_(allocator) {
+                                    allocator_(std::move(obj.allocator_)) {
         obj.head_ = nullptr;
         obj.first_ = nullptr;
         obj.size_ = 0;
@@ -592,7 +585,12 @@ public:
     Pair<Iterator, bool> Insert(const T& value) {
         if (head_ == nullptr) {
             Node* newNode = allocator_.allocate(1);
-            ::new(newNode) Node(value);
+            try {
+                ::new(newNode) Node(value);
+            } catch (...) {
+                allocator_.deallocate(newNode, 1);
+                throw;
+            }
             newNode->colour = black;
             head_ = newNode;
             first_ = newNode;
@@ -634,7 +632,114 @@ public:
         }
 
         Node* newNode = allocator_.allocate(1);
-        ::new(newNode) Node(value);
+        try {
+            ::new(newNode) Node(value);
+        } catch (...) {
+            allocator_.deallocate(newNode, 1);
+            throw;
+        }
+        ++size_;
+        if (min) first_ = newNode;
+        newNode->parent = place;
+        if (direction) place->left = newNode;
+        else place->right = newNode;
+
+        if (place->colour == black) return Pair<Iterator, bool>(Iterator(newNode, this), true);
+
+        place = newNode;
+
+        while (place->parent != nullptr && place->parent->colour == red) {
+            // Must have its grandparent, because the parent is red (red node
+            // cannot be the head node.)
+            uncle = place->Uncle();
+            if (uncle == nullptr || uncle->colour == black) {
+                if (place->IsLeftNode()) {
+                    if (place->parent->IsLeftNode()) LLRotate_(place);
+                    else RLRotate_(place);
+                } else {
+                    if (place->parent->IsLeftNode()) LRRotate_(place);
+                    else RRRotate_(place);
+                }
+                break;
+            } else {
+                place = place->parent;
+                place->colour = black;
+                uncle->colour = black;
+                place = place->parent;
+                place->colour = red;
+            }
+        }
+        head_->colour = black;
+        return Pair<Iterator, bool>(Iterator(newNode, this), true);
+    }
+
+    /**
+     * Add a value into the tree in place.  Please note that the node will be
+     * constructed in the very beginning of this function.
+     * @param args
+     * @return a pair of Iterator and a bool.
+     * <br><br>
+     * If such node doesn't exist, the first one is the iterator of the new
+     * node, and the second one is true;
+     * <br>
+     * if such node exists, the first one is the iterator of the node that
+     * prevents this insertion, and the second one is false.
+     */
+    template<class... Args>
+    Pair<Iterator, bool> Emplace(Args&&... args) {
+        Node* newNode = allocator_.allocate(1);
+        try {
+            ::new(newNode) Node(args...);
+        } catch (...) {
+            allocator_.deallocate(newNode, 1);
+            throw;
+        }
+
+        if (head_ == nullptr) {
+            newNode->colour = black;
+            head_ = newNode;
+            first_ = newNode;
+            ++size_;
+            return Pair<Iterator, bool>(Iterator(newNode, this), true);
+        }
+
+        // Find the place to insert
+        Node* place = head_;
+        Node* uncle;
+        bool direction = true; // true for left and right for right
+        bool min = true;
+        Node* tmp;
+        if (compare_(newNode->value, place->value)) {
+            tmp = place->left;
+        } else {
+            min = false;
+            tmp = place->right;
+            direction = false;
+        }
+
+        if (!direction && !compare_(place->value, newNode->value)) { // the case of same value
+            newNode->~Node();
+            allocator_.deallocate(newNode, 1);
+            return Pair<Iterator, bool>(Iterator(place, this), false);
+        }
+
+        while (tmp != nullptr) {
+            place = direction ? place->left : place->right;
+            if (compare_(newNode->value, place->value)) {
+                tmp = place->left;
+                direction = true;
+            } else {
+                min = false;
+                tmp = place->right;
+                direction = false;
+            }
+            if (!direction && !compare_(place->value, newNode->value)) {
+                newNode->~Node();
+                allocator_.deallocate(newNode, 1);
+                return Pair<Iterator, bool>(Iterator(place, this), false);
+            }
+        }
+
         ++size_;
         if (min) first_ = newNode;
         newNode->parent = place;
@@ -684,7 +789,12 @@ public:
     Pair<Iterator, bool> Insert(T&& value) {
         if (head_ == nullptr) {
             Node* newNode = allocator_.allocate(1);
-            ::new(newNode) Node(value);
+            try {
+                ::new(newNode) Node(value);
+            } catch (...) {
+                allocator_.deallocate(newNode, 1);
+                throw;
+            }
             newNode->colour = black;
             head_ = newNode;
             first_ = newNode;
@@ -726,7 +836,12 @@ public:
         }
 
         Node* newNode = allocator_.allocate(1);
-        ::new(newNode) Node(value);
+        try {
+            ::new(newNode) Node(value);
+        } catch (...) {
+            allocator_.deallocate(newNode, 1);
+            throw;
+        }
         ++size_;
         if (min) first_ = newNode;
         newNode->parent = place;
@@ -795,6 +910,21 @@ public:
     }
 
     /**
+     * Erase the node with the same value.
+     * @param value
+     * @return the reference to this class
+     */
+    template<class K>
+    RBTree& Erase(const K& value) {
+        Node* place = Find_(value);
+        if (place == nullptr) {
+            throw InvalidArgument("Invalid Argument: the class have no such value");
+        }
+        Erase_(place);
+        return *this;
+    }
+
+    /**
      * Clear the class.
      * @return the reference to this class
      */
@@ -834,7 +964,15 @@ public:
      * @param value the value for searching
      * @return a boolean of whether the value exist or not
      */
-    bool Exist(const T& value) const { return Find_(value) != nullptr; }
+    [[nodiscard]] bool Contains(const T& value) const { return Find_(value) != nullptr; }
+
+    /**
+     * Check whether a node exist or not.
+     * @param value the value for searching
+     * @return a boolean of whether the value exist or not
+     */
+    template<class K>
+    [[nodiscard]] bool Contains(const K& value) const { return Find_(value) != nullptr; }
 
     /**
      * Find the place of the value.
@@ -843,7 +981,19 @@ public:
      * <br>
      * if the there doesn't exist such node, an end pointer will be returned.
      */
-    Iterator Find(const T& value) { return Iterator(Find_(value), this); }
+    [[nodiscard]] Iterator Find(const T& value) { return Iterator(Find_(value), this); }
+
+    /**
+     * Find the place of the value.  Please note that the type K must have
+     * valid <code>Compare::is_transparent</code>.
+     * @param value the value for searching
+     * @return the iterator of the corresponding node;
+     * <br>
+     * if the there doesn't exist such node, an end pointer will be returned.
+     */
+    template<class K>
+    [[nodiscard]] Iterator Find(const K& value) { return Iterator(Find_(value), this); }
+
 
     /**
      * Find the place of the value.
@@ -853,23 +1003,272 @@ public:
      * if the there doesn't exist such node, an const end pointer will be
      * returned.
      */
-    ConstIterator Find(const T& value) const { return ConstIterator(Find_(value), this); }
+    [[nodiscard]] ConstIterator Find(const T& value) const { return ConstIterator(Find_(value), this); }
 
-    Iterator Begin() noexcept { return Iterator(first_, this); }
-    ConstIterator Begin() const noexcept { return ConstIterator(first_, this); }
+    /**
+     * Find the place of the value.  Please note that the type K must have
+     * valid <code>Compare::is_transparent</code>.
+     * @param value the value for searching
+     * @return the const iterator of the corresponding node;
+     * <br>
+     * if the there doesn't exist such node, an const end pointer will be
+     * returned.
+     */
+    template<class K>
+    [[nodiscard]] ConstIterator Find(const K& value) const { return ConstIterator(Find_(value), this); }
 
-    Iterator begin() { return Begin(); }
-    ConstIterator begin() const noexcept { return ConstIterator(first_, this); }
+    /**
+     * Find the first node that is no less that the value.  If there are no
+     * nodes that is no less than the value, the end iterator will be returned.
+     * @param value
+     * @return the iterator of the first node that is no less that the value
+     * <br>
+     * If there are no nodes that is no less than the value, the end iterator
+     * will be returned.
+     */
+    [[nodiscard]] Iterator LowerBound(const T& value) {
+        Node* place = head_;
+        Node* lowerBound = nullptr;
 
-    ConstIterator ConstBegin() const noexcept { return ConstIterator(first_, this); }
+        while (place != nullptr) {
+            if (compare_(place->value, value)) {
+                place = place->right;
+            } else {
+                lowerBound = place;
+                place = place->left;
+            }
+        }
+        return Iterator(lowerBound, this);
+    }
 
-    Iterator End() noexcept { return Iterator(nullptr, this); }
-    ConstIterator End() const noexcept { return ConstIterator(nullptr, this); }
+    /**
+     * Find the first node that is no less that the value.  If there are no
+     * nodes that is no less than the value, the const end iterator will be
+     * returned.
+     * @param value
+     * @return the const iterator of the first node that is no less that the
+     * value
+     * <br>
+     * If there are no nodes that is no less than the value, an const end
+     * iterator will be returned.
+     */
+    [[nodiscard]] ConstIterator LowerBound(const T& value) const {
+        Node* place = head_;
+        Node* lowerBound = nullptr;
 
-    Iterator end() { return End(); }
-    ConstIterator end() const noexcept { return ConstIterator(nullptr, this); }
+        while (place != nullptr) {
+            if (compare_(place->value, value)) {
+                place = place->right;
+            } else {
+                lowerBound = place;
+                place = place->left;
+            }
+        }
+        return ConstIterator(lowerBound, this);
+    }
 
-    ConstIterator ConstEnd() const { return ConstIterator(nullptr, this); }
+    /**
+     * Find the first node that is no less that the value.  If there are no
+     * nodes that is no less than the value, the end iterator will be
+     * returned.  Please note that the type K must have valid
+     * <code>Compare::is_transparent</code>.
+     * @param value
+     * @return the iterator of the first node that is no less that the value
+     * <br>
+     * If there are no nodes that is no less than the value, the end iterator
+     * will be returned.
+     */
+    template<class K>
+    [[nodiscard]] Iterator LowerBound(const K& value) {
+        Node* place = head_;
+        Node* lowerBound = nullptr;
+
+        while (place != nullptr) {
+            if (compare_(place->value, value)) {
+                place = place->right;
+            } else {
+                lowerBound = place;
+                place = place->left;
+            }
+        }
+        return Iterator(lowerBound, this);
+    }
+
+    /**
+     * Find the first node that is no less that the value.  If there are no
+     * nodes that is no less than the value, the const end iterator will be
+     * returned.  Please note that the type K must have valid
+     * <code>Compare::is_transparent</code>.
+     * @param value
+     * @return the const iterator of the first node that is no less that the
+     * value
+     * <br>
+     * If there are no nodes that is no less than the value, an const end
+     * iterator will be returned.
+     */
+    template<class K>
+    [[nodiscard]] ConstIterator LowerBound(const K& value) const {
+        Node* place = head_;
+        Node* lowerBound = nullptr;
+
+        while (place != nullptr) {
+            if (compare_(place->value, value)) {
+                place = place->right;
+            } else {
+                lowerBound = place;
+                place = place->left;
+            }
+        }
+        return ConstIterator(lowerBound, this);
+    }
+
+    /**
+     * Find the first node that is greater that the value.  If there are no
+     * nodes that is greater than the value, the end iterator will be returned.
+     * @param value
+     * @return the iterator of the first node that is greater that the value
+     * <br>
+     * If there are no nodes that is greater than the value, the end iterator
+     * will be returned.
+     */
+    [[nodiscard]] Iterator UpperBound(const T& value) {
+        Node* place = head_;
+        Node* upperBound = nullptr;
+
+        while (place != nullptr) {
+            if (compare_(value, place->value)) {
+                upperBound = place;
+                place = place->left;
+            } else {
+                place = place->right;
+            }
+        }
+        return Iterator(upperBound, this);
+    }
+
+    /**
+     * Find the first node that is greater that the value.  If there are no
+     * nodes that is greater than the value, the const end iterator will be
+     * returned.
+     * @param value
+     * @return the const iterator of the first node that is greater that the
+     * value
+     * <br>
+     * If there are no nodes that is greater than the value, an const end
+     * iterator will be returned.
+     */
+    [[nodiscard]] ConstIterator UpperBound(const T& value) const {
+        Node* place = head_;
+        Node* upperBound = nullptr;
+
+        while (place != nullptr) {
+            if (compare_(value, place->value)) {
+                upperBound = place;
+                place = place->left;
+            } else {
+                place = place->right;
+            }
+        }
+        return ConstIterator(upperBound, this);
+    }
+
+    /**
+     * Find the first node that is greater that the value.  If there are no
+     * nodes that is greater than the value, the end iterator will be
+     * returned.  Please note that the type K must have valid
+     * <code>Compare::is_transparent</code>.
+     * @param value
+     * @return the iterator of the first node that is greater that the value
+     * <br>
+     * If there are no nodes that is greater than the value, the end iterator
+     * will be returned.
+     */
+    template<class K>
+    [[nodiscard]] Iterator UpperBound(const K& value) {
+        Node* place = head_;
+        Node* upperBound = nullptr;
+
+        while (place != nullptr) {
+            if (compare_(value, place->value)) {
+                upperBound = place;
+                place = place->left;
+            } else {
+                place = place->right;
+            }
+        }
+        return Iterator(upperBound, this);
+    }
+
+    /**
+     * Find the first node that is greater that the value.  If there are no
+     * nodes that is greater than the value, the const end iterator will be
+     * returned.  Please note that the type K must have valid
+     * <code>Compare::is_transparent</code>.
+     * @param value
+     * @return the const iterator of the first node that is greater that the
+     * value
+     * <br>
+     * If there are no nodes that is greater than the value, an const end
+     * iterator will be returned.
+     */
+    template<class K>
+    [[nodiscard]] ConstIterator UpperBound(const K& value) const {
+        Node* place = head_;
+        Node* upperBound = nullptr;
+
+        while (place != nullptr) {
+            if (compare_(value, place->value)) {
+                upperBound = place;
+                place = place->left;
+            } else {
+                place = place->right;
+            }
+        }
+        return ConstIterator(upperBound, this);
+    }
+
+    [[nodiscard]] Iterator Begin() noexcept { return Iterator(first_, this); }
+    [[nodiscard]] ConstIterator Begin() const noexcept { return ConstIterator(first_, this); }
+
+    [[nodiscard]] Iterator begin() { return Begin(); }
+    [[nodiscard]] ConstIterator begin() const noexcept { return ConstIterator(first_, this); }
+
+    [[nodiscard]] ConstIterator ConstBegin() const noexcept { return ConstIterator(first_, this); }
+
+    [[nodiscard]] Iterator End() noexcept { return Iterator(nullptr, this); }
+    [[nodiscard]] ConstIterator End() const noexcept { return ConstIterator(nullptr, this); }
+
+    [[nodiscard]] Iterator end() { return End(); }
+    [[nodiscard]] ConstIterator end() const noexcept { return ConstIterator(nullptr, this); }
+
+    [[nodiscard]] ConstIterator ConstEnd() const { return ConstIterator(nullptr, this); }
+
+    /**
+     * Swap the contents of two red black tree.
+     * @param other
+     * @return the reference to this class
+     */
+    RBTree& Swap(RBTree& other) noexcept {
+        Node* tmpNode = other.head_;
+        other.head_ = this->head_;
+        this->head_ = tmpNode;
+
+        tmpNode = other.first_;
+        other.first_ = this->first_;
+        this->first_ = tmpNode;
+
+        Compare tmpCompare = std::move(other.compare_);
+        other.compare_ = std::move(this->compare_);
+        this->compare_ = std::move(tmpCompare);
+
+        SizeT tmpSize = other.size_;
+        other.size_ = this->size_;
+        this->size_ = tmpSize;
+
+        AllocatorType tmpAllocator = std::move(other.allocator_);
+        other.allocator_ = std::move(this->allocator_);
+        this->allocator_ = std::move(tmpAllocator);
+    }
 
 private:
     /**
@@ -998,6 +1397,21 @@ private:
      * such node.
      */
     Node* Find_(const T& value) const noexcept {
+        Node* position = head_;
+        while (position != nullptr) {
+            if (compare_(value, position->value)) {
+                position = position->left;
+            } else if (compare_(position->value, value)) {
+                position = position->right;
+            } else {
+                return position;
+            }
+        }
+        return nullptr;
+    }
+
+    template<class K>
+    Node* Find_(const K& value) const noexcept {
         Node* position = head_;
         while (position != nullptr) {
             if (compare_(value, position->value)) {
@@ -1408,11 +1822,16 @@ private:
     Node* CopyChildTree_(Node* node) {
         if (node == nullptr) return nullptr;
         Node* newNode = allocator_.allocate(1);
-        ::new(newNode) Node(node->value,
-                                 nullptr,
-                                 CopyChildTree_(node->left),
-                                 CopyChildTree_(node->right),
-                                 node->colour);
+        try {
+            ::new(newNode) Node(node->value,
+                                nullptr,
+                                CopyChildTree_(node->left),
+                                CopyChildTree_(node->right),
+                                node->colour);
+        } catch (...) {
+            allocator_.deallocate(newNode, 1);
+            throw;
+        }
         if (newNode->left != nullptr) newNode->left->parent = newNode;
         if (newNode->right != nullptr) newNode->right->parent = newNode;
         return newNode;
@@ -1449,6 +1868,11 @@ private:
     AllocatorType allocator_;
 };
 
+template <typename T, typename Compare, typename Allocator>
+void Swap(RBTree<T, Compare, Allocator>& lhs, RBTree<T, Compare, Allocator>& rhs) noexcept {
+    lhs.Swap(rhs);
 }
+
+} // namespace lau
 
 #endif // LAU_CPP_LIB_LAU_RB_TREE_H

@@ -166,8 +166,7 @@ public:
 
         ConstIterator& operator=(const ConstIterator& obj) noexcept = default;
 
-        ~Iterator() = default;
-
+        ~ConstIterator() = default;
 
         ConstIterator operator+(SizeT n) const noexcept { return ConstIterator(objPtr_ + n, vectorPtr_); }
         ConstIterator operator-(SizeT n) const noexcept { return ConstIterator(objPtr_ - n, vectorPtr_); }

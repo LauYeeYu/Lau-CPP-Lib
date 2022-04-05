@@ -10,6 +10,7 @@ add_executable(test
         lau/file_data_structure.h
         lau/file_double_unrolled_linked_list.h
         lau/file_unrolled_linked_list.h
+        lau/map.h
         lau/priority_queue.h
         lau/RB_tree.h
         lau/sparse_table.h
