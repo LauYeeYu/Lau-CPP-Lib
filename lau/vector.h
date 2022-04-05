@@ -269,7 +269,16 @@ public:
         target_ = pointerAllocator_.allocate(capacity_);
         for (SizeT i = 0; i < size_; ++i) {
             target_[i] = allocator_.allocate(1);
-            ::new (target_[i]) T(*(obj.target_[i + obj.beginIndex_]));
+            try {
+                ::new(target_[i]) T(*(obj.target_[i + obj.beginIndex_]));
+            } catch (...) {
+                for (SizeT j = 0; j < i; ++j) {
+                    target_[j]->~T();
+                    allocator_.deallocate(target_[j], 1);
+                }
+                pointerAllocator_.deallocate(target_, capacity_);
+                throw;
+            }
         }
     }
 
@@ -305,7 +314,16 @@ public:
         target_ = pointerAllocator_.allocate(capacity_);
         for (SizeT i = 0; i < size_; ++i) {
             target_[i] = allocator_.allocate(1);
-            ::new (target_[i]) T(*(obj.target_[i + obj.beginIndex_]));
+            try {
+                ::new(target_[i]) T(*(obj.target_[i + obj.beginIndex_]));
+            } catch (...) {
+                for (SizeT j = 0; j < i; ++j) {
+                    target_[j]->~T();
+                    allocator_.deallocate(target_[j], 1);
+                }
+                pointerAllocator_.deallocate(target_, capacity_);
+                throw;
+            }
         }
         return *this;
     }
@@ -493,7 +511,12 @@ public:
             target_[i + beginIndex_] = target_[i + beginIndex_ - 1];
         }
         target_[index + beginIndex_] = allocator_.allocate(1);
-        ::new (target_[index + beginIndex_]) T(value);
+        try {
+            ::new(target_[index + beginIndex_]) T(value);
+        } catch (...) {
+            allocator_.deallocate(target_[index + beginIndex_], 1);
+            throw;
+        }
         ++size_;
         return Iterator(target_ + beginIndex_ + index, this);
     }
@@ -553,7 +576,12 @@ public:
     Vector& PushBack(const T& value) {
         if (NeedEnlarging_()) Enlarge_();
         target_[size_ + beginIndex_] = allocator_.allocate(1);
-        ::new (target_[size_ + beginIndex_]) T(value);
+        try {
+            ::new(target_[size_ + beginIndex_]) T(value);
+        } catch (...) {
+            allocator_.deallocate(target_[size_ + beginIndex_], 1);
+            throw;
+        }
         ++size_;
         return *this;
     }
@@ -570,7 +598,12 @@ public:
     Vector& EmplaceBack(Args&&... args) {
         if (NeedEnlarging_()) Enlarge_();
         target_[size_ + beginIndex_] = allocator_.allocate(1);
-        ::new (target_[size_ + beginIndex_]) T(args...);
+        try {
+            ::new(target_[size_ + beginIndex_]) T(args...);
+        } catch (...) {
+            allocator_.deallocate(target_[size_ + beginIndex_], 1);
+            throw;
+        }
         ++size_;
         return *this;
     }
@@ -582,9 +615,14 @@ public:
      */
     Vector& PushFront(const T& value) {
         if (beginIndex_ > 0) {
+            target_[beginIndex_ - 1] = allocator_.allocate(1);
+            try {
+                ::new(target_[beginIndex_]) T(value);
+            } catch (...) {
+                allocator_.deallocate(target_[beginIndex_], 1);
+                throw;
+            }
             --beginIndex_;
-            target_[beginIndex_] = allocator_.allocate(1);
-            ::new (target_[beginIndex_]) T(value);
             ++size_;
         } else {
             if (NeedEnlarging_()) Enlarge_();
@@ -592,7 +630,13 @@ public:
                 target_[i] = target_[i - 1];
             }
             target_[0] = allocator_.allocate(1);
-            ::new (target_[0]) T(value);
+            try {
+                ::new(target_[0]) T(value);
+            } catch (...) {
+                allocator_.deallocate(target_[0], 1);
+                ++beginIndex_;
+                throw;
+            }
             ++size_;
         }
         return *this;
@@ -609,9 +653,14 @@ public:
     template<class... Args>
     Vector& EmplaceFront(Args... args) {
         if (beginIndex_ > 0) {
+            target_[beginIndex_ - 1] = allocator_.allocate(1);
+            try {
+                ::new(target_[beginIndex_]) T(args...);
+            } catch (...) {
+                allocator_.deallocate(target_[beginIndex_], 1);
+                throw;
+            }
             --beginIndex_;
-            target_[beginIndex_] = allocator_.allocate(1);
-            ::new (target_[beginIndex_]) T(args...);
             ++size_;
         } else {
             if (NeedEnlarging_()) Enlarge_();
@@ -619,7 +668,13 @@ public:
                 target_[i] = target_[i - 1];
             }
             target_[0] = allocator_.allocate(1);
-            ::new (target_[0]) T(args...);
+            try {
+                ::new(target_[0]) T(args...);
+            } catch (...) {
+                allocator_.deallocate(target_[0], 1);
+                ++beginIndex_;
+                throw;
+            }
             ++size_;
         }
         return *this;
@@ -773,7 +828,15 @@ public:
             Reserve(count);
             for (SizeT i = size_; i < count; ++i) {
                 target_[i + beginIndex_] = allocator_.allocate(1);
-                ::new (target_[i + beginIndex_]) T();
+                try {
+                    ::new(target_[i + beginIndex_]) T();
+                } catch (...) {
+                    for (SizeT j = 0; j < i; ++j) {
+                        target_[j + beginIndex_]->~T();
+                        allocator_.deallocate(target_[j + beginIndex_], 1);
+                    }
+                    throw;
+                }
             }
         }
         size_ = count;
@@ -799,7 +862,15 @@ public:
             Reserve(count);
             for (SizeT i = size_; i < count; ++i) {
                 target_[i + beginIndex_] = allocator_.allocate(1);
-                ::new (target_[i + beginIndex_]) T(value);
+                try {
+                    ::new(target_[i + beginIndex_]) T(value);
+                } catch (...) {
+                    for (SizeT j = 0; j < i; ++j) {
+                        target_[j + beginIndex_]->~T();
+                        allocator_.deallocate(target_[j + beginIndex_], 1);
+                    }
+                    throw;
+                }
             }
         }
         size_ = count;
