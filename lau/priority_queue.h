@@ -136,7 +136,12 @@ public:
      */
     PriorityQueue& Push(const T& value) {
         Node_* tmp = nodeAllocator_.allocate(1);
-        ::new(tmp) Node_(nullptr, nullptr, 0, value);
+        try {
+            ::new(tmp) Node_(nullptr, nullptr, 0, value);
+        } catch (...) {
+            nodeAllocator_.deallocate(tmp, 1);
+            throw;
+        }
         data_ = MergeNode_(data_, tmp);
         ++size_;
         return *this;
@@ -153,7 +158,12 @@ public:
     template<class... Args>
     PriorityQueue& Emplace(Args&&... args) {
         Node_* tmp = nodeAllocator_.allocate(1);
-        ::new(tmp) Node_(nullptr, nullptr, 0, args...);
+        try {
+            ::new(tmp) Node_(nullptr, nullptr, 0, args...);
+        } catch (...) {
+            nodeAllocator_.deallocate(tmp, 1);
+            throw;
+        }
         data_ = MergeNode_(data_, tmp);
         ++size_;
         return *this;
@@ -348,9 +358,19 @@ private:
      */
     Node_* CopyNode_(Node_* node) {
         Node_* newNode = nodeAllocator_.allocate(1);
-        ::new(newNode) Node_(node->value, nullptr, nullptr, node->distance);
-        if (node->left != nullptr) newNode->left = CopyNode_(node->left);
-        if (node->right != nullptr) newNode->right = CopyNode_(node->right);
+        try {
+            ::new(newNode) Node_(node->value, nullptr, nullptr, node->distance);
+        } catch (...) {
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
+        }
+        try {
+            if (node->left != nullptr) newNode->left = CopyNode_(node->left);
+            if (node->right != nullptr) newNode->right = CopyNode_(node->right);
+        } catch (...) {
+            DeleteAllChildNode_(newNode);
+            throw;
+        }
         return newNode;
     }
 };
