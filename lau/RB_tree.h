@@ -1868,8 +1868,9 @@ private:
     AllocatorType allocator_;
 };
 
-template <typename T, typename Compare, typename Allocator>
-void Swap(RBTree<T, Compare, Allocator>& lhs, RBTree<T, Compare, Allocator>& rhs) noexcept {
+template <class T, class Compare, class Allocator>
+void Swap(RBTree<T, Compare, Allocator>& lhs,
+          RBTree<T, Compare, Allocator>& rhs) noexcept {
     lhs.Swap(rhs);
 }
 
