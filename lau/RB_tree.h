@@ -58,7 +58,7 @@ public:
         explicit Node(T&& valueIn) : value(valueIn) {}
 
         template<class... Args>
-        explicit Node(Args&... args) : value(std::forward<Args>(args)...) {}
+        explicit Node(Args&... args) : value(args...) {}
 
         Node(const Node& obj) = default;
 
