@@ -144,8 +144,8 @@ public:
         bool operator!=(const Iterator& rhs)      const noexcept { return this->treeIterator_ != rhs.treeIterator_; }
         bool operator!=(const ConstIterator& rhs) const noexcept { return this->treeIterator_ != rhs.treeIterator_; }
 
-        KeyValuePair& operator*()  const { return *treeIterator_; }
-        KeyValuePair* operator->() const { return &(*treeIterator_); }
+        KeyValuePair& operator*()  const { return treeIterator_->value; }
+        KeyValuePair* operator->() const { return &(treeIterator_->value); }
 
     private:
         explicit Iterator(const typename RBTree<KeyValuePair, PairCompare, Allocator>::Iterator& iterator)
@@ -206,8 +206,8 @@ public:
         bool operator!=(const Iterator& rhs)      const noexcept { return this->treeIterator_ != rhs.treeIterator_; }
         bool operator!=(const ConstIterator& rhs) const noexcept { return this->treeIterator_ != rhs.treeIterator_; }
 
-        const KeyValuePair& operator*()  const { return *treeIterator_; }
-        const KeyValuePair* operator->() const { return &(*treeIterator_); }
+        const KeyValuePair& operator*()  const { return treeIterator_->value; }
+        const KeyValuePair* operator->() const { return &(treeIterator_->value); }
 
     private:
         explicit ConstIterator(const typename RBTree<KeyValuePair, PairCompare, Allocator>::ConstIterator& iterator)
@@ -271,7 +271,7 @@ public:
     [[nodiscard]] Value& At(const Key& key) {
         auto iter = tree_.Find(key);
         if (iter == tree_.End()) throw OutOfRange();
-        return iter->value;
+        return iter->value.value;
     }
 
     /**
@@ -284,23 +284,23 @@ public:
     [[nodiscard]] const Value& At(const Key& key) const {
         auto iter = tree_.Find(key);
         if (iter == tree_.ConstEnd()) throw OutOfRange();
-        return iter->value;
+        return iter->value.value;
     }
 
     Value& operator[](const Key& key) {
         auto [iter, result] = tree_.Insert(KeyValuePair(key, Value()));
-        return iter->value;
+        return iter->value.value;
     }
 
     Value& operator[](Key&& key) {
         auto [iter, result] = tree_.Insert(std::move(KeyValuePair(key, Value())));
-        return iter->value;
+        return iter->value.value;
     }
 
     [[nodiscard]] const Value& operator[](const Key& key) const {
         auto iter = tree_.Find(key);
         if (iter == tree_.ConstEnd()) throw OutOfRange();
-        return iter->value;
+        return iter->value.value;
     }
 
     [[nodiscard]] Iterator Begin() noexcept { return Iterator(tree_.Begin()); }
@@ -366,7 +366,7 @@ public:
      */
     template<class... Args>
     Pair<Iterator, bool> Emplace(Args&&... args) {
-        auto [iter, success] = tree_.Emplace(args...);
+        auto [iter, success] = tree_.Emplace(std::forward<Args>(args)...);
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 

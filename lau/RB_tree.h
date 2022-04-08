@@ -54,15 +54,21 @@ public:
         friend RBTree;
 
     public:
+        Node() = default;
+
         explicit Node(const T& valueIn) : value(valueIn) {}
         explicit Node(T&& valueIn) : value(valueIn) {}
 
-        template<class... Args>
-        explicit Node(Args&... args) : value(args...) {}
-
+        Node(Node& obj) = default;
         Node(const Node& obj) = default;
+        Node(Node&& obj) = default;
 
+        template<class... Args>
+        explicit Node(Args&&... args) : value(std::forward<Args>(args)...) {}
+
+        Node& operator=(Node& obj) = default;
         Node& operator=(const Node& obj) = default;
+        Node& operator=(Node&& obj) = default;
 
         ~Node() = default;
 
@@ -75,9 +81,6 @@ public:
         T value;
 
     private:
-        Node(const T& valueIn, Node* parentIn, Node* leftIn, Node* rightIn, Flag colourIn)
-            : value(valueIn), parent(parentIn), left(leftIn), right(rightIn), colour(colourIn) {}
-
         /**
          * Check whether the node is left node.  The node MUST have its parent
          * node.
@@ -138,6 +141,8 @@ public:
         Iterator& operator=(const Iterator& obj) noexcept = default;
 
         ~Iterator() = default;
+
+        operator const Node*() const noexcept { return target_; }
 
         /**
          * Get the iterator next it.  For the last iterator, it will become
@@ -223,18 +228,18 @@ public:
             return (this->tree_ != rhs.tree_ || this->target_ != rhs.target_);
         }
 
-        T& operator*() const {
+        Node& operator*() const {
             if (target_ == nullptr) {
                 throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
-            return target_->value;
+            return *target_;
         }
 
-        T* operator->() const {
+        Node* operator->() const {
             if (target_ == nullptr) {
                 throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
-            return &(target_->value);
+            return target_;
         }
 
     private:
@@ -274,6 +279,8 @@ public:
         ConstIterator& operator=(const ConstIterator& obj) noexcept = default;
 
         ~ConstIterator()  = default;
+
+        operator const Node*() const noexcept { return target_; }
 
         /**
          * Get the iterator next it.  For the last iterator, it will become
@@ -359,18 +366,18 @@ public:
             return (this->tree_ != rhs.tree_ || this->target_ != rhs.target_);
         }
 
-        const T& operator*() const {
+        const Node& operator*() const {
             if (target_ == nullptr) {
                 throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
-            return target_->value;
+            return *target_;
         }
 
-        const T* operator->() const {
+        const Node* operator->() const {
             if (target_ == nullptr) {
                 throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
-            return &(target_->value);
+            return target_;
         }
 
     private:
@@ -689,7 +696,7 @@ public:
     Pair<Iterator, bool> Emplace(Args&&... args) {
         Node* newNode = allocator_.allocate(1);
         try {
-            ::new(newNode) Node(args...);
+            ::new(newNode) Node(std::forward<Args>(args)...);
         } catch (...) {
             allocator_.deallocate(newNode, 1);
             throw;
@@ -1823,7 +1830,7 @@ private:
         if (node == nullptr) return nullptr;
         Node* newNode = allocator_.allocate(1);
         try {
-            ::new(newNode) Node(node->value, nullptr, nullptr, nullptr, node->colour);
+            ::new(newNode) Node(*node);
         } catch (...) {
             allocator_.deallocate(newNode, 1);
             throw;
