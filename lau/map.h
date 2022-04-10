@@ -36,34 +36,14 @@
 
 namespace lau {
 
-template<class Key, class Value>
-struct MapPair {
-    MapPair() : key(), value() {}
-    MapPair(const MapPair& other) = default;
-    MapPair(MapPair&& other) = default;
-    MapPair(const Key& key, const Value& value) : key(key), value(value) {}
-
-    template<class KeyIn, class ValueIn>
-    MapPair(KeyIn&& key, ValueIn&& value) : key(key), value(value) {}
-
-    template<class KeyIn, class ValueIn>
-    MapPair(const Pair<KeyIn, ValueIn>& other) : key(other.first), value(other.second) {}
-
-    template<class KeyIn, class ValueIn>
-    MapPair(Pair<KeyIn, ValueIn>&& other) : key(other.first), value(other.second) {}
-
-    const Key key;
-    Value value;
-};
-
 template<class Key,
          class Value,
          class Compare = std::less<Key>,
-         class Allocator = std::allocator<MapPair<Key, Value>>>
+         class Allocator = std::allocator<KeyValuePair<Key, Value>>>
 class Map {
 public:
-    using KeyValuePair = MapPair<Key, Value>;
-    using value_type   = MapPair<Key, Value>;
+    using MapPair    = KeyValuePair<Key, Value>;
+    using value_type = KeyValuePair<Key, Value>;
 
     class Iterator;
     class ConstIterator;
@@ -75,17 +55,17 @@ public:
         PairCompare() = default;
         explicit PairCompare(const Compare& compareIn) : compare_(compareIn) {}
 
-        bool operator()(const KeyValuePair& lhs, const KeyValuePair& rhs) const {
+        bool operator()(const MapPair& lhs, const MapPair& rhs) const {
             return compare_(lhs.key, rhs.key);
         }
 
         template<class K>
-        bool operator()(const K& lhs, const KeyValuePair& rhs) const {
+        bool operator()(const K& lhs, const MapPair& rhs) const {
             return compare_(lhs, rhs.key);
         }
 
         template<class K>
-        bool operator()(const KeyValuePair& lhs, const K& rhs) const {
+        bool operator()(const MapPair& lhs, const K& rhs) const {
             return compare_(lhs.key, rhs);
         }
 
@@ -105,9 +85,9 @@ public:
         // https://en.cppreference.com/w/cpp/header/type_traits
         // About iterator_category: https://en.cppreference.com/w/cpp/iterator
         using difference_type   = std::ptrdiff_t;
-        using value_type        = KeyValuePair;
-        using pointer           = KeyValuePair*;
-        using reference         = KeyValuePair&;
+        using value_type        = MapPair;
+        using pointer           = MapPair*;
+        using reference         = MapPair&;
         using iterator_category = std::output_iterator_tag;
 
         Iterator() = default;
@@ -144,14 +124,14 @@ public:
         bool operator!=(const Iterator& rhs)      const noexcept { return this->treeIterator_ != rhs.treeIterator_; }
         bool operator!=(const ConstIterator& rhs) const noexcept { return this->treeIterator_ != rhs.treeIterator_; }
 
-        KeyValuePair& operator*()  const { return treeIterator_->value; }
-        KeyValuePair* operator->() const { return &(treeIterator_->value); }
+        MapPair& operator*()  const { return treeIterator_->value; }
+        MapPair* operator->() const { return &(treeIterator_->value); }
 
     private:
-        explicit Iterator(const typename RBTree<KeyValuePair, PairCompare, Allocator>::Iterator& iterator)
+        explicit Iterator(const typename RBTree<MapPair, PairCompare, Allocator>::Iterator& iterator)
         : treeIterator_(iterator) {}
 
-        typename RBTree<KeyValuePair, PairCompare, Allocator>::Iterator treeIterator_;
+        typename RBTree<MapPair, PairCompare, Allocator>::Iterator treeIterator_;
     };
 
     class ConstIterator {
@@ -166,9 +146,9 @@ public:
         // https://en.cppreference.com/w/cpp/header/type_traits
         // About iterator_category: https://en.cppreference.com/w/cpp/iterator
         using difference_type   = std::ptrdiff_t;
-        using value_type        = KeyValuePair;
-        using pointer           = KeyValuePair*;
-        using reference         = KeyValuePair&;
+        using value_type        = MapPair;
+        using pointer           = MapPair*;
+        using reference         = MapPair&;
         using iterator_category = std::output_iterator_tag;
 
         ConstIterator() = default;
@@ -206,14 +186,14 @@ public:
         bool operator!=(const Iterator& rhs)      const noexcept { return this->treeIterator_ != rhs.treeIterator_; }
         bool operator!=(const ConstIterator& rhs) const noexcept { return this->treeIterator_ != rhs.treeIterator_; }
 
-        const KeyValuePair& operator*()  const { return treeIterator_->value; }
-        const KeyValuePair* operator->() const { return &(treeIterator_->value); }
+        const MapPair& operator*()  const { return treeIterator_->value; }
+        const MapPair* operator->() const { return &(treeIterator_->value); }
 
     private:
-        explicit ConstIterator(const typename RBTree<KeyValuePair, PairCompare, Allocator>::ConstIterator& iterator)
+        explicit ConstIterator(const typename RBTree<MapPair, PairCompare, Allocator>::ConstIterator& iterator)
             : treeIterator_(iterator) {}
 
-        typename RBTree<KeyValuePair, PairCompare, Allocator>::ConstIterator treeIterator_;
+        typename RBTree<MapPair, PairCompare, Allocator>::ConstIterator treeIterator_;
     };
 
     Map() : tree_() {}
@@ -244,15 +224,15 @@ public:
 
     Map(Map&& obj) noexcept = default;
 
-    Map(std::initializer_list<KeyValuePair> init) : tree_(init) {}
+    Map(std::initializer_list<MapPair> init) : tree_(init) {}
 
-    Map(std::initializer_list<KeyValuePair> init,
+    Map(std::initializer_list<MapPair> init,
         const Compare& compare) : tree_(init, compare) {}
 
-    Map(std::initializer_list<KeyValuePair> init,
+    Map(std::initializer_list<MapPair> init,
         const Allocator& allocator) : tree_(init, allocator) {}
 
-    Map(std::initializer_list<KeyValuePair> init,
+    Map(std::initializer_list<MapPair> init,
         const Compare& compare,
         const Allocator& allocator) : tree_(init, compare, allocator) {}
 
@@ -288,12 +268,12 @@ public:
     }
 
     Value& operator[](const Key& key) {
-        auto [iter, result] = tree_.Insert(KeyValuePair(key, Value()));
+        auto [iter, result] = tree_.Insert(MapPair(key, Value()));
         return iter->value.value;
     }
 
     Value& operator[](Key&& key) {
-        auto [iter, result] = tree_.Insert(std::move(KeyValuePair(key, Value())));
+        auto [iter, result] = tree_.Insert(std::move(MapPair(key, Value())));
         return iter->value.value;
     }
 
@@ -352,7 +332,7 @@ public:
      * element (or the element that prevented the insertion), the second
      * one is a bool denoting whether the insertion took place.
      */
-    Pair<Iterator, bool> Insert(const KeyValuePair& pair) {
+    Pair<Iterator, bool> Insert(const MapPair& pair) {
         auto [iter, success] = tree_.Insert(pair);
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
@@ -377,7 +357,7 @@ public:
      * element (or the element that prevented the insertion), the second
      * one is a bool denoting whether the insertion took place.
      */
-    Pair<Iterator, bool> Insert(KeyValuePair&& pair) {
+    Pair<Iterator, bool> Insert(MapPair&& pair) {
         auto [iter, success] = tree_.Insert(pair);
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
@@ -428,7 +408,7 @@ public:
      * @return the number of elements with key
      */
     [[nodiscard]] SizeT Count(const Key& key) const {
-        return tree_.Contains(KeyValuePair(key, Value())) ? 1 : 0;
+        return tree_.Contains(MapPair(key, Value())) ? 1 : 0;
     }
 
     /**
@@ -452,7 +432,7 @@ public:
      * to the input key
      */
     [[nodiscard]] bool Contains(const Key& key) const {
-        return tree_.Contains(KeyValuePair(key, Value()));
+        return tree_.Contains(MapPair(key, Value()));
     }
 
     /**
@@ -500,7 +480,7 @@ public:
      * iterator if not found
      */
     ConstIterator Find(const Key& key) const {
-        return ConstIterator(tree_.Find(KeyValuePair(key, Value())));
+        return ConstIterator(tree_.Find(MapPair(key, Value())));
     }
 
     /**
@@ -653,7 +633,7 @@ public:
     }
 
 private:
-    RBTree<KeyValuePair, PairCompare, Allocator> tree_;
+    RBTree<MapPair, PairCompare, Allocator> tree_;
 };
 
 template<class Key, class Value, class Compare, class Allocator>

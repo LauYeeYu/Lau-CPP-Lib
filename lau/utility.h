@@ -49,6 +49,26 @@ public:
     T2 second;
 };
 
+template<class Key, class Value>
+struct KeyValuePair {
+    KeyValuePair() : key(), value() {}
+    KeyValuePair(const KeyValuePair& other) = default;
+    KeyValuePair(KeyValuePair&& other) = default;
+    KeyValuePair(const Key& key, const Value& value) : key(key), value(value) {}
+
+    template<class KeyIn, class ValueIn>
+    KeyValuePair(KeyIn&& key, ValueIn&& value) : key(key), value(value) {}
+
+    template<class KeyIn, class ValueIn>
+    KeyValuePair(const Pair<KeyIn, ValueIn>& other) : key(other.first), value(other.second) {}
+
+    template<class KeyIn, class ValueIn>
+    KeyValuePair(Pair<KeyIn, ValueIn>&& other) : key(other.first), value(other.second) {}
+
+    const Key key;
+    Value value;
+};
+
 }
 
 #endif // LAU_CPP_LIB_LAU_UTILITY_H
