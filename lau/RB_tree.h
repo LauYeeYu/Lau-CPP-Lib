@@ -74,9 +74,9 @@ public:
 
         Flag Colour() const noexcept { return colour; }
 
-        const Node* Parent() const noexcept { return parent; }
-        const Node* Left()   const noexcept { return left; }
-        const Node* Right()  const noexcept { return right; }
+        Node* Parent() const noexcept { return parent; }
+        Node* Left()   const noexcept { return left; }
+        Node* Right()  const noexcept { return right; }
 
         T value;
 
@@ -142,7 +142,7 @@ public:
 
         ~Iterator() = default;
 
-        operator const Node*() const noexcept { return target_; }
+        operator Node*() const noexcept { return target_; }
 
         /**
          * Get the iterator next it.  For the last iterator, it will become
