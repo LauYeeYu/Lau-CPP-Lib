@@ -13,11 +13,13 @@ add_executable(test
         lau/map.h
         lau/priority_queue.h
         lau/RB_tree.h
+        lau/rehash_policy.cpp
+        lau/rehash_policy.h
         lau/sparse_table.h
-        lau/token_scanner.h
         lau/token_scanner.cpp
+        lau/token_scanner.h
         lau/type_trait.h
-        lau/utility.h
         lau/utility.cpp
+        lau/utility.h
         lau/vector.h
         test.cpp)
