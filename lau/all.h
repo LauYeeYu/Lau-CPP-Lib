@@ -31,6 +31,7 @@
 #include "map.h"
 #include "priority_queue.h"
 #include "RB_tree.h"
+#include "rehash_policy.h"
 #include "sparse_table.h"
 #include "token_scanner.h"
 #include "type_traits.h"
