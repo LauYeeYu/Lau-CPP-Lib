@@ -193,7 +193,7 @@ public:
         Iterator& operator--() {
             if (target_ == nullptr) {
                 if (tree_->size_ == 0) {
-                    throw InvalidIterator("Invalid Iterator: using -- on a begin iterator");
+                    throw InvalidIterator("Invalid Iterator: using -- on an empty tree");
                 }
                 target_ = tree_->head_;
                 while (target_->right != nullptr) target_ = target_->right;
@@ -331,7 +331,7 @@ public:
         ConstIterator& operator--() {
             if (target_ == nullptr) {
                 if (tree_->size_ == 0) {
-                    throw InvalidIterator("Invalid Iterator: using -- on a begin iterator");
+                    throw InvalidIterator("Invalid Iterator: using -- on an empty tree");
                 }
                 target_ = tree_->head_;
                 while (target_->right != nullptr) target_ = target_->right;
