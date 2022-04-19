@@ -26,7 +26,7 @@
 #include <iostream>
 #include <string>
 
-#include "type_trait.h"
+#include "type_traits.h"
 
 std::string lau::TokenScanner::NextToken() noexcept {
     if (mode_ == multiple) {

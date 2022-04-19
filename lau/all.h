@@ -33,7 +33,7 @@
 #include "RB_tree.h"
 #include "sparse_table.h"
 #include "token_scanner.h"
-#include "type_trait.h"
+#include "type_traits.h"
 #include "utility.h"
 #include "vector.h"
 

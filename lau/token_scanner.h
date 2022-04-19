@@ -26,7 +26,7 @@
 
 #include <string>
 
-#include "type_trait.h"
+#include "type_traits.h"
 
 namespace lau {
 

@@ -28,7 +28,7 @@
 #include <utility>
 #include <vector>
 
-#include "type_trait.h"
+#include "type_traits.h"
 
 namespace lau {
 

@@ -30,6 +30,7 @@
 #include <utility>
 
 #include "exception.h"
+#include "type_traits.h"
 #include "utility.h"
 
 namespace lau {

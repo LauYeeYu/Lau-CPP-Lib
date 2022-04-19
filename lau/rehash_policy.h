@@ -24,7 +24,7 @@
 #ifndef LAU_CPP_LIB_LAU_REHASH_POLICY_H
 #define LAU_CPP_LIB_LAU_REHASH_POLICY_H
 
-#include "type_trait.h"
+#include "type_traits.h"
 
 namespace lau {
 

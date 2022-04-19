@@ -24,7 +24,7 @@
 #include "rehash_policy.h"
 
 #include "exception.h"
-#include "type_trait.h"
+#include "type_traits.h"
 
 
 lau::RehashPolicy::RehashPolicy(SizeT minimumSize) {

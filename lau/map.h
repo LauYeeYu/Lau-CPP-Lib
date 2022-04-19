@@ -32,6 +32,7 @@
 
 #include "exception.h"
 #include "RB_tree.h"
+#include "type_traits.h"
 #include "utility.h"
 
 namespace lau {
