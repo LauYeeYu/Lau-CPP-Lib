@@ -32,17 +32,17 @@ lau::RehashPolicy::RehashPolicy(SizeT minimumSize) {
 }
 
 [[nodiscard]] SizeT lau::RehashPolicy::NextSize() noexcept {
-    if (index_ == maxIndex_) return bucketSize_[index_];
+    if (index_ == kMaxIndex_) return kBucketSize_[index_];
     ++index_;
-    return bucketSize_[index_];
+    return kBucketSize_[index_];
 }
 
 [[nodiscard]] SizeT lau::RehashPolicy::PreviousSize() noexcept {
     if (index_ == 0) {
-        return bucketSize_[index_];
+        return kBucketSize_[index_];
     }
     --index_;
-    return bucketSize_[index_];
+    return kBucketSize_[index_];
 }
 
 SizeT lau::RehashPolicy::ReserveAtLeast(SizeT size) {
@@ -51,19 +51,19 @@ SizeT lau::RehashPolicy::ReserveAtLeast(SizeT size) {
     }
     if (size == 0) {
         index_ = 0;
-        return bucketSize_[index_];
+        return kBucketSize_[index_];
     }
-    SizeT left = 0, right = maxIndex_;
+    SizeT left = 0, right = kMaxIndex_;
     while (left < right) {
         SizeT mid = (left + right) / 2;
-        if (bucketSize_[mid] >= size) {
+        if (kBucketSize_[mid] >= size) {
             right = mid;
         } else {
             left = mid + 1;
         }
     }
     index_ = left;
-    return bucketSize_[index_];
+    return kBucketSize_[index_];
 }
 
 void lau::RehashPolicy::SetSize(SizeT size) {
@@ -74,21 +74,21 @@ void lau::RehashPolicy::SetSize(SizeT size) {
         index_ = 0;
         return;
     }
-    SizeT left = 0, right = maxIndex_;
+    SizeT left = 0, right = kMaxIndex_;
     while (left < right) {
         SizeT mid = (left + right) / 2;
-        if (bucketSize_[mid] >= size) {
+        if (kBucketSize_[mid] >= size) {
             right = mid;
         } else {
             left = mid + 1;
         }
     }
-    if (bucketSize_[left] != size) {
+    if (kBucketSize_[left] != size) {
         throw lau::InvalidArgument("Invalid Argument: argument not matching any of the bucket size");
     }
     index_ = left;
 }
 
 [[nodiscard]] SizeT lau::RehashPolicy::GetSize() const noexcept {
-    return bucketSize_[index_];
+    return kBucketSize_[index_];
 }

@@ -78,11 +78,11 @@ public:
     [[nodiscard]] SizeT GetSize() const noexcept;
 
     [[nodiscard]] constexpr static SizeT MaxSize() noexcept {
-        return bucketSize_[maxIndex_];
+        return kBucketSize_[kMaxIndex_];
     }
 
 private:
-    constexpr static SizeT bucketSize_[32] = {0,
+    constexpr static SizeT kBucketSize_[32] = {0,
                                               127,
                                               257,
                                               521,
@@ -114,7 +114,7 @@ private:
                                               34359738337,
                                               68719476731,
                                               137438953481};
-    constexpr static SizeT maxIndex_ = 31;
+    constexpr static SizeT kMaxIndex_ = 31;
 
     SizeT index_ = 0;
 };
