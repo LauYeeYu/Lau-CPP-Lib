@@ -10,6 +10,7 @@ add_executable(test
         lau/file_data_structure.h
         lau/file_double_unrolled_linked_list.h
         lau/file_unrolled_linked_list.h
+        lau/linked_hash_table.h
         lau/map.h
         lau/priority_queue.h
         lau/RB_tree.h
@@ -18,7 +19,7 @@ add_executable(test
         lau/sparse_table.h
         lau/token_scanner.cpp
         lau/token_scanner.h
-        lau/type_trait.h
+        lau/type_traits.h
         lau/utility.cpp
         lau/utility.h
         lau/vector.h
