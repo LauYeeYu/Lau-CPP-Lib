@@ -61,11 +61,11 @@ public:
 
         Node(std::size_t hashIn, const T& valueIn) : value(valueIn), hash(hashIn) {}
         Node(std::size_t hashIn, T&& valueIn) : value(std::move(valueIn)), hash(hashIn) {}
-        explicit Node(const T& valueIn) : value(valueIn), hash(Hash()(value)) {}
-        explicit Node(T&& valueIn) : value(std::move(valueIn)), hash(Hash()(value)) {}
+        /*explicit Node(const T& valueIn) : value(valueIn), hash(Hash()(value)) {}
+        explicit Node(T&& valueIn) : value(std::move(valueIn)), hash(Hash()(value)) {}*/
 
         template<class... Args>
-        explicit Node(Args&&... args) : value(std::forward<Args>(args)...), hash(Hash()(value)) {}
+        explicit Node(std::size_t hashIn, Args&&... args) : value(std::forward<Args>(args)...), hash(hashIn) {}
 
         Node& operator=(Node&) = default;
         Node& operator=(const Node&) = default;
@@ -645,6 +645,63 @@ public:
         } catch (...) {
             nodeAllocator_.deallocate(newNode, 1);
             throw;
+        }
+        newNode->next = bucket_[bucketIndex];
+        bucket_[bucketIndex] = newNode;
+        newNode->linkedPrevious = tail_;
+
+        if (size_ == 0) head_ = newNode;
+        else tail_->linkedNext = newNode;
+        tail_ = newNode;
+
+        ++size_;
+        return Pair<Iterator, bool>(Iterator(newNode, this), true);
+    }
+
+    /**
+     * Try inserting the value into the hash using a in-place construction of
+     * the contained class.  The function will construct the contained class
+     * even if there is an element equal to it.  If the value has not already
+     * been contained in the table, the value will be inserted and a pair of
+     * the iterator pointing to the inserted element and a bool set to true
+     * will be returned.  If not, a pair of the iterator pointing to the
+     * existing element that is equal to the value and a bool set to false
+     * will be returned.
+     * @tparam Args...
+     * @param args... the argument(s) to construct the contained class
+     * @return the iterator pointing to the inserted element or the existing
+     * element that is equal to the value and a bool indicating whether the
+     * operation is successful or not
+     */
+    template<class... Args>
+    Pair<Iterator, bool> Emplace(Args&&... args) {
+        if (NeedRehash_()) Rehash_();
+
+        Node* newNode = nodeAllocator_.allocate(1);
+        try {
+            ::new(newNode) Node(0, std::forward<Args>(args)...);
+        } catch (...) {
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
+        }
+
+        try {
+            newNode->hash = hash_(newNode->value);
+        } catch (...) {
+            newNode->~Node();
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
+        }
+        std::size_t hash = newNode->hash;
+        std::size_t bucketIndex = hash % bucketSize_;
+        Node* tmpNode = bucket_[bucketIndex];
+        while (tmpNode != nullptr) {
+            if (equal_(tmpNode->value, newNode->value)) {
+                newNode->~Node();
+                nodeAllocator_.deallocate(newNode, 1);
+                return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
+            }
+            tmpNode = tmpNode->next;
         }
         newNode->next = bucket_[bucketIndex];
         bucket_[bucketIndex] = newNode;
