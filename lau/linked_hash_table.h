@@ -25,6 +25,9 @@
 
 #include <cstddef>
 #include <functional>
+#include <memory>
+#include <type_traits>
+#include <utility>
 
 #include "exception.h"
 #include "type_traits.h"
@@ -33,11 +36,18 @@
 
 namespace lau {
 
-template <class T, class Hash = std::hash<T>, class Equal = std::equal_to<T>>
+template <class T,
+          class Hash = std::hash<T>,
+          class Equal = std::equal_to<T>,
+          class Allocator = std::allocator<T>>
 class LinkedHashTable {
 public:
+    struct Node;
     class Iterator;
     class ConstIterator;
+
+    using NodeAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<Node>;
+    using BucketAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<Node*>;
 
     struct Node {
         friend class LinkedHashTable;
@@ -263,19 +273,22 @@ public:
         const LinkedHashTable* table_ = nullptr;
     };
 
-    LinkedHashTable() : hash_(), equal_(), rehashPolicy_(),
-                        head_(nullptr), tail_(nullptr), bucket_(nullptr),
-                        size_(0), bucketSize_(0) {}
+    LinkedHashTable(Allocator allocator = Allocator())
+        : hash_(), equal_(), rehashPolicy_(), nodeAllocator_(allocator), bucketAllocator_(allocator),
+          head_(nullptr), tail_(nullptr), bucket_(nullptr),
+          size_(0), bucketSize_(0) {}
 
     LinkedHashTable(const LinkedHashTable& obj) : hash_(obj.hash_),
                                                   equal_(obj.equal_),
                                                   rehashPolicy_(obj.rehashPolicy_),
+                                                  nodeAllocator_(obj.nodeAllocator_),
+                                                  bucketAllocator_(obj.bucketAllocator_),
                                                   head_(nullptr),
                                                   tail_(nullptr),
                                                   bucket_(nullptr),
                                                   size_(obj.size_),
                                                   bucketSize_(obj.bucketSize_) {
-        bucket_ = new Node*[bucketSize_];
+        bucket_ = bucketAllocator_.allocate(bucketSize_);
         for (int i = 0; i < bucketSize_; ++i) {
             bucket_[i] = nullptr;
         }
@@ -283,15 +296,22 @@ public:
         for (Node* node = obj.head_; node != nullptr; node = node->linkedNext) {
             Node* newNode;
             try {
-                newNode = new Node(node->hash, node->value);
+                newNode = nodeAllocator_.allocate(1);
+                try {
+                ::new(newNode) Node(node->hash, node->value);
+                } catch (...) {
+                    nodeAllocator_.deallocate(newNode, 1);
+                    throw;
+                }
             } catch (...) {
                 Node* toDelete = head_;
                 while (toDelete != nullptr) {
                     Node* next = toDelete->linkedNext;
-                    delete toDelete;
+                    toDelete->~Node();
+                    nodeAllocator_.deallocate(toDelete, 1);
                     toDelete = next;
                 }
-                delete[] bucket_;
+                bucketAllocator_.deallocate(bucket_, bucketSize_);
                 throw;
             }
             this->Insert_(newNode);
@@ -302,6 +322,8 @@ public:
         : hash_(std::move(obj.hash_)),
           equal_(std::move(obj.equal_)),
           rehashPolicy_(obj.rehashPolicy_),
+          nodeAllocator_(std::move(obj.nodeAllocator_)),
+          bucketAllocator_(std::move(obj.bucketAllocator_)),
           head_(obj.head_),
           tail_(obj.tail_),
           bucket_(obj.bucket_),
@@ -319,7 +341,9 @@ public:
             return *this;
         }
 
-        Node** newBucket = new Node*[obj.bucketSize_];
+        NodeAllocatorType newNodeAllocator(obj.nodeAllocator_);
+        BucketAllocatorType newBucketAllocator(obj.bucketAllocator_);
+        Node** newBucket = newBucketAllocator.allocate(obj.bucketSize_);
         Node* newHead = nullptr;
         Node* newTail = nullptr;
 
@@ -330,15 +354,22 @@ public:
         for (Node* node = obj.head_; node != nullptr; node = node->linkedNext) {
             Node* newNode;
             try {
-                newNode = new Node(node->hash, node->value);
+                newNode = newNodeAllocator.allocate(1);
+                try {
+                    ::new(newNode) Node(node->hash, node->value);
+                } catch (...) {
+                    nodeAllocator_.deallocate(newNode, 1);
+                    throw;
+                }
             } catch (...) {
                 Node* toDelete = newHead;
                 while (toDelete != nullptr) {
                     Node* next = toDelete->linkedNext;
-                    delete toDelete;
+                    toDelete->~Node();
+                    nodeAllocator_.deallocate(toDelete, 1);
                     toDelete = next;
                 }
-                delete[] newBucket;
+                newBucketAllocator.deallocate(newBucket, obj.bucketSize_);
                 throw;
             }
             // Handling the linked list
@@ -362,6 +393,8 @@ public:
         this->bucket_ = newBucket;
         this->head_ = newHead;
         this->tail_ = newTail;
+        this->nodeAllocator_ = std::move(newNodeAllocator);
+        this->bucketAllocator_ = std::move(newBucketAllocator);
 
         return *this;
     }
@@ -371,6 +404,8 @@ public:
         hash_ = std::move(obj.hash_);
         equal_ = std::move(obj.equal_);
         rehashPolicy_ = obj.rehashPolicy_;
+        nodeAllocator_ = std::move(obj.nodeAllocator_);
+        bucketAllocator_ = std::move(obj.bucketAllocator_);
         head_ = obj.head_;
         tail_ = obj.tail_;
         bucket_ = obj.bucket_;
@@ -394,10 +429,11 @@ public:
         Node* toDelete = head_;
         while (toDelete != nullptr) {
             Node* next = toDelete->linkedNext;
-            delete toDelete;
+            toDelete->~Node();
+            nodeAllocator_.deallocate(toDelete, 1);
             toDelete = next;
         }
-        delete[] bucket_;
+        bucketAllocator_.deallocate(bucket_, bucketSize_);
         bucket_ = nullptr;
         bucketSize_ = 0;
         rehashPolicy_.SetSize(0);
@@ -430,7 +466,13 @@ public:
             }
             tmpNode = tmpNode->next;
         }
-        Node* newNode = new Node(hash, value);
+        Node* newNode = nodeAllocator_.allocate(1);
+        try {
+            ::new(newNode) Node(hash, value);
+        } catch (...) {
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
+        }
         newNode->next = bucket_[bucketIndex];
         bucket_[bucketIndex] = newNode;
         newNode->linkedPrevious = tail_;
@@ -490,7 +532,8 @@ public:
             if (tmpNode->linkedPrevious != nullptr) {
                 tmpNode->linkedPrevious->linkedNext = tmpNode->linkedNext;
             }
-            delete tmpNode;
+            tmpNode->~Node();
+            nodeAllocator_.deallocate(tmpNode, 1);
             --size_;
             return *this;
         }
@@ -508,7 +551,8 @@ public:
                     tmpNode->linkedPrevious->linkedNext = tmpNode->linkedNext;
                 }
                 previousNode->next = tmpNode->next;
-                delete tmpNode;
+                tmpNode->~Node();
+                nodeAllocator_.deallocate(tmpNode, 1);
                 --size_;
                 return *this;
             }
@@ -550,7 +594,8 @@ public:
             if (tmpNode->linkedPrevious != nullptr) {
                 tmpNode->linkedPrevious->linkedNext = tmpNode->linkedNext;
             }
-            delete tmpNode;
+            tmpNode->~Node();
+            nodeAllocator_.deallocate(tmpNode, 1);
             --size_;
             return *this;
         }
@@ -568,7 +613,8 @@ public:
                     tmpNode->linkedPrevious->linkedNext = tmpNode->linkedNext;
                 }
                 previousNode->next = tmpNode->next;
-                delete tmpNode;
+                tmpNode->~Node();
+                nodeAllocator_.deallocate(tmpNode, 1);
                 --size_;
                 return *this;
             }
@@ -593,12 +639,12 @@ public:
         SizeT newSize = rehashPolicy_.ReserveAtLeast(minimumSize);
         Node** newBucket;
         try {
-            newBucket = new Node*[newSize];
+            newBucket = bucketAllocator_.allocate(newSize);
         } catch (...) {
             rehashPolicy_.SetSize(bucketSize_);
             throw;
         }
-        delete[] bucket_;
+        bucketAllocator_.deallocate(bucket_, bucketSize_);
         bucket_ = newBucket;
         bucketSize_ = newSize;
         for (SizeT i = 0; i < newSize; ++i) {
@@ -655,15 +701,16 @@ private:
      * Rehash the hash table.
      */
     void Rehash_() {
+        SizeT lastSize = bucketSize_;
         bucketSize_ = rehashPolicy_.NextSize();
         Node** newBucket;
         try {
-            newBucket = new Node*[bucketSize_];
+            newBucket = bucketAllocator_.allocate(bucketSize_);
         } catch (...) {
             bucketSize_ = rehashPolicy_.PreviousSize();
             throw;
         }
-        delete[] bucket_;
+        bucketAllocator_.deallocate(bucket_, lastSize);
         bucket_ = newBucket;
         for (int i = 0; i < bucketSize_; ++i) bucket_[i] = nullptr;
         for (Node* node = head_; node != nullptr; node = node->linkedNext) Reinsert_(node);
@@ -737,18 +784,21 @@ private:
             while (tmpNode->next != node) tmpNode = tmpNode->next;
             tmpNode->next = node->next;
         }
-        delete node;
+        node->~Node();
+        nodeAllocator_.deallocate(node, 1);
         --size_;
     }
 
-    Node* head_ = nullptr;
-    Node* tail_ = nullptr;
-    Node** bucket_ = nullptr;
-    SizeT size_ = 0;
-    SizeT bucketSize_ = 0;
-    Hash hash_;
-    Equal equal_;
-    RehashPolicy rehashPolicy_;
+    Node*  head_       = nullptr;
+    Node*  tail_       = nullptr;
+    Node** bucket_     = nullptr;
+    SizeT  size_       = 0;
+    SizeT  bucketSize_ = 0;
+    Hash                 hash_;
+    Equal                equal_;
+    RehashPolicy         rehashPolicy_;
+    NodeAllocatorType    nodeAllocator_;
+    BucketAllocatorType  bucketAllocator_;
 };
 
 } // namespace lau
