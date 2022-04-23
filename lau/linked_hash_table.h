@@ -751,7 +751,7 @@ public:
     }
 
     /**
-     * Try inserting the value into the hash.  If the value has not already
+     * Try inserting the value into the table.  If the value has not already
      * been contained in the table, the value will be inserted and a pair of
      * the iterator pointing to the inserted element and a bool set to true
      * will be returned.  If not, a pair of the iterator pointing to the
@@ -769,6 +769,136 @@ public:
         Node* tmpNode = bucket_[bucketIndex];
         while (tmpNode != nullptr) {
             if (equal_(tmpNode->value, value)) {
+                return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
+            }
+            tmpNode = tmpNode->next;
+        }
+        Node* newNode = nodeAllocator_.allocate(1);
+        try {
+            ::new(newNode) Node(hash, value);
+        } catch (...) {
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
+        }
+        newNode->next = bucket_[bucketIndex];
+        bucket_[bucketIndex] = newNode;
+        newNode->linkedPrevious = tail_;
+
+        if (size_ == 0) head_ = newNode;
+        else tail_->linkedNext = newNode;
+        tail_ = newNode;
+
+        ++size_;
+        return Pair<Iterator, bool>(Iterator(newNode, this), true);
+    }
+
+    /**
+     * Try inserting the value into the table.  If the value has not already
+     * been contained in the table, the value will be inserted and a pair of
+     * the iterator pointing to the inserted element and a bool set to true
+     * will be returned.  If not, a pair of the iterator pointing to the
+     * existing element that is equal to the value and a bool set to false
+     * will be returned.
+     * @param value
+     * @return the iterator pointing to the inserted element or the existing
+     * element that is equal to the value and a bool indicating whether the
+     * operation is successful or not
+     */
+    Pair<Iterator, bool> Insert(T&& value) {
+        if (NeedRehash_()) Rehash_();
+        std::size_t hash = hash_(value);
+        std::size_t bucketIndex = hash % bucketSize_;
+        Node* tmpNode = bucket_[bucketIndex];
+        while (tmpNode != nullptr) {
+            if (equal_(tmpNode->value, value)) {
+                return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
+            }
+            tmpNode = tmpNode->next;
+        }
+        Node* newNode = nodeAllocator_.allocate(1);
+        try {
+            ::new(newNode) Node(hash, value);
+        } catch (...) {
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
+        }
+        newNode->next = bucket_[bucketIndex];
+        bucket_[bucketIndex] = newNode;
+        newNode->linkedPrevious = tail_;
+
+        if (size_ == 0) head_ = newNode;
+        else tail_->linkedNext = newNode;
+        tail_ = newNode;
+
+        ++size_;
+        return Pair<Iterator, bool>(Iterator(newNode, this), true);
+    }
+
+    /**
+     * Insert or assign the value into the table.  If the value has not already
+     * been contained in the table, the value will be inserted and a pair of
+     * the iterator pointing to the inserted element and a bool set to true
+     * will be returned.  If not, the element will be set to the input value
+     * and a pair of the iterator pointing to that existing element and a bool
+     * set to false will be returned.
+     * @param value
+     * @return the iterator pointing to the inserted element or the existing
+     * element that is equal to the value and a bool indicating whether the
+     * operation is successful or not
+     */
+    Pair<Iterator, bool> InsertOrAssign(const T& value) {
+        if (NeedRehash_()) Rehash_();
+        std::size_t hash = hash_(value);
+        std::size_t bucketIndex = hash % bucketSize_;
+        Node* tmpNode = bucket_[bucketIndex];
+        while (tmpNode != nullptr) {
+            if (equal_(tmpNode->value, value)) {
+                tmpNode->value = value;
+                tmpNode->hash = hash;
+                return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
+            }
+            tmpNode = tmpNode->next;
+        }
+        Node* newNode = nodeAllocator_.allocate(1);
+        try {
+            ::new(newNode) Node(hash, value);
+        } catch (...) {
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
+        }
+        newNode->next = bucket_[bucketIndex];
+        bucket_[bucketIndex] = newNode;
+        newNode->linkedPrevious = tail_;
+
+        if (size_ == 0) head_ = newNode;
+        else tail_->linkedNext = newNode;
+        tail_ = newNode;
+
+        ++size_;
+        return Pair<Iterator, bool>(Iterator(newNode, this), true);
+    }
+
+    /**
+     * Insert or assign the value into the table.  If the value has not already
+     * been contained in the table, the value will be inserted and a pair of
+     * the iterator pointing to the inserted element and a bool set to true
+     * will be returned.  If not, the element will be set to the input value
+     * and a pair of the iterator pointing to that existing element and a bool
+     * set to false will be returned.
+     * @param value
+     * @return the iterator pointing to the inserted element or the existing
+     * element that is equal to the value and a bool indicating whether the
+     * operation is successful or not
+     */
+    Pair<Iterator, bool> InsertOrAssign(const T&& value) {
+        if (NeedRehash_()) Rehash_();
+        std::size_t hash = hash_(value);
+        std::size_t bucketIndex = hash % bucketSize_;
+        Node* tmpNode = bucket_[bucketIndex];
+        while (tmpNode != nullptr) {
+            if (equal_(tmpNode->value, value)) {
+                tmpNode->value = value;
+                tmpNode->hash = hash;
                 return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
             }
             tmpNode = tmpNode->next;
@@ -836,6 +966,56 @@ public:
                 return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
             }
             tmpNode = tmpNode->next;
+        }
+        newNode->next = bucket_[bucketIndex];
+        bucket_[bucketIndex] = newNode;
+        newNode->linkedPrevious = tail_;
+
+        if (size_ == 0) head_ = newNode;
+        else tail_->linkedNext = newNode;
+        tail_ = newNode;
+
+        ++size_;
+        return Pair<Iterator, bool>(Iterator(newNode, this), true);
+    }
+
+    /**
+     * Insert ot assign the value into the hash using a in-place construction
+     * of the contained class.  The function will construct the contained class
+     * even if there is an element equal to it.  If the value has not already
+     * been contained in the table, the value will be inserted and a pair of
+     * the iterator pointing to the inserted element and a bool set to true
+     * will be returned.  If not, the element will be set to the input value
+     * and a pair of the iterator pointing to that existing element and a bool
+     * set to false will be returned.
+     * @tparam Args...
+     * @param args... the argument(s) to construct the contained class
+     * @return the iterator pointing to the inserted element or the existing
+     * element that is equal to the value and a bool indicating whether the
+     * operation is successful or not
+     */
+    template<class... Args>
+    Pair<Iterator, bool> EmplaceOrAssign(Args&&... args) {
+        if (NeedRehash_()) Rehash_();
+
+        T value(std::forward<Args>(args)...);
+        std::size_t hash = hash_(value);
+        std::size_t bucketIndex = hash % bucketSize_;
+        Node* tmpNode = bucket_[bucketIndex];
+        while (tmpNode != nullptr) {
+            if (equal_(tmpNode->value, value)) {
+                tmpNode->value = std::move(value);
+                tmpNode->hash = hash;
+                return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
+            }
+            tmpNode = tmpNode->next;
+        }
+        Node* newNode = nodeAllocator_.allocate(1);
+        try {
+            ::new(newNode) Node(hash, std::move(value));
+        } catch (...) {
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
         }
         newNode->next = bucket_[bucketIndex];
         bucket_[bucketIndex] = newNode;
@@ -988,6 +1168,68 @@ public:
         throw InvalidArgument("Invalid Argument: no such element to be erased");
     }
 
+    LinkedHashTable& Merge(LinkedHashTable& other) {
+        size_ += other.size_;
+        if (NeedRehash_()) ReserveAtLeast(size_);
+        for (Node* node = other.head_; node != nullptr; node = node->linkedNext) {
+            this->Insert_(node);
+        }
+
+        other.head_ = nullptr;
+        other.tail_ = nullptr;
+        other.size_ = 0;
+        return *this;
+    }
+
+    /**
+     * Swap the content of two hash tables.
+     * @param other
+     * @return the reference to the table
+     */
+    LinkedHashTable& Swap(LinkedHashTable& other) noexcept {
+        SizeT tmpSize = this->size_;
+        this->size_ = other.size_;
+        other.size_ = tmpSize;
+
+        Node** tmpBucket = this->bucket_;
+        this->bucket_ = other.bucket_;
+        other.bucket_ = tmpBucket;
+
+        Node* tmpHead = this->head_;
+        this->head_ = other.head_;
+        other.head_ = tmpHead;
+
+        Node* tmpTail = this->tail_;
+        this->tail_ = other.tail_;
+        other.tail_ = tmpTail;
+
+        SizeT tmpBucketSize = this->bucketSize_;
+        this->bucketSize_ = other.bucketSize_;
+        other.bucketSize_ = tmpBucketSize;
+
+        Hash tmpHash = std::move(this->hash_);
+        this->hash_ = std::move(other.hash_);
+        other.hash_ = std::move(tmpHash);
+
+        Equal tmpEqual = std::move(this->equal_);
+        this->equal_ = std::move(other.equal_);
+        other.equal_ = std::move(tmpEqual);
+
+        NodeAllocatorType tmpNodeAllocator = std::move(this->nodeAllocator_);
+        this->nodeAllocator_ = std::move(other.nodeAllocator_);
+        other.nodeAllocator_ = std::move(tmpNodeAllocator);
+
+        BucketAllocatorType tmpBucketAllocator = std::move(this->bucketAllocator_);
+        this->bucketAllocator_ = std::move(other.bucketAllocator_);
+        other.bucketAllocator_ = std::move(tmpBucketAllocator);
+
+        RehashPolicy tmpRehashPolicy = this->rehashPolicy_;
+        this->rehashPolicy_ = other.rehashPolicy_;
+        other.rehashPolicy_ = tmpRehashPolicy;
+
+        return *this;
+    }
+
     /**
      * Reserve the bucket size with at lest <code>minimumSize</code> elements.
      * If the size reaches the maximum size, the bucket size will be the
@@ -1098,6 +1340,31 @@ public:
 
     [[nodiscard]] SizeT Size() const noexcept { return size_; }
     [[nodiscard]] bool Empty() const noexcept { return size_ == 0; }
+    [[nodiscard]] SizeT BucketCount() const noexcept { return bucketSize_; }
+
+    /**
+     * Get a copy of the hash class.
+     * @return a copy of the hash class
+     */
+    [[nodiscard]] Hash GetHash() const { return hash_; }
+
+    /**
+     * Get a copy of the equal class.
+     * @return a copy of the equal class
+     */
+    [[nodiscard]] Equal GetEqual() const { return equal_; }
+
+    /**
+     * Get a copy of the node allocator class.
+     * @return a copy of the node allocator class
+     */
+    [[nodiscard]] NodeAllocatorType GetNodeAllocator() const { return nodeAllocator_; }
+
+    /**
+     * Get a copy of the bucket allocator class.
+     * @return a copy of the bucket allocator class
+     */
+    [[nodiscard]] BucketAllocatorType GetAllocator() const { return bucketAllocator_; }
 
 private:
     /**
@@ -1204,14 +1471,20 @@ private:
     Node*  head_       = nullptr;
     Node*  tail_       = nullptr;
     Node** bucket_     = nullptr;
-    SizeT  size_       = 0;
-    SizeT  bucketSize_ = 0;
+    SizeT  size_       = 0; // the number of elements in the hash table
+    SizeT  bucketSize_ = 0; // the number of buckets
     Hash                 hash_;
     Equal                equal_;
     RehashPolicy         rehashPolicy_;
     NodeAllocatorType    nodeAllocator_;
     BucketAllocatorType  bucketAllocator_;
 };
+
+template<class T, class Hash, class Equal, class Allocator>
+void Swap(LinkedHashTable<T, Hash, Equal, Allocator>& lhs,
+          LinkedHashTable<T, Hash, Equal, Allocator>& rhs) noexcept {
+    lhs.Swap(rhs);
+}
 
 } // namespace lau
 
