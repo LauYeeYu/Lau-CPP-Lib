@@ -114,7 +114,7 @@ public:
 
         ~Iterator() = default;
 
-        operator Node*() const noexcept { return target_; }
+        explicit operator Node*() const noexcept { return target_; }
 
         Iterator operator++(int) {
             Iterator tmp = *this;
@@ -211,7 +211,7 @@ public:
 
         ~ConstIterator() = default;
 
-        operator const Node*() const noexcept { return target_; }
+        explicit operator const Node*() const noexcept { return target_; }
 
         ConstIterator operator++(int) {
             Iterator tmp = *this;
@@ -309,7 +309,7 @@ public:
 
         ~BucketIterator() = default;
 
-        operator Node*() const noexcept { return target_; }
+        explicit operator Node*() const noexcept { return target_; }
 
         BucketIterator operator++(int) {
             Iterator tmp = *this;
@@ -393,7 +393,7 @@ public:
 
         ~ConstBucketIterator() = default;
 
-        operator const Node*() const noexcept { return target_; }
+        explicit operator const Node*() const noexcept { return target_; }
 
         ConstBucketIterator operator++(int) {
             Iterator tmp = *this;

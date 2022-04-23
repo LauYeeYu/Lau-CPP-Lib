@@ -143,7 +143,7 @@ public:
 
         ~Iterator() = default;
 
-        operator Node*() const noexcept { return target_; }
+        explicit operator Node*() const noexcept { return target_; }
 
         /**
          * Get the iterator next it.  For the last iterator, it will become
@@ -281,7 +281,7 @@ public:
 
         ~ConstIterator()  = default;
 
-        operator const Node*() const noexcept { return target_; }
+        explicit operator const Node*() const noexcept { return target_; }
 
         /**
          * Get the iterator next it.  For the last iterator, it will become
