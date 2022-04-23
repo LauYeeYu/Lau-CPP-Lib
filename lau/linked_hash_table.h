@@ -20,8 +20,8 @@
  * This is a external header file, including a linked hash table class.
  */
 
-#ifndef TEST_CPP_LAU_LINKED_HASH_TABLE_H
-#define TEST_CPP_LAU_LINKED_HASH_TABLE_H
+#ifndef LAU_CPP_LIB_LAU_LINKED_HASH_TABLE_H
+#define LAU_CPP_LIB_LAU_LINKED_HASH_TABLE_H
 
 #include <cstddef>
 #include <functional>
@@ -1017,4 +1017,4 @@ private:
 
 } // namespace lau
 
-#endif //TEST_CPP_LAU_LINKED_HASH_TABLE_H
+#endif // LAU_CPP_LIB_LAU_LINKED_HASH_TABLE_H
