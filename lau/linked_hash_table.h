@@ -446,10 +446,69 @@ public:
         Node const* const* bucket_ = nullptr;
     };
 
-    LinkedHashTable(Allocator allocator = Allocator())
-        : hash_(), equal_(), rehashPolicy_(), nodeAllocator_(allocator), bucketAllocator_(allocator),
+    explicit LinkedHashTable(const Allocator& allocator = Allocator())
+        : hash_(), equal_(), rehashPolicy_(),
+          nodeAllocator_(allocator), bucketAllocator_(allocator),
           head_(nullptr), tail_(nullptr), bucket_(nullptr),
           size_(0), bucketSize_(0) {}
+
+    explicit LinkedHashTable(const Hash& hash,
+                             const Equal& equal = Equal(),
+                             const Allocator& allocator = Allocator())
+        : hash_(hash), equal_(equal), rehashPolicy_(),
+          nodeAllocator_(allocator), bucketAllocator_(allocator),
+          head_(nullptr), tail_(nullptr), bucket_(nullptr),
+          size_(0), bucketSize_(0) {}
+
+    explicit LinkedHashTable(SizeT minimumBucketSize,
+                             const Hash& hash = Hash(),
+                             const Equal& equal = Equal(),
+                             const Allocator& allocator = Allocator())
+        : hash_(hash), equal_(equal), rehashPolicy_(minimumBucketSize),
+          nodeAllocator_(allocator), bucketAllocator_(allocator),
+          head_(nullptr), tail_(nullptr), bucket_(bucketAllocator_.allocate(rehashPolicy_.GetSize())),
+          size_(0), bucketSize_(rehashPolicy_.GetSize()) {}
+
+    template<class InputIt>
+    LinkedHashTable(InputIt first, InputIt last,
+                    const Hash& hash = Hash(),
+                    const Equal& equal = Equal(),
+                    const Allocator& allocator = Allocator())
+        : hash_(hash), equal_(equal), rehashPolicy_(),
+          nodeAllocator_(allocator), bucketAllocator_(allocator),
+          head_(nullptr), tail_(nullptr), bucket_(nullptr),
+          size_(0), bucketSize_(0) {
+        try {
+            while (first != last) {
+                this->Insert(*first);
+                ++first;
+            }
+        } catch (...) {
+            this->Clear();
+            throw;
+        }
+    }
+
+    template<class InputIt>
+    LinkedHashTable(InputIt first, InputIt last,
+                    SizeT minimumBucketSize,
+                    const Hash& hash = Hash(),
+                    const Equal& equal = Equal(),
+                    const Allocator& allocator = Allocator())
+        : hash_(hash), equal_(equal), rehashPolicy_(minimumBucketSize),
+          nodeAllocator_(allocator), bucketAllocator_(allocator),
+          head_(nullptr), tail_(nullptr), bucket_(bucketAllocator_.allocate(rehashPolicy_.GetSize())),
+          size_(0), bucketSize_(rehashPolicy_.GetSize()) {
+        try {
+            while (first != last) {
+                this->Insert(*first);
+                ++first;
+            }
+        } catch (...) {
+            this->Clear();
+            throw;
+        }
+    }
 
     LinkedHashTable(const LinkedHashTable& obj) : hash_(obj.hash_),
                                                   equal_(obj.equal_),
@@ -491,6 +550,47 @@ public:
         }
     }
 
+    LinkedHashTable(const LinkedHashTable& obj,
+                    const Allocator& allocator) : hash_(obj.hash_),
+                                                  equal_(obj.equal_),
+                                                  rehashPolicy_(obj.rehashPolicy_),
+                                                  nodeAllocator_(allocator),
+                                                  bucketAllocator_(allocator),
+                                                  head_(nullptr),
+                                                  tail_(nullptr),
+                                                  bucket_(nullptr),
+                                                  size_(obj.size_),
+                                                  bucketSize_(obj.bucketSize_) {
+        bucket_ = bucketAllocator_.allocate(bucketSize_);
+        for (int i = 0; i < bucketSize_; ++i) {
+            bucket_[i] = nullptr;
+        }
+
+        for (Node* node = obj.head_; node != nullptr; node = node->linkedNext) {
+            Node* newNode;
+            try {
+                newNode = nodeAllocator_.allocate(1);
+                try {
+                    ::new(newNode) Node(node->hash, node->value);
+                } catch (...) {
+                    nodeAllocator_.deallocate(newNode, 1);
+                    throw;
+                }
+            } catch (...) {
+                Node* toDelete = head_;
+                while (toDelete != nullptr) {
+                    Node* next = toDelete->linkedNext;
+                    toDelete->~Node();
+                    nodeAllocator_.deallocate(toDelete, 1);
+                    toDelete = next;
+                }
+                bucketAllocator_.deallocate(bucket_, bucketSize_);
+                throw;
+            }
+            this->Insert_(newNode);
+        }
+    }
+
     LinkedHashTable(LinkedHashTable&& obj) noexcept
         : hash_(std::move(obj.hash_)),
           equal_(std::move(obj.equal_)),
@@ -507,6 +607,40 @@ public:
         obj.bucket_ = nullptr;
         obj.size_ = 0;
         obj.bucketSize_ = 0;
+    }
+
+    LinkedHashTable(std::initializer_list<T> init,
+                    const Hash& hash,
+                    const Equal& equal = Equal(),
+                    const Allocator& allocator = Allocator())
+        : hash_(hash), equal_(equal), rehashPolicy_(init.size()),
+          nodeAllocator_(allocator), bucketAllocator_(allocator),
+          head_(nullptr), tail_(nullptr), bucket_(bucketAllocator_.allocate(rehashPolicy_.GetSize())),
+          size_(0), bucketSize_(rehashPolicy_.GetSize()) {
+        try {
+            for (auto& value: init) {
+                this->Insert_(value);
+            }
+        } catch (...) {
+            this->Clear();
+            throw;
+        }
+    }
+
+    LinkedHashTable(std::initializer_list<T> init,
+                    const Allocator& allocator = Allocator())
+        : hash_(), equal_(), rehashPolicy_(init.size()),
+          nodeAllocator_(allocator), bucketAllocator_(allocator),
+          head_(nullptr), tail_(nullptr), bucket_(bucketAllocator_.allocate(rehashPolicy_.GetSize())),
+          size_(0), bucketSize_(rehashPolicy_.GetSize()) {
+        try {
+            for (auto& value: init) {
+                this->Insert_(value);
+            }
+        } catch (...) {
+            this->Clear();
+            throw;
+        }
     }
 
     LinkedHashTable& operator=(const LinkedHashTable& obj) {
