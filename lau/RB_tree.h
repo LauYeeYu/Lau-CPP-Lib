@@ -244,7 +244,7 @@ public:
         }
 
     private:
-        Iterator(Node* target, const RBTree* tree) : target_(target), tree_(tree) {}
+        Iterator(Node* target, const RBTree* tree) noexcept : target_(target), tree_(tree) {}
 
         Node* target_       = nullptr;
         const RBTree* tree_ = nullptr;
@@ -382,7 +382,7 @@ public:
         }
 
     private:
-        ConstIterator(Node* target, const RBTree* tree) : target_(target), tree_(tree) {}
+        ConstIterator(Node* target, const RBTree* tree) noexcept : target_(target), tree_(tree) {}
 
         Node* target_       = nullptr;
         const RBTree* tree_ = nullptr;

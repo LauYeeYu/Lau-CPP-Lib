@@ -65,10 +65,17 @@ public:
         explicit Node(T&& valueIn) : value(std::move(valueIn)), hash(Hash()(value)) {}
 
         template<class... Args>
-        Node(Args&&... args) : value(std::forward<Args>(args)...), hash(Hash()(value)) {}
+        explicit Node(Args&&... args) : value(std::forward<Args>(args)...), hash(Hash()(value)) {}
 
-        template<class... Args>
-        Node(std::size_t hashIn, Args&&... args) : value(std::forward<Args>(args)...), hash(hashIn) {}
+        Node& operator=(Node&) = default;
+        Node& operator=(const Node&) = default;
+        Node& operator=(Node&&) = default;
+
+        ~Node() = default;
+
+        Node* BucketNext() const noexcept { return next; }
+        Node* LinkedNext() const noexcept { return linkedNext; }
+        Node* LinkedPrevious() const noexcept { return linkedPrevious; }
 
         // Every time you change the value, you should also change the hash
         T value;
@@ -100,14 +107,14 @@ public:
         using reference         = value_type&;
         using iterator_category = std::output_iterator_tag;
 
-        Iterator() = default;
-        Iterator(const Iterator&) = default;
+        Iterator() noexcept = default;
+        Iterator(const Iterator&) noexcept = default;
 
-        Iterator& operator=(const Iterator&) = default;
+        Iterator& operator=(const Iterator&) noexcept = default;
 
         ~Iterator() = default;
 
-        operator Node*() const { return target_; }
+        operator Node*() const noexcept { return target_; }
 
         Iterator operator++(int) {
             Iterator tmp = *this;
@@ -141,20 +148,20 @@ public:
             target_ = target_->linkedPrevious;
             return *this;
         }
-        /**
-         * a operator to check whether two iterators are same (pointing to the same memory).
-         */
-        bool operator==(const Iterator& rhs) const {
+
+        bool operator==(const Iterator& rhs) const noexcept {
             return ((this->table_ == rhs.table_) && (this->target_ == rhs.target_));
         }
 
-        bool operator==(const ConstIterator& rhs) const {
+        bool operator==(const ConstIterator& rhs) const noexcept {
             return ((this->table_ == rhs.table_) && (this->target_ == rhs.target_));
         }
-        bool operator!=(const Iterator& rhs) const {
+
+        bool operator!=(const Iterator& rhs) const noexcept {
             return ((this->table_ != rhs.table_) || (this->target_ != rhs.target_));
         }
-        bool operator!=(const ConstIterator& rhs) const {
+
+        bool operator!=(const ConstIterator& rhs) const noexcept {
             return ((this->table_ != rhs.table_) || (this->target_ != rhs.target_));
         }
 
@@ -172,7 +179,7 @@ public:
         }
 
     private:
-        Iterator(Node* target, const LinkedHashTable* table) : target_(target), table_(table) {}
+        Iterator(Node* target, const LinkedHashTable* table) noexcept : target_(target), table_(table) {}
 
         Node* target_ = nullptr;
         const LinkedHashTable* table_ = nullptr;
@@ -196,15 +203,15 @@ public:
         using reference         = value_type&;
         using iterator_category = std::output_iterator_tag;
 
-        ConstIterator() = default;
-        ConstIterator(const ConstIterator&) = default;
-        ConstIterator(const Iterator& obj) : target_(obj.target_), table_(obj.table_) {}
+        ConstIterator() noexcept = default;
+        ConstIterator(const ConstIterator&) noexcept = default;
+        ConstIterator(const Iterator& obj) noexcept : target_(obj.target_), table_(obj.table_) {}
 
-        ConstIterator& operator=(const ConstIterator&) = default;
+        ConstIterator& operator=(const ConstIterator&) noexcept = default;
 
         ~ConstIterator() = default;
 
-        operator const Node*() const { return target_; }
+        operator const Node*() const noexcept { return target_; }
 
         ConstIterator operator++(int) {
             Iterator tmp = *this;
@@ -240,20 +247,20 @@ public:
             target_ = target_->linkedPrevious;
             return *this;
         }
-        /**
-         * a operator to check whether two iterators are same (pointing to the same memory).
-         */
-        bool operator==(const Iterator& rhs) const {
+
+        bool operator==(const Iterator& rhs) const noexcept {
             return ((this->table_ == rhs.table_) && (this->target_ == rhs.target_));
         }
 
-        bool operator==(const ConstIterator& rhs) const {
+        bool operator==(const ConstIterator& rhs) const noexcept {
             return ((this->table_ == rhs.table_) && (this->target_ == rhs.target_));
         }
-        bool operator!=(const Iterator& rhs) const {
+
+        bool operator!=(const Iterator& rhs) const noexcept {
             return ((this->table_ != rhs.table_) || (this->target_ != rhs.target_));
         }
-        bool operator!=(const ConstIterator& rhs) const {
+
+        bool operator!=(const ConstIterator& rhs) const noexcept {
             return ((this->table_ != rhs.table_) || (this->target_ != rhs.target_));
         }
 
@@ -271,7 +278,7 @@ public:
         }
 
     private:
-        ConstIterator(const Node* target, const LinkedHashTable* table) : target_(target), table_(table) {}
+        ConstIterator(const Node* target, const LinkedHashTable* table) noexcept : target_(target), table_(table) {}
 
         const Node* target_ = nullptr;
         const LinkedHashTable* table_ = nullptr;
@@ -302,7 +309,7 @@ public:
 
         ~BucketIterator() = default;
 
-        operator Node*() const { return target_; }
+        operator Node*() const noexcept { return target_; }
 
         BucketIterator operator++(int) {
             Iterator tmp = *this;
@@ -318,19 +325,19 @@ public:
             return *this;
         }
 
-        bool operator==(const BucketIterator& rhs) const {
+        bool operator==(const BucketIterator& rhs) const noexcept {
             return ((this->target_ == rhs.target_) && (this->bucket_ == rhs.bucket_));
         }
 
-        bool operator==(const ConstBucketIterator& rhs) const {
+        bool operator==(const ConstBucketIterator& rhs) const noexcept {
             return ((this->target_ == rhs.target_) && (this->bucket_ == rhs.bucket_));
         }
 
-        bool operator!=(const BucketIterator& rhs) const {
+        bool operator!=(const BucketIterator& rhs) const noexcept {
             return ((this->target_ != rhs.target_) || (this->bucket_ != rhs.bucket_));
         }
 
-        bool operator!=(const ConstBucketIterator& rhs) const {
+        bool operator!=(const ConstBucketIterator& rhs) const noexcept {
             return ((this->target_ != rhs.target_) || (this->bucket_ != rhs.bucket_));
         }
 
@@ -349,7 +356,7 @@ public:
         }
 
     private:
-        BucketIterator(Node* target, Node const* const* bucket) : target_(target), bucket_(bucket) {}
+        BucketIterator(Node* target, Node const* const* bucket) noexcept : target_(target), bucket_(bucket) {}
 
         Node* target_ = nullptr;
         Node const* const* bucket_ = nullptr;
@@ -370,9 +377,9 @@ public:
         using reference         = value_type&;
         using iterator_category = std::output_iterator_tag;
 
-        ConstBucketIterator() = default;
-        ConstBucketIterator(const ConstBucketIterator&) = default;
-        ConstBucketIterator(const BucketIterator& obj) : target_(obj.target_), bucket_(obj.bucket_) {}
+        ConstBucketIterator() noexcept = default;
+        ConstBucketIterator(const ConstBucketIterator&) noexcept = default;
+        ConstBucketIterator(const BucketIterator& obj) noexcept : target_(obj.target_), bucket_(obj.bucket_) {}
 
         explicit ConstBucketIterator(const Iterator& obj) noexcept
             : target_(obj.target_),
@@ -382,11 +389,11 @@ public:
             : target_(obj.target_),
               bucket_(obj.table_->bucket_ + target_->hash % obj.table_->bucketSize_) {}
 
-        ConstBucketIterator& operator=(const ConstBucketIterator&) = default;
+        ConstBucketIterator& operator=(const ConstBucketIterator&) noexcept = default;
 
         ~ConstBucketIterator() = default;
 
-        operator const Node*() const { return target_; }
+        operator const Node*() const noexcept { return target_; }
 
         ConstBucketIterator operator++(int) {
             Iterator tmp = *this;
@@ -402,19 +409,19 @@ public:
             return *this;
         }
 
-        bool operator==(const BucketIterator& rhs) const {
+        bool operator==(const BucketIterator& rhs) const noexcept {
             return ((this->target_ == rhs.target_) && (this->bucket_ == rhs.bucket_));
         }
 
-        bool operator==(const ConstBucketIterator& rhs) const {
+        bool operator==(const ConstBucketIterator& rhs) const noexcept {
             return ((this->target_ == rhs.target_) && (this->bucket_ == rhs.bucket_));
         }
 
-        bool operator!=(const BucketIterator& rhs) const {
+        bool operator!=(const BucketIterator& rhs) const noexcept {
             return ((this->target_ != rhs.target_) || (this->bucket_ != rhs.bucket_));
         }
 
-        bool operator!=(const ConstBucketIterator& rhs) const {
+        bool operator!=(const ConstBucketIterator& rhs) const noexcept {
             return ((this->target_ != rhs.target_) || (this->bucket_ != rhs.bucket_));
         }
 
@@ -433,7 +440,7 @@ public:
         }
 
     private:
-        ConstBucketIterator(Node* target, Node const* const* bucket) : target_(target), bucket_(bucket) {}
+        ConstBucketIterator(Node* target, Node const* const* bucket) noexcept : target_(target), bucket_(bucket) {}
 
         Node* target_ = nullptr;
         Node const* const* bucket_ = nullptr;
@@ -591,7 +598,7 @@ public:
      * Delete all the contents of the hash table.
      * @return the reference to the hash table
      */
-    LinkedHashTable& Clear() {
+    LinkedHashTable& Clear() noexcept {
         Node* toDelete = head_;
         while (toDelete != nullptr) {
             Node* next = toDelete->linkedNext;
@@ -797,7 +804,7 @@ public:
      * @param minimumSize
      * @return the reference to the table
      */
-    LinkedHashTable& ReserveAtLeast(SizeT minimumSize) {
+    LinkedHashTable& ReserveAtLeast(SizeT minimumSize) noexcept {
         if (minimumSize <= bucketSize_ ||
             minimumSize >= rehashPolicy_.NextSize()) {
             return *this;
@@ -822,10 +829,10 @@ public:
         return *this;
     }
 
-    [[nodiscard]] Iterator Begin() { return Iterator(head_, this); }
-    [[nodiscard]] ConstIterator Begin() const { return ConstIterator(head_, this); }
-    [[nodiscard]] Iterator begin() { return Iterator(head_, this); }
-    [[nodiscard]] ConstIterator begin() const { return ConstIterator(head_, this); }
+    [[nodiscard]] Iterator Begin() noexcept { return Iterator(head_, this); }
+    [[nodiscard]] ConstIterator Begin() const noexcept { return ConstIterator(head_, this); }
+    [[nodiscard]] Iterator begin() noexcept { return Iterator(head_, this); }
+    [[nodiscard]] ConstIterator begin() const noexcept { return ConstIterator(head_, this); }
 
     [[nodiscard]] BucketIterator Begin(SizeT bucketIndex) {
         if (bucketIndex >= bucketSize_) {
@@ -841,7 +848,7 @@ public:
         return ConstBucketIterator(bucket_[bucketIndex], bucket_ + bucketIndex);
     }
 
-    [[nodiscard]] ConstIterator ConstBegin() const { return ConstIterator(head_, this); }
+    [[nodiscard]] ConstIterator ConstBegin() const noexcept { return ConstIterator(head_, this); }
 
     [[nodiscard]] ConstBucketIterator ConstBegin(SizeT bucketIndex) const {
         if (bucketIndex >= bucketSize_) {
@@ -850,10 +857,10 @@ public:
         return ConstBucketIterator(bucket_[bucketIndex], bucket_ + bucketIndex);
     }
 
-    [[nodiscard]] Iterator End() { return Iterator(nullptr, this); }
-    [[nodiscard]] ConstIterator End() const { return ConstIterator(nullptr, this); }
-    [[nodiscard]] Iterator end() { return Iterator(nullptr, this); }
-    [[nodiscard]] ConstIterator end() const { return ConstIterator(nullptr, this); }
+    [[nodiscard]] Iterator End() noexcept { return Iterator(nullptr, this); }
+    [[nodiscard]] ConstIterator End() const noexcept { return ConstIterator(nullptr, this); }
+    [[nodiscard]] Iterator end() noexcept { return Iterator(nullptr, this); }
+    [[nodiscard]] ConstIterator end() const noexcept { return ConstIterator(nullptr, this); }
 
     [[nodiscard]] BucketIterator End(SizeT bucketIndex) {
         if (bucketIndex >= bucketSize_) {
@@ -869,7 +876,7 @@ public:
         return ConstBucketIterator(nullptr, bucket_ + bucketIndex);
     }
 
-    [[nodiscard]] ConstIterator ConstEnd() const { return ConstIterator(nullptr, this); }
+    [[nodiscard]] ConstIterator ConstEnd() const noexcept { return ConstIterator(nullptr, this); }
 
     [[nodiscard]] ConstBucketIterator ConstEnd(SizeT bucketIndex) const {
         if (bucketIndex >= bucketSize_) {
@@ -898,8 +905,8 @@ public:
     template<class K>
     [[nodiscard]] bool Contains(const K& value) const { return Find_(value) != nullptr; }
 
-    [[nodiscard]] SizeT Size() const { return size_; }
-    [[nodiscard]] bool Empty() const { return size_ == 0; }
+    [[nodiscard]] SizeT Size() const noexcept { return size_; }
+    [[nodiscard]] bool Empty() const noexcept { return size_ == 0; }
 
 private:
     /**
