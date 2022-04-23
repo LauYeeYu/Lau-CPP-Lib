@@ -1446,7 +1446,7 @@ private:
         return nullptr;
     }
 
-    void Erase_(Node* node) {
+    void Erase_(Node* node) noexcept {
         if (node == head_) head_ = node->linkedNext;
         if (node == tail_) tail_ = node->linkedPrevious;
         if (node->linkedNext != nullptr) {
