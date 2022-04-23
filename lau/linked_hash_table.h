@@ -45,6 +45,8 @@ public:
     struct Node;
     class Iterator;
     class ConstIterator;
+    class BucketIterator;
+    class ConstBucketIterator;
 
     using NodeAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<Node>;
     using BucketAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<Node*>;
@@ -81,6 +83,8 @@ public:
     class Iterator {
         friend class LinkedHashTable;
         friend class ConstIterator;
+        friend class BucketIterator;
+        friend class ConstBucketIterator;
 
     public:
         // The following code is written for the C++ type_traits library.
@@ -154,15 +158,15 @@ public:
             return ((this->table_ != rhs.table_) || (this->target_ != rhs.target_));
         }
 
-        Node& operator*()  const {
+        Node& operator*() const {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+                throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
             return *target_;
         }
         Node* operator->() const {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+                throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
             return target_;
         }
@@ -176,7 +180,7 @@ public:
 
     class ConstIterator {
         friend class LinkedHashTable;
-        friend class Iterator;
+        friend class ConstBucketIterator;
 
     public:
         // The following code is written for the C++ type_traits library.
@@ -194,7 +198,7 @@ public:
 
         ConstIterator() = default;
         ConstIterator(const ConstIterator&) = default;
-        explicit ConstIterator(const Iterator& obj) : target_(obj.target_), table_(obj.table_) {}
+        ConstIterator(const Iterator& obj) : target_(obj.target_), table_(obj.table_) {}
 
         ConstIterator& operator=(const ConstIterator&) = default;
 
@@ -253,15 +257,15 @@ public:
             return ((this->table_ != rhs.table_) || (this->target_ != rhs.target_));
         }
 
-        const Node& operator*()  const {
+        const Node& operator*() const {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+                throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
             return *target_;
         }
         const Node* operator->() const {
             if (target_ == nullptr) {
-                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+                throw InvalidIterator("Invalid Iterator: de-referencing the end iterator");
             }
             return target_;
         }
@@ -271,6 +275,168 @@ public:
 
         const Node* target_ = nullptr;
         const LinkedHashTable* table_ = nullptr;
+    };
+
+    class BucketIterator {
+    public:
+        // The following code is written for the C++ type_traits library.
+        // Type traits is a C++ feature for describing certain properties of a type.
+        // STL algorithms and containers may use these type_traits (e.g. the following
+        // typedef) to work properly.
+        // See these websites for more information:
+        // https://en.cppreference.com/w/cpp/header/type_traits
+        // About iterator_category: https://en.cppreference.com/w/cpp/iterator
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = T;
+        using pointer           = value_type*;
+        using reference         = value_type&;
+        using iterator_category = std::output_iterator_tag;
+
+        BucketIterator() noexcept = default;
+        BucketIterator(const BucketIterator&) noexcept = default;
+        explicit BucketIterator(const Iterator& obj) noexcept
+            : target_(obj.target_),
+              bucket_(obj.table_->bucket_ + target_->hash % obj.table_->bucketSize_) {}
+
+        BucketIterator& operator=(const BucketIterator&) noexcept = default;
+
+        ~BucketIterator() = default;
+
+        operator Node*() const { return target_; }
+
+        BucketIterator operator++(int) {
+            Iterator tmp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        BucketIterator& operator++() {
+            if (target_ == nullptr) {
+                throw InvalidIterator("Invalid Iterator: using ++ on the end iterator");
+            }
+            target_ = target_->next;
+            return *this;
+        }
+
+        bool operator==(const BucketIterator& rhs) const {
+            return ((this->target_ == rhs.target_) && (this->bucket_ == rhs.bucket_));
+        }
+
+        bool operator==(const ConstBucketIterator& rhs) const {
+            return ((this->target_ == rhs.target_) && (this->bucket_ == rhs.bucket_));
+        }
+
+        bool operator!=(const BucketIterator& rhs) const {
+            return ((this->target_ != rhs.target_) || (this->bucket_ != rhs.bucket_));
+        }
+
+        bool operator!=(const ConstBucketIterator& rhs) const {
+            return ((this->target_ != rhs.target_) || (this->bucket_ != rhs.bucket_));
+        }
+
+        Node& operator*() const {
+            if (target_ == nullptr) {
+                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+            }
+            return *target_;
+        }
+
+        Node* operator->() const {
+            if (target_ == nullptr) {
+                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+            }
+            return target_;
+        }
+
+    private:
+        BucketIterator(Node* target, Node const* const* bucket) : target_(target), bucket_(bucket) {}
+
+        Node* target_ = nullptr;
+        Node const* const* bucket_ = nullptr;
+    };
+
+    class ConstBucketIterator {
+    public:
+        // The following code is written for the C++ type_traits library.
+        // Type traits is a C++ feature for describing certain properties of a type.
+        // STL algorithms and containers may use these type_traits (e.g. the following
+        // typedef) to work properly.
+        // See these websites for more information:
+        // https://en.cppreference.com/w/cpp/header/type_traits
+        // About iterator_category: https://en.cppreference.com/w/cpp/iterator
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = T;
+        using pointer           = value_type*;
+        using reference         = value_type&;
+        using iterator_category = std::output_iterator_tag;
+
+        ConstBucketIterator() = default;
+        ConstBucketIterator(const ConstBucketIterator&) = default;
+        ConstBucketIterator(const BucketIterator& obj) : target_(obj.target_), bucket_(obj.bucket_) {}
+
+        explicit ConstBucketIterator(const Iterator& obj) noexcept
+            : target_(obj.target_),
+              bucket_(obj.table_->bucket_ + target_->hash % obj.table_->bucketSize_) {}
+
+        explicit ConstBucketIterator(const ConstIterator& obj) noexcept
+            : target_(obj.target_),
+              bucket_(obj.table_->bucket_ + target_->hash % obj.table_->bucketSize_) {}
+
+        ConstBucketIterator& operator=(const ConstBucketIterator&) = default;
+
+        ~ConstBucketIterator() = default;
+
+        operator const Node*() const { return target_; }
+
+        ConstBucketIterator operator++(int) {
+            Iterator tmp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        ConstBucketIterator& operator++() {
+            if (target_ == nullptr) {
+                throw InvalidIterator("Invalid Iterator: using ++ on the end iterator");
+            }
+            target_ = target_->next;
+            return *this;
+        }
+
+        bool operator==(const BucketIterator& rhs) const {
+            return ((this->target_ == rhs.target_) && (this->bucket_ == rhs.bucket_));
+        }
+
+        bool operator==(const ConstBucketIterator& rhs) const {
+            return ((this->target_ == rhs.target_) && (this->bucket_ == rhs.bucket_));
+        }
+
+        bool operator!=(const BucketIterator& rhs) const {
+            return ((this->target_ != rhs.target_) || (this->bucket_ != rhs.bucket_));
+        }
+
+        bool operator!=(const ConstBucketIterator& rhs) const {
+            return ((this->target_ != rhs.target_) || (this->bucket_ != rhs.bucket_));
+        }
+
+        const Node& operator*() const {
+            if (target_ == nullptr) {
+                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+            }
+            return *target_;
+        }
+
+        const Node* operator->() const {
+            if (target_ == nullptr) {
+                throw InvalidIterator("Invalid Iterator: de-referencing an end iterator");
+            }
+            return target_;
+        }
+
+    private:
+        ConstBucketIterator(Node* target, Node const* const* bucket) : target_(target), bucket_(bucket) {}
+
+        Node* target_ = nullptr;
+        Node const* const* bucket_ = nullptr;
     };
 
     LinkedHashTable(Allocator allocator = Allocator())
@@ -658,12 +824,60 @@ public:
 
     [[nodiscard]] Iterator Begin() { return Iterator(head_, this); }
     [[nodiscard]] ConstIterator Begin() const { return ConstIterator(head_, this); }
+    [[nodiscard]] Iterator begin() { return Iterator(head_, this); }
+    [[nodiscard]] ConstIterator begin() const { return ConstIterator(head_, this); }
+
+    [[nodiscard]] BucketIterator Begin(SizeT bucketIndex) {
+        if (bucketIndex >= bucketSize_) {
+            throw InvalidArgument("Invalid Argument: bucket index out of range");
+        }
+        return BucketIterator(bucket_[bucketIndex], bucket_ + bucketIndex);
+    }
+
+    [[nodiscard]] ConstBucketIterator Begin(SizeT bucketIndex) const {
+        if (bucketIndex >= bucketSize_) {
+            throw InvalidArgument("Invalid Argument: bucket index out of range");
+        }
+        return ConstBucketIterator(bucket_[bucketIndex], bucket_ + bucketIndex);
+    }
+
     [[nodiscard]] ConstIterator ConstBegin() const { return ConstIterator(head_, this); }
 
+    [[nodiscard]] ConstBucketIterator ConstBegin(SizeT bucketIndex) const {
+        if (bucketIndex >= bucketSize_) {
+            throw InvalidArgument("Invalid Argument: bucket index out of range");
+        }
+        return ConstBucketIterator(bucket_[bucketIndex], bucket_ + bucketIndex);
+    }
 
     [[nodiscard]] Iterator End() { return Iterator(nullptr, this); }
     [[nodiscard]] ConstIterator End() const { return ConstIterator(nullptr, this); }
+    [[nodiscard]] Iterator end() { return Iterator(nullptr, this); }
+    [[nodiscard]] ConstIterator end() const { return ConstIterator(nullptr, this); }
+
+    [[nodiscard]] BucketIterator End(SizeT bucketIndex) {
+        if (bucketIndex >= bucketSize_) {
+            throw InvalidArgument("Invalid Argument: bucket index out of range");
+        }
+        return BucketIterator(nullptr, bucket_ + bucketIndex);
+    }
+
+    [[nodiscard]] ConstBucketIterator End(SizeT bucketIndex) const {
+        if (bucketIndex >= bucketSize_) {
+            throw InvalidArgument("Invalid Argument: bucket index out of range");
+        }
+        return ConstBucketIterator(nullptr, bucket_ + bucketIndex);
+    }
+
     [[nodiscard]] ConstIterator ConstEnd() const { return ConstIterator(nullptr, this); }
+
+    [[nodiscard]] ConstBucketIterator ConstEnd(SizeT bucketIndex) const {
+        if (bucketIndex >= bucketSize_) {
+            throw InvalidArgument("Invalid Argument: bucket index out of range");
+        }
+        return ConstBucketIterator(nullptr, bucket_ + bucketIndex);
+    }
+
     [[nodiscard]] Iterator Find(const T& value) { return Iterator(Find_(value), this); }
 
     template<class K>

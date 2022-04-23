@@ -28,6 +28,7 @@
 #include "file_data_structure.h"
 #include "file_double_unrolled_linked_list.h"
 #include "file_unrolled_linked_list.h"
+#include "linked_hash_table.h"
 #include "map.h"
 #include "priority_queue.h"
 #include "RB_tree.h"
