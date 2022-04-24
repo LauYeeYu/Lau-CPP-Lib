@@ -1180,11 +1180,25 @@ public:
         throw InvalidArgument("Invalid Argument: no such element to be erased");
     }
 
+    /**
+     * Merge other linked hash table into this linked hash table.  The function
+     * will merge the elements of the other linked hash table into this linked
+     * hash table.  If the key of the other linked hash table is already contained
+     * in this linked hash table, the value of the other linked hash table will be
+     * replaced by the value of this linked hash table.  If the key of the other
+     * linked hash table is not contained in this linked hash table, the key-value
+     * pair of the other linked hash table will be inserted into this linked
+     * hash table.  After this operation, the other table will be cleared.
+     * @param other
+     * @return the reference to the table
+     */
     LinkedHashTable& Merge(LinkedHashTable& other) {
-        size_ += other.size_;
         if (NeedRehash_()) ReserveAtLeast(size_);
         for (Node* node = other.head_; node != nullptr; node = node->linkedNext) {
-            this->Insert_(node);
+            if (Find_(node->value), node->hash == nullptr) {
+                this->Insert_(node);
+                ++size_;
+            }
         }
 
         other.head_ = nullptr;
@@ -1432,8 +1446,18 @@ private:
     }
 
     [[nodiscard]] Node* Find_(const T& value) const {
+        return Find_(value, hash_(value));
+    }
+
+    template<class K>
+    [[nodiscard]] Node* Find_(const K& key) const {
+        return Find_(key, hash_(key));
+    }
+
+
+    [[nodiscard]] Node* Find_(const T& value, std::size_t hash) const {
         if (size_ == 0) return nullptr;
-        std::size_t bucketIndex = hash_(value) % bucketSize_;
+        std::size_t bucketIndex = hash % bucketSize_;
         Node* tmpNode = bucket_[bucketIndex];
         while (tmpNode != nullptr) {
             if (equal_(tmpNode->value, value)) {
@@ -1445,12 +1469,12 @@ private:
     }
 
     template<class K>
-    [[nodiscard]] Node* Find_(const K& key) const {
+    [[nodiscard]] Node* Find_(const K& value, std::size_t hash) const {
         if (size_ == 0) return nullptr;
-        std::size_t bucketIndex = hash_(key) % bucketSize_;
+        std::size_t bucketIndex = hash % bucketSize_;
         Node* tmpNode = bucket_[bucketIndex];
         while (tmpNode != nullptr) {
-            if (equal_(tmpNode->value, key)) {
+            if (equal_(tmpNode->value, value)) {
                 return tmpNode;
             }
             tmpNode = tmpNode->next;
