@@ -36,6 +36,15 @@
 
 namespace lau {
 
+/**
+ * @class LinkedHashTable
+ *
+ * A hash table whose elements are linked together.
+ * @tparam T
+ * @tparam Hash
+ * @tparam Equal
+ * @tparam Allocator
+ */
 template <class T,
           class Hash = std::hash<T>,
           class Equal = std::equal_to<T>,
@@ -48,7 +57,7 @@ public:
     class BucketIterator;
     class ConstBucketIterator;
 
-    using NodeAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<Node>;
+    using NodeAllocatorType   = typename std::allocator_traits<Allocator>::template rebind_alloc<Node>;
     using BucketAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<Node*>;
 
     struct Node {
@@ -840,7 +849,8 @@ public:
      * the iterator pointing to the inserted element and a bool set to true
      * will be returned.  If not, the element will be set to the input value
      * and a pair of the iterator pointing to that existing element and a bool
-     * set to false will be returned.
+     * set to false will be returned.  Note that the order of the linked list
+     * is not changed in this progress.
      * @param value
      * @return the iterator pointing to the inserted element or the existing
      * element that is equal to the value and a bool indicating whether the
@@ -884,13 +894,14 @@ public:
      * the iterator pointing to the inserted element and a bool set to true
      * will be returned.  If not, the element will be set to the input value
      * and a pair of the iterator pointing to that existing element and a bool
-     * set to false will be returned.
+     * set to false will be returned.  Note that the order of the linked list
+     * is not changed in this progress.
      * @param value
      * @return the iterator pointing to the inserted element or the existing
      * element that is equal to the value and a bool indicating whether the
      * operation is successful or not
      */
-    Pair<Iterator, bool> InsertOrAssign(const T&& value) {
+    Pair<Iterator, bool> InsertOrAssign(T&& value) {
         if (NeedRehash_()) Rehash_();
         std::size_t hash = hash_(value);
         std::size_t bucketIndex = hash % bucketSize_;
@@ -987,7 +998,8 @@ public:
      * the iterator pointing to the inserted element and a bool set to true
      * will be returned.  If not, the element will be set to the input value
      * and a pair of the iterator pointing to that existing element and a bool
-     * set to false will be returned.
+     * set to false will be returned.  Note that the order of the linked
+     * list is not changed in this progress.
      * @tparam Args...
      * @param args... the argument(s) to construct the contained class
      * @return the iterator pointing to the inserted element or the existing
@@ -1032,8 +1044,7 @@ public:
     /**
      * Erasing the value from the hash table.  If the position iterator is not
      * pointing to this table or is the end iterator, a
-     * <code>lau::InvalidIterator</code> will be thrown.  If the value is not
-     * contained
+     * <code>lau::InvalidIterator</code> will be thrown.
      * @param position the iterator pointing to the element to be erased
      * @return the reference to the table
      */
