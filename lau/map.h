@@ -98,6 +98,10 @@ public:
 
         ~Iterator() = default;
 
+        explicit operator MapPair*() const noexcept {
+            return &((static_cast<typename RBTree<MapPair, PairCompare, Allocator>::Node*>(treeIterator_))->value);
+        }
+
         Iterator operator++(int) {
             Iterator tmp = *this;
             ++(*this);
@@ -159,6 +163,10 @@ public:
         ConstIterator& operator=(const ConstIterator& obj) = default;
 
         ~ConstIterator() = default;
+
+        explicit operator const MapPair*() const noexcept {
+            return &((static_cast<typename RBTree<MapPair, PairCompare, Allocator>::Node const*>(treeIterator_))->value);
+        }
 
         ConstIterator operator++(int) {
             ConstIterator tmp = *this;

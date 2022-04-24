@@ -76,6 +76,8 @@ public:
 
         ~Iterator() = default;
 
+        explicit operator T*() const noexcept { return objPtr_; }
+
         Iterator operator+(SizeT n) const noexcept { return Iterator(objPtr_ + n, vectorPtr_); }
         Iterator operator-(SizeT n) const noexcept { return Iterator(objPtr_ - n, vectorPtr_); }
 
@@ -167,6 +169,8 @@ public:
         ConstIterator& operator=(const ConstIterator& obj) noexcept = default;
 
         ~ConstIterator() = default;
+
+        explicit operator const T*() const noexcept { return objPtr_; }
 
         ConstIterator operator+(SizeT n) const noexcept { return ConstIterator(objPtr_ + n, vectorPtr_); }
         ConstIterator operator-(SizeT n) const noexcept { return ConstIterator(objPtr_ - n, vectorPtr_); }
