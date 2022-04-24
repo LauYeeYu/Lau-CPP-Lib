@@ -738,7 +738,8 @@ public:
     ~LinkedHashTable() { this->Clear(); }
 
     /**
-     * Delete all the contents of the hash table.
+     * Delete all the contents of the hash table.  This will also free the
+     * memory of the bucket table.
      * @return the reference to the hash table
      */
     LinkedHashTable& Clear() noexcept {
