@@ -287,11 +287,6 @@ private:
 
     using NodeAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<Node_>;
 
-    Node_* data_ = nullptr;
-    SizeT size_ = 0;
-    Compare compare_;
-    NodeAllocatorType nodeAllocator_;
-
     /**
      * Merge two leftist tree with the pointer of two tree.  Using recursion
      * to handle this procedure.
@@ -304,11 +299,11 @@ private:
         if (node2 == nullptr) return node1;
         if (compare_(node1->value, node2->value)) { // merge the node1 into node2
             node2->right = MergeNode_(node1, node2->right);
-            FlushNode(node2);
+            FlushNode_(node2);
             return node2;
         } else {
             node1->right = MergeNode_(node1->right, node2);
-            FlushNode(node1);
+            FlushNode_(node1);
             return node1;
         }
     }
@@ -318,7 +313,7 @@ private:
      * have no less distance than the right one.
      * @param node
      */
-    void FlushNode(Node_* node) {
+    void FlushNode_(Node_* node) {
         if (node->right == nullptr) {
             node->distance = 0;
             return;
@@ -373,6 +368,11 @@ private:
         }
         return newNode;
     }
+
+    Node_* data_ = nullptr;
+    SizeT size_ = 0;
+    Compare compare_;
+    NodeAllocatorType nodeAllocator_;
 };
 
 /**
