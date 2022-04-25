@@ -330,6 +330,22 @@ public:
     }
 
     /**
+     * Access or create a specified element.  If the element does exist, this
+     * function will return the reference to the mapped value of the element.
+     * If the element does not exist, this function will insert a new element
+     * with the specified key and the default value, and return the reference
+     * to the mapped value.
+     *
+     * @param key the input key
+     * @return the reference to the value that is mapped to a key equal to
+     * the input key, or the reference to the value that is inserted just now.
+     */
+    Value& operator[](Key&& key) {
+        auto [iter, success] = table_.Insert(std::move(MapPair(key, Value())));
+        return iter->value.value;
+    }
+
+    /**
      * Access a certain element.  If no such element exists, an
      * <code>lau::OutOfRange</code> will be returned.
      * @param key the key of the element to access
