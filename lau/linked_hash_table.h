@@ -971,14 +971,21 @@ public:
         std::size_t hash = newNode->hash;
         std::size_t bucketIndex = hash % bucketSize_;
         Node* tmpNode = bucket_[bucketIndex];
-        while (tmpNode != nullptr) {
-            if (equal_(tmpNode->value, newNode->value)) {
-                newNode->~Node();
-                nodeAllocator_.deallocate(newNode, 1);
-                return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
+        try {
+            while (tmpNode != nullptr) {
+                if (equal_(tmpNode->value, newNode->value)) {
+                    newNode->~Node();
+                    nodeAllocator_.deallocate(newNode, 1);
+                    return Pair<Iterator, bool>(Iterator(tmpNode, this), false);
+                }
+                tmpNode = tmpNode->next;
             }
-            tmpNode = tmpNode->next;
+        } catch (...) {
+            newNode->~Node();
+            nodeAllocator_.deallocate(newNode, 1);
+            throw;
         }
+
         newNode->next = bucket_[bucketIndex];
         bucket_[bucketIndex] = newNode;
         newNode->linkedPrevious = tail_;
@@ -1023,6 +1030,7 @@ public:
             }
             tmpNode = tmpNode->next;
         }
+
         Node* newNode = nodeAllocator_.allocate(1);
         try {
             ::new(newNode) Node(hash, std::move(value));
@@ -1030,6 +1038,7 @@ public:
             nodeAllocator_.deallocate(newNode, 1);
             throw;
         }
+
         newNode->next = bucket_[bucketIndex];
         bucket_[bucketIndex] = newNode;
         newNode->linkedPrevious = tail_;
