@@ -1403,7 +1403,7 @@ public:
      * Get a copy of the bucket allocator class.
      * @return a copy of the bucket allocator class
      */
-    [[nodiscard]] BucketAllocatorType GetAllocator() const { return bucketAllocator_; }
+    [[nodiscard]] BucketAllocatorType GetBucketAllocator() const { return bucketAllocator_; }
 
 private:
     /**
