@@ -1195,7 +1195,7 @@ public:
     LinkedHashTable& Merge(LinkedHashTable& other) {
         if (NeedRehash_()) ReserveAtLeast(size_);
         for (Node* node = other.head_; node != nullptr; node = node->linkedNext) {
-            if (Find_(node->value), node->hash == nullptr) {
+            if (Find_(node->value, node->hash) == nullptr) {
                 this->Insert_(node);
                 ++size_;
             }
@@ -1204,6 +1204,10 @@ public:
         other.head_ = nullptr;
         other.tail_ = nullptr;
         other.size_ = 0;
+
+        for (int i = 0; i < other.bucket_.size(); ++i) {
+            other.bucket_[i] = nullptr;
+        }
         return *this;
     }
 
@@ -1445,29 +1449,24 @@ private:
         bucket_[index] = node;
     }
 
-    [[nodiscard]] Node* Find_(const T& value) const {
+    /**
+     * Find the node that has the equal value with the given value.
+     * @tparam K
+     * @param key
+     * @return the pointer to the node if found, otherwise nullptr
+     */
+    template<class K>
+    [[nodiscard]] Node* Find_(const K& value) const {
         return Find_(value, hash_(value));
     }
 
-    template<class K>
-    [[nodiscard]] Node* Find_(const K& key) const {
-        return Find_(key, hash_(key));
-    }
-
-
-    [[nodiscard]] Node* Find_(const T& value, std::size_t hash) const {
-        if (size_ == 0) return nullptr;
-        std::size_t bucketIndex = hash % bucketSize_;
-        Node* tmpNode = bucket_[bucketIndex];
-        while (tmpNode != nullptr) {
-            if (equal_(tmpNode->value, value)) {
-                return tmpNode;
-            }
-            tmpNode = tmpNode->next;
-        }
-        return nullptr;
-    }
-
+    /**
+     * Find the node that has the equal value with the given value.
+     * @tparam K
+     * @param key
+     * @param hash
+     * @return the pointer to the node if found, otherwise nullptr
+     */
     template<class K>
     [[nodiscard]] Node* Find_(const K& value, std::size_t hash) const {
         if (size_ == 0) return nullptr;
@@ -1482,6 +1481,10 @@ private:
         return nullptr;
     }
 
+    /**
+     * Remove the node from the bucket.
+     * @param node
+     */
     void Erase_(Node* node) noexcept {
         if (node == head_) head_ = node->linkedNext;
         if (node == tail_) tail_ = node->linkedPrevious;
