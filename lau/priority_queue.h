@@ -59,10 +59,10 @@ public:
         data_ = CopyNode_(obj.data_);
     }
 
-    PriorityQueue(PriorityQueue&& obj) noexcept : compare_(obj.compare_),
+    PriorityQueue(PriorityQueue&& obj) noexcept : compare_(std::move(obj.compare_)),
                                                   data_(obj.data_),
                                                   size_(obj.size()),
-                                                  nodeAllocator_(obj.nodeAllocator_) {
+                                                  nodeAllocator_(std::move(obj.nodeAllocator_)) {
         obj.data_ = nullptr;
         obj.size_ = 0;
     }
@@ -159,7 +159,7 @@ public:
     PriorityQueue& Emplace(Args&&... args) {
         Node_* tmp = nodeAllocator_.allocate(1);
         try {
-            ::new(tmp) Node_(nullptr, nullptr, 0, args...);
+            ::new(tmp) Node_(nullptr, nullptr, 0, std::forward<Args>(args)...);
         } catch (...) {
             nodeAllocator_.deallocate(tmp, 1);
             throw;
@@ -280,7 +280,7 @@ private:
 
         template<class... Args>
         Node_(Node_* left, Node_* right, SizeT distance, Args&&... args)
-            : value(args...), left(left), right(right), distance(distance) {}
+            : value(std::forward<Args>(args)...), left(left), right(right), distance(distance) {}
 
         ~Node_() = default;
     };

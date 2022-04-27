@@ -341,7 +341,7 @@ public:
      * the input key, or the reference to the value that is inserted just now.
      */
     Value& operator[](Key&& key) {
-        auto [iter, success] = table_.Insert(std::move(MapPair(key, Value())));
+        auto [iter, success] = table_.Insert(std::move(MapPair(std::move(key), Value())));
         return iter->value.value;
     }
 
@@ -412,7 +412,7 @@ public:
      * operation is successful or not
      */
     Pair<Iterator, bool> Insert(MapPair&& pair) {
-        auto [iter, success] = table_.Insert(pair);
+        auto [iter, success] = table_.Insert(std::move(pair));
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 

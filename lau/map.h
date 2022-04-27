@@ -282,7 +282,7 @@ public:
     }
 
     Value& operator[](Key&& key) {
-        auto [iter, result] = tree_.Insert(std::move(MapPair(key, Value())));
+        auto [iter, result] = tree_.Insert(std::move(MapPair(std::move(key), Value())));
         return iter->value.value;
     }
 
@@ -367,7 +367,7 @@ public:
      * one is a bool denoting whether the insertion took place.
      */
     Pair<Iterator, bool> Insert(MapPair&& pair) {
-        auto [iter, success] = tree_.Insert(pair);
+        auto [iter, success] = tree_.Insert(std::move(pair));
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 

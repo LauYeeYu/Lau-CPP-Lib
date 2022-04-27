@@ -290,7 +290,7 @@ public:
                                     size_(obj.size_),
                                     beginIndex_(obj.beginIndex_),
                                     target_(obj.target_),
-                                    allocator_(std::move(allocator_)),
+                                    allocator_(std::move(obj.allocator_)),
                                     pointerAllocator_(std::move(obj.pointerAllocator_)){
         obj.target_ = nullptr;
         obj.capacity_ = 0;
@@ -603,7 +603,7 @@ public:
         if (NeedEnlarging_()) Enlarge_();
         target_[size_ + beginIndex_] = allocator_.allocate(1);
         try {
-            ::new(target_[size_ + beginIndex_]) T(args...);
+            ::new(target_[size_ + beginIndex_]) T(std::forward<Args>(args)...);
         } catch (...) {
             allocator_.deallocate(target_[size_ + beginIndex_], 1);
             throw;

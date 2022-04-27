@@ -70,8 +70,6 @@ public:
 
         Node(std::size_t hashIn, const T& valueIn) : value(valueIn), hash(hashIn) {}
         Node(std::size_t hashIn, T&& valueIn) : value(std::move(valueIn)), hash(hashIn) {}
-        /*explicit Node(const T& valueIn) : value(valueIn), hash(Hash()(value)) {}
-        explicit Node(T&& valueIn) : value(std::move(valueIn)), hash(Hash()(value)) {}*/
 
         template<class... Args>
         explicit Node(std::size_t hashIn, Args&&... args) : value(std::forward<Args>(args)...), hash(hashIn) {}
@@ -827,7 +825,7 @@ public:
         }
         Node* newNode = nodeAllocator_.allocate(1);
         try {
-            ::new(newNode) Node(hash, value);
+            ::new(newNode) Node(hash, std::move(value));
         } catch (...) {
             nodeAllocator_.deallocate(newNode, 1);
             throw;
@@ -917,7 +915,7 @@ public:
         }
         Node* newNode = nodeAllocator_.allocate(1);
         try {
-            ::new(newNode) Node(hash, value);
+            ::new(newNode) Node(hash, std::move(value));
         } catch (...) {
             nodeAllocator_.deallocate(newNode, 1);
             throw;

@@ -58,7 +58,7 @@ public:
         Node() = default;
 
         explicit Node(const T& valueIn) : value(valueIn) {}
-        explicit Node(T&& valueIn) : value(valueIn) {}
+        explicit Node(T&& valueIn) : value(std::move(valueIn)) {}
 
         Node(Node& obj) = default;
         Node(const Node& obj) = default;
@@ -798,7 +798,7 @@ public:
         if (head_ == nullptr) {
             Node* newNode = allocator_.allocate(1);
             try {
-                ::new(newNode) Node(value);
+                ::new(newNode) Node(std::move(value));
             } catch (...) {
                 allocator_.deallocate(newNode, 1);
                 throw;
@@ -845,7 +845,7 @@ public:
 
         Node* newNode = allocator_.allocate(1);
         try {
-            ::new(newNode) Node(value);
+            ::new(newNode) Node(std::move(value));
         } catch (...) {
             allocator_.deallocate(newNode, 1);
             throw;
