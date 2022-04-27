@@ -366,7 +366,8 @@ public:
      * one is a bool denoting whether the insertion took place.
      */
     Pair<Iterator, bool> InsertOrAssign(const MapPair& pair) {
-        auto [iter, success] = tree_.InsertOrAssign(pair);
+        auto [iter, success] = tree_.Insert(pair);
+        if (!success) iter->value.value = pair.value;
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 
@@ -378,7 +379,8 @@ public:
      * one is a bool denoting whether the insertion took place.
      */
     Pair<Iterator, bool> InsertOrAssign(MapPair&& pair) {
-        auto [iter, success] = tree_.InsertOrAssign(pair);
+        auto [iter, success] = tree_.Insert(std::move(pair));
+        if (!success) iter->value.value = std::move(pair.value);
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 
@@ -392,19 +394,6 @@ public:
     template<class... Args>
     Pair<Iterator, bool> Emplace(Args&&... args) {
         auto [iter, success] = tree_.Emplace(std::forward<Args>(args)...);
-        return Pair<Iterator, bool>(Iterator(iter), success);
-    }
-
-    /**
-     * Insert or assign an element in place.
-     * @param value a key-value pair
-     * @return a pair, the first of the pair is the iterator to the new
-     * element (or the element that prevented the insertion), the second
-     * one is a bool denoting whether the insertion took place.
-     */
-    template<class... Args>
-    Pair<Iterator, bool> EmplaceOrAssign(Args&&... args) {
-        auto [iter, success] = tree_.EmplaceOrAssign(std::forward<Args>(args)...);
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 

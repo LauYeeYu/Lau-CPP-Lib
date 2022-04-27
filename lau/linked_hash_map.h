@@ -430,7 +430,27 @@ public:
      * operation is successful or not
      */
     Pair<Iterator, bool> InsertOrAssign(const MapPair& pair) {
-        auto [iter, success] = table_.InsertOrAssign(pair);
+        auto [iter, success] = table_.Insert(pair);
+        if (!success) iter->value.value = pair.value;
+        return Pair<Iterator, bool>(Iterator(iter), success);
+    }
+
+    /**
+     * Insert or assign the key-value pair into the map.  If the pair has not
+     * already been contained in the map, the pair will be inserted and a pair
+     * of the iterator pointing to the inserted element and a bool set to true
+     * will be returned.  If not, the element will be set to the input pair
+     * and a pair of the iterator pointing to that existing element and a bool
+     * set to false will be returned.  Note that the order of the linked list
+     * is not changed in this progress.
+     * @param pair
+     * @return the iterator pointing to the inserted element or the existing
+     * element that is equal to the key and a bool indicating whether the
+     * operation is successful or not
+     */
+    Pair<Iterator, bool> InsertOrAssign(MapPair&& pair) {
+        auto [iter, success] = table_.Insert(std::move(pair));
+        if (!success) iter->value.value = std::move(pair.value);
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 
@@ -452,28 +472,6 @@ public:
     template<class... Args>
     Pair<Iterator, bool> Emplace(Args&&... args) {
         auto [iter, success] = table_.Emplace(std::forward<Args>(args)...);
-        return Pair<Iterator, bool>(Iterator(iter), success);
-    }
-
-    /**
-     * Insert ot assign the key-value pair into the hash using a in-place
-     * construction of the contained class.  The function will construct the
-     * contained class even if there is an element equal to it.  If the pair
-     * has not already been contained in the table, the pair will be inserted
-     * and a pair of the iterator pointing to the inserted element and a bool
-     * set to true will be returned.  If not, the element will be set to the
-     * input pair and a pair of the iterator pointing to that existing element
-     * and a bool set to false will be returned.  Note that the order of the
-     * linked list is not changed in this progress.
-     * @tparam Args...
-     * @param args... the argument(s) to construct the contained class
-     * @return the iterator pointing to the inserted element or the existing
-     * element that is equal to the key and a bool indicating whether the
-     * operation is successful or not
-     */
-    template<class... Args>
-    Pair<Iterator, bool> EmplaceOrAssign(Args&&... args) {
-        auto [iter, success] = table_.EmplaceOrAssign(std::forward<Args>(args)...);
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 
