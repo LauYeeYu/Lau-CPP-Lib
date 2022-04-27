@@ -88,7 +88,9 @@ public:
           * @return the distance between two iterators
           */
         difference_type operator-(const Iterator &rhs) const {
-            if (this->vectorPtr_ != rhs.vectorPtr_) throw InvalidIterator();
+            if (this->vectorPtr_ != rhs.vectorPtr_) {
+                throw InvalidIterator("Invalid Iterator: the two iterators belongs to different vectors");
+            }
             return this->objPtr_ - rhs.objPtr_;
         }
 
@@ -162,8 +164,9 @@ public:
         using iterator_category = std::output_iterator_tag;
 
         ConstIterator() noexcept = default;
-        ConstIterator(const Iterator& iterator) : objPtr_(iterator.objPtr_),
-                                                  vectorPtr_(iterator.vectorPtr_) {}
+        ConstIterator(const Iterator& iterator) noexcept : objPtr_(iterator.objPtr_),
+                                                           vectorPtr_(iterator.vectorPtr_) {}
+
         ConstIterator(const ConstIterator& obj) noexcept = default;
 
         ConstIterator& operator=(const ConstIterator& obj) noexcept = default;
@@ -182,7 +185,9 @@ public:
           * @return the distance between two iterators
           */
         difference_type operator-(const ConstIterator &rhs) const {
-            if (this->vectorPtr_ != rhs.vectorPtr_) throw InvalidIterator();
+            if (this->vectorPtr_ != rhs.vectorPtr_) {
+                throw InvalidIterator("Invalid Iterator: the two iterators belongs to different vectors");
+            }
             return this->objPtr_ - rhs.objPtr_;
         }
 

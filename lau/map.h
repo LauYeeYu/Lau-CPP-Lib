@@ -91,10 +91,10 @@ public:
         using reference         = MapPair&;
         using iterator_category = std::output_iterator_tag;
 
-        Iterator() = default;
-        Iterator(const Iterator &obj) = default;
+        Iterator() noexcept = default;
+        Iterator(const Iterator &obj) noexcept = default;
 
-        Iterator& operator=(const Iterator& obj) = default;
+        Iterator& operator=(const Iterator& obj) noexcept = default;
 
         ~Iterator() = default;
 
@@ -156,11 +156,11 @@ public:
         using reference         = MapPair&;
         using iterator_category = std::output_iterator_tag;
 
-        ConstIterator() = default;
-        ConstIterator(const ConstIterator& obj) = default;
-        ConstIterator(const Iterator& iter) : treeIterator_(iter.treeIterator_) {}
+        ConstIterator() noexcept = default;
+        ConstIterator(const ConstIterator& obj) noexcept = default;
+        ConstIterator(const Iterator& iter) noexcept : treeIterator_(iter.treeIterator_) {}
 
-        ConstIterator& operator=(const ConstIterator& obj) = default;
+        ConstIterator& operator=(const ConstIterator& obj) noexcept = default;
 
         ~ConstIterator() = default;
 
