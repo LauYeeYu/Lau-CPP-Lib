@@ -353,6 +353,42 @@ public:
      * element (or the element that prevented the insertion), the second
      * one is a bool denoting whether the insertion took place.
      */
+    Pair<Iterator, bool> Insert(MapPair&& pair) {
+        auto [iter, success] = tree_.Insert(std::move(pair));
+        return Pair<Iterator, bool>(Iterator(iter), success);
+    }
+
+    /**
+     * Insert or assign an element.
+     * @param value a key-value pair
+     * @return a pair, the first of the pair is the iterator to the new
+     * element (or the element that prevented the insertion), the second
+     * one is a bool denoting whether the insertion took place.
+     */
+    Pair<Iterator, bool> InsertOrAssign(const MapPair& pair) {
+        auto [iter, success] = tree_.InsertOrAssign(pair);
+        return Pair<Iterator, bool>(Iterator(iter), success);
+    }
+
+    /**
+     * Insert or assign an element.
+     * @param value a key-value pair
+     * @return a pair, the first of the pair is the iterator to the new
+     * element (or the element that prevented the insertion), the second
+     * one is a bool denoting whether the insertion took place.
+     */
+    Pair<Iterator, bool> InsertOrAssign(MapPair&& pair) {
+        auto [iter, success] = tree_.InsertOrAssign(pair);
+        return Pair<Iterator, bool>(Iterator(iter), success);
+    }
+
+    /**
+     * Insert an element in place.
+     * @param value a key-value pair
+     * @return a pair, the first of the pair is the iterator to the new
+     * element (or the element that prevented the insertion), the second
+     * one is a bool denoting whether the insertion took place.
+     */
     template<class... Args>
     Pair<Iterator, bool> Emplace(Args&&... args) {
         auto [iter, success] = tree_.Emplace(std::forward<Args>(args)...);
@@ -360,14 +396,15 @@ public:
     }
 
     /**
-     * Insert an element.
+     * Insert or assign an element in place.
      * @param value a key-value pair
      * @return a pair, the first of the pair is the iterator to the new
      * element (or the element that prevented the insertion), the second
      * one is a bool denoting whether the insertion took place.
      */
-    Pair<Iterator, bool> Insert(MapPair&& pair) {
-        auto [iter, success] = tree_.Insert(std::move(pair));
+    template<class... Args>
+    Pair<Iterator, bool> EmplaceOrAssign(Args&&... args) {
+        auto [iter, success] = tree_.EmplaceOrAssign(std::forward<Args>(args)...);
         return Pair<Iterator, bool>(Iterator(iter), success);
     }
 
