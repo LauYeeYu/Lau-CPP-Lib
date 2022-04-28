@@ -46,7 +46,7 @@ public:
     Pair(Pair<U1, U2>&& other) : first(other.first), second(other.second) {}
 
     Pair& operator=(const Pair& other) = default;
-    Pair& operator=(Pair&& other) noexcept(noexcept(T1(T1())) && noexcept(Value(T2()))) = default;
+    Pair& operator=(Pair&& other) noexcept(noexcept(T1(T1())) && noexcept(T2(T2()))) = default;
 
     ~Pair() = default;
 
