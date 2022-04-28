@@ -31,7 +31,7 @@ namespace lau {
 template<class T1, class T2>
 class Pair {
 public:
-    Pair() : first(), second() {}
+    Pair() noexcept(noexcept(T1()) && noexcept(T2())) : first(), second() {}
     Pair(const Pair& other) = default;
     Pair(Pair&& other) = default;
     Pair(const T1& x, const T2& y) : first(x), second(y) {}
@@ -40,13 +40,14 @@ public:
     Pair(U1&& x, U2&& y) : first(x), second(y) {}
 
     template<class U1, class U2>
-    Pair(const Pair<U1, U2>& other) : first(other.first), second(other.second) {}
+    Pair(const Pair<U1, U2>& obj) : first(obj.first), second(obj.second) {}
 
     template<class U1, class U2>
-    Pair(Pair<U1, U2>&& other) : first(other.first), second(other.second) {}
+    Pair(Pair<U1, U2>&& obj) : first(obj.first), second(obj.second) {}
 
-    Pair& operator=(const Pair& other) = default;
-    Pair& operator=(Pair&& other) noexcept(noexcept(T1(T1())) && noexcept(T2(T2()))) = default;
+    Pair& operator=(const Pair& obj) = default;
+    Pair& operator=(Pair&& obj)
+        noexcept(noexcept(T1(std::move(obj.first))) && noexcept(T2(std::move(obj.second)))) = default;
 
     ~Pair() = default;
 
@@ -56,7 +57,7 @@ public:
 
 template<class Key, class Value>
 struct KeyValuePair {
-    KeyValuePair() : key(), value() {}
+    KeyValuePair() noexcept(noexcept(Key()) && noexcept(Value())) : key(), value() {}
     KeyValuePair(const KeyValuePair& other) = default;
     KeyValuePair(KeyValuePair&& other) = default;
     KeyValuePair(const Key& key, const Value& value) : key(key), value(value) {}
@@ -65,13 +66,14 @@ struct KeyValuePair {
     KeyValuePair(KeyIn&& key, ValueIn&& value) : key(key), value(value) {}
 
     template<class KeyIn, class ValueIn>
-    KeyValuePair(const Pair<KeyIn, ValueIn>& other) : key(other.first), value(other.second) {}
+    KeyValuePair(const Pair<KeyIn, ValueIn>& obj) : key(obj.first), value(obj.second) {}
 
     template<class KeyIn, class ValueIn>
-    KeyValuePair(Pair<KeyIn, ValueIn>&& other) : key(other.first), value(other.second) {}
+    KeyValuePair(Pair<KeyIn, ValueIn>&& obj) : key(obj.first), value(obj.second) {}
 
-    KeyValuePair& operator=(const KeyValuePair&) = default;
-    KeyValuePair& operator=(KeyValuePair&&) noexcept(noexcept(Key(Key())) && noexcept(Value(Value()))) = default;
+    KeyValuePair& operator=(const KeyValuePair& obj) = default;
+    KeyValuePair& operator=(KeyValuePair&& obj)
+        noexcept(noexcept(Key(std::move(obj.key))) && noexcept(Value(std::move(obj.value)))) = default;
 
     ~KeyValuePair() = default;
 
