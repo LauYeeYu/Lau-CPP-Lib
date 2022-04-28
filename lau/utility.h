@@ -45,6 +45,11 @@ public:
     template<class U1, class U2>
     Pair(Pair<U1, U2>&& other) : first(other.first), second(other.second) {}
 
+    Pair& operator=(const Pair& other) = default;
+    Pair& operator=(Pair&& other) noexcept(noexcept(T1(T1())) && noexcept(Value(T2()))) = default;
+
+    ~Pair() = default;
+
     T1 first;
     T2 second;
 };
@@ -64,6 +69,11 @@ struct KeyValuePair {
 
     template<class KeyIn, class ValueIn>
     KeyValuePair(Pair<KeyIn, ValueIn>&& other) : key(other.first), value(other.second) {}
+
+    KeyValuePair& operator=(const KeyValuePair&) = default;
+    KeyValuePair& operator=(KeyValuePair&&) noexcept(noexcept(Key(Key())) && noexcept(Value(Value()))) = default;
+
+    ~KeyValuePair() = default;
 
     Key   key;
     Value value;
