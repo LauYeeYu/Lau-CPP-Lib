@@ -37,14 +37,25 @@
 
 namespace lau {
 
+/**
+ * A class mapping a key to a value.  Please note that if a key is inserted,
+ * it cannot be modified.  If you want to modify the key stored in the
+ * container, you may use the raw data structure class -
+ * <code>lau::RBTree</code>.
+ *
+ * @tparam Key
+ * @tparam Value
+ * @tparam Compare
+ * @tparam Allocator the allocator of key value pair
+ */
 template<class Key,
          class Value,
-         class Compare = std::less<Key>,
-         class Allocator = std::allocator<KeyValuePair<Key, Value>>>
+         class Compare   = std::less<Key>,
+         class Allocator = std::allocator<KeyValuePair<const Key, Value>>>
 class Map {
 public:
-    using MapPair    = KeyValuePair<Key, Value>;
-    using value_type = KeyValuePair<Key, Value>;
+    using MapPair    = KeyValuePair<const Key, Value>;
+    using value_type = KeyValuePair<const Key, Value>;
 
     class Iterator;
     class ConstIterator;

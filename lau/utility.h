@@ -65,7 +65,7 @@ struct KeyValuePair {
     template<class KeyIn, class ValueIn>
     KeyValuePair(Pair<KeyIn, ValueIn>&& other) : key(other.first), value(other.second) {}
 
-    const Key key;
+    Key   key;
     Value value;
 };
 

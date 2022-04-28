@@ -38,7 +38,11 @@
 namespace lau {
 
 /**
- * A mapping class whose key-value pairs are linked together.
+ * A mapping class whose key-value pairs are linked together.  Please note
+ * that if a key is inserted, it cannot be modified.  If you want to modify
+ * the key, you may use the raw data structure class -
+ * <code>lau::RBTree</code>.
+ *
  * @tparam Key the key type
  * @tparam Value the value type
  * @tparam Hash the class that can get the hash value of the key
@@ -48,11 +52,11 @@ template<class Key,
          class Value,
          class Hash      = std::hash<Key>,
          class Equal     = std::equal_to<Key>,
-         class Allocator = std::allocator<KeyValuePair<Key, Value>>>
+         class Allocator = std::allocator<KeyValuePair<const Key, Value>>>
 class LinkedHashMap {
 public:
-    using MapPair    = KeyValuePair<Key, Value>;
-    using value_type = KeyValuePair<Key, Value>;
+    using MapPair    = KeyValuePair<const Key, Value>;
+    using value_type = KeyValuePair<const Key, Value>;
     
     class Iterator;
     class ConstIterator;
@@ -136,7 +140,7 @@ public:
         ~Iterator() = default;
 
         explicit operator MapPair*() const noexcept {
-            return &((static_cast<typename LinkedHashTable<MapPair, PairHash, PairEqual>::Node*>(iterator_))->value);
+            return &((static_cast<typename LinkedHashTable<MapPair, PairHash, PairEqual, Allocator>::Node*>(iterator_))->value);
         }
 
         Iterator operator++(int) {
@@ -170,10 +174,10 @@ public:
         MapPair* operator->() const noexcept {return &(iterator_->value);}
 
     private:
-        explicit Iterator(const typename LinkedHashTable<MapPair, PairHash, PairEqual>::Iterator& iterator)
+        explicit Iterator(const typename LinkedHashTable<MapPair, PairHash, PairEqual, Allocator>::Iterator& iterator)
             : iterator_(iterator) {}
 
-        typename LinkedHashTable<MapPair, PairHash, PairEqual>::Iterator iterator_;
+        typename LinkedHashTable<MapPair, PairHash, PairEqual, Allocator>::Iterator iterator_;
     };
 
     class ConstIterator {
@@ -236,9 +240,9 @@ public:
         const MapPair* operator->() const { return &(iterator_->value); }
 
     private:
-        explicit ConstIterator(const typename LinkedHashTable<MapPair, PairHash, PairEqual>::ConstIterator& iterator)
+        explicit ConstIterator(const typename LinkedHashTable<MapPair, PairHash, PairEqual, Allocator>::ConstIterator& iterator)
             : iterator_(iterator) {}
-        typename LinkedHashTable<MapPair, PairHash, PairEqual>::ConstIterator iterator_;
+        typename LinkedHashTable<MapPair, PairHash, PairEqual, Allocator>::ConstIterator iterator_;
     };
 
     LinkedHashMap() = default;
