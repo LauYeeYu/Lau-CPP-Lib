@@ -32,11 +32,11 @@ template<class T1, class T2>
 class Pair {
 public:
     Pair() noexcept(noexcept(T1()) && noexcept(T2())) : first(), second() {}
-    Pair(const Pair& obj)
-    noexcept(noexcept(T1(std::move(obj.first))) && noexcept(T2(std::move(obj.second))))
-    = default;
+    Pair(const Pair& obj) = default;
 
-    Pair(Pair&& obj) = default;
+    Pair(Pair&& obj)
+    noexcept(noexcept(T1(std::move(obj.first))) && noexcept(T2(std::move(obj.second))))
+        = default;
 
     Pair(const T1& firstIn, const T2& secondIn) noexcept(noexcept(T1(firstIn)) && noexcept(T2(secondIn)))
         : first(firstIn), second(secondIn) {}
