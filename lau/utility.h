@@ -107,6 +107,6 @@ struct KeyValuePair {
     Value value;
 };
 
-}
+} // namespace lau
 
 #endif // LAU_CPP_LIB_LAU_UTILITY_H
