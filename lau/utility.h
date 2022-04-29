@@ -32,22 +32,31 @@ template<class T1, class T2>
 class Pair {
 public:
     Pair() noexcept(noexcept(T1()) && noexcept(T2())) : first(), second() {}
-    Pair(const Pair& other) = default;
-    Pair(Pair&& other) = default;
-    Pair(const T1& x, const T2& y) : first(x), second(y) {}
+    Pair(const Pair& obj)
+    noexcept(noexcept(T1(std::move(obj.first))) && noexcept(T2(std::move(obj.second))))
+    = default;
+
+    Pair(Pair&& obj) = default;
+
+    Pair(const T1& firstIn, const T2& secondIn) noexcept(noexcept(T1(firstIn)) && noexcept(T2(secondIn)))
+        : first(firstIn), second(secondIn) {}
 
     template<class U1, class U2>
-    Pair(U1&& x, U2&& y) : first(x), second(y) {}
+    Pair(U1&& firstIn, U2&& secondIn) noexcept(noexcept(T1(firstIn)) && noexcept(T2(secondIn)))
+        : first(firstIn), second(secondIn) {}
 
     template<class U1, class U2>
-    Pair(const Pair<U1, U2>& obj) : first(obj.first), second(obj.second) {}
+    Pair(const Pair<U1, U2>& obj)
+        noexcept(noexcept(T1(obj.first)) && noexcept(T2(obj.second)))
+        : first(obj.first), second(obj.second) {}
 
     template<class U1, class U2>
-    Pair(Pair<U1, U2>&& obj) : first(obj.first), second(obj.second) {}
+    Pair(Pair<U1, U2>&& obj)
+        noexcept(noexcept(T1(std::move(obj.first))) && noexcept(std::move(T2(obj.second))))
+        : first(obj.first), second(obj.second) {}
 
-    Pair& operator=(const Pair& obj) = default;
-    Pair& operator=(Pair&& obj)
-        noexcept(noexcept(T1(std::move(obj.first))) && noexcept(T2(std::move(obj.second)))) = default;
+    Pair& operator=(const Pair& obj)  = default;
+    Pair& operator=(Pair&& obj) = default;
 
     ~Pair() = default;
 
@@ -58,22 +67,29 @@ public:
 template<class Key, class Value>
 struct KeyValuePair {
     KeyValuePair() noexcept(noexcept(Key()) && noexcept(Value())) : key(), value() {}
-    KeyValuePair(const KeyValuePair& other) = default;
-    KeyValuePair(KeyValuePair&& other) = default;
-    KeyValuePair(const Key& key, const Value& value) : key(key), value(value) {}
+    KeyValuePair(const KeyValuePair& obj) = default;
+    KeyValuePair(KeyValuePair&& obj)
+        noexcept(noexcept(Key(std::move(obj.key))) && noexcept(Value(std::move(obj.value))))
+        = default;
+
+    KeyValuePair(const Key& key, const Value& value) noexcept(noexcept(Key(key)) && noexcept(Value(value)))
+        : key(key), value(value) {}
 
     template<class KeyIn, class ValueIn>
-    KeyValuePair(KeyIn&& key, ValueIn&& value) : key(key), value(value) {}
+    KeyValuePair(KeyIn&& key, ValueIn&& value) noexcept(noexcept(Key(key)) && noexcept(Value(value)))
+        : key(key), value(value) {}
 
     template<class KeyIn, class ValueIn>
-    KeyValuePair(const Pair<KeyIn, ValueIn>& obj) : key(obj.first), value(obj.second) {}
+    KeyValuePair(const Pair<KeyIn, ValueIn>& obj) noexcept(noexcept(Key(obj.first)) && noexcept(Value(obj.second)))
+        : key(obj.first), value(obj.second) {}
 
     template<class KeyIn, class ValueIn>
-    KeyValuePair(Pair<KeyIn, ValueIn>&& obj) : key(obj.first), value(obj.second) {}
+    KeyValuePair(Pair<KeyIn, ValueIn>&& obj)
+        noexcept(noexcept(Key(std::move(obj.first))) && noexcept(Value(std::move(obj.second))))
+        : key(obj.first), value(obj.second) {}
 
     KeyValuePair& operator=(const KeyValuePair& obj) = default;
-    KeyValuePair& operator=(KeyValuePair&& obj)
-        noexcept(noexcept(Key(std::move(obj.key))) && noexcept(Value(std::move(obj.value)))) = default;
+    KeyValuePair& operator=(KeyValuePair&& obj) = default;
 
     ~KeyValuePair() = default;
 
