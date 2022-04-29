@@ -80,6 +80,16 @@ struct KeyValuePair {
         : key(key), value(value) {}
 
     template<class KeyIn, class ValueIn>
+    KeyValuePair(const KeyValuePair<KeyIn, ValueIn>& obj)
+        noexcept(noexcept(Key(obj.key)) && noexcept(Value(obj.value)))
+        : key(obj.key), value(obj.value) {}
+
+    template<class KeyIn, class ValueIn>
+    KeyValuePair(KeyValuePair<KeyIn, ValueIn>&& obj)
+        noexcept(noexcept(Key(std::move(obj.key))) && noexcept(Value(std::move(obj.value))))
+        : key(obj.key), value(obj.value) {}
+
+    template<class KeyIn, class ValueIn>
     KeyValuePair(const Pair<KeyIn, ValueIn>& obj) noexcept(noexcept(Key(obj.first)) && noexcept(Value(obj.second)))
         : key(obj.first), value(obj.second) {}
 
