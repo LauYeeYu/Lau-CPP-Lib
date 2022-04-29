@@ -35,7 +35,7 @@ public:
     Pair(const Pair& obj) = default;
 
     Pair(Pair&& obj)
-    noexcept(noexcept(T1(std::move(obj.first))) && noexcept(T2(std::move(obj.second))))
+        noexcept(noexcept(T1(std::move(obj.first))) && noexcept(T2(std::move(obj.second))))
         = default;
 
     Pair(const T1& firstIn, const T2& secondIn) noexcept(noexcept(T1(firstIn)) && noexcept(T2(secondIn)))
