@@ -142,7 +142,7 @@ template<class T, class Allocator = std::allocator<SizeT>>
  * @param target
  * @param allocator
  * @return the index of the place where the target string match the source
- * string; if the target string doesn't match, a -1 will be returned.
+ * string; if the target string doesn't match, a <code>-1</code> will be returned.
  */
 template<class Allocator = std::allocator<SizeT>>
 [[nodiscard]] SizeT StringMatching(const char* source,
@@ -163,7 +163,7 @@ template<class Allocator = std::allocator<SizeT>>
 /**
  * Find the first index where a target string matches the source string.  If
  * the target string doesn't match the source string, the function will return
- * -1.
+ * <code>-1</code>.
  * <br>
  * This function uses Knuth-Morris-Pratt algorithm.
  * @tparam Allocator the allocator type to allocate the partial match table
@@ -189,6 +189,6 @@ template<class Allocator = std::allocator<SizeT>>
     return value;
 }
 
-}
+} // namespace lau
 
 #endif // LAU_CPP_LIB_LAU_ALGORITHM_H
