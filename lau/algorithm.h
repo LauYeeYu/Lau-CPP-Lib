@@ -52,8 +52,7 @@ Container& PartialMatchTable(const T& target, SizeT size, Container& table) {
             ++position;
             ++clue;
             table[position] = clue;
-        }
-        else {
+        } else {
             clue = table[clue];
         }
     }
@@ -75,7 +74,8 @@ Container& PartialMatchTable(const T& target, SizeT size, Container& table) {
  * @param targetLength
  * @param table the partial table that have been calculated
  * @return the index of the place where the target string match the source
- * string; if the target string doesn't match, a -1 will be returned.
+ * string; if the target string doesn't match, a <code>-1</code> will be
+ * returned.
  */
 template<class T, class Container>
 [[nodiscard]] SizeT StringMatchingWithPartialMatchTable(const T& source,
@@ -114,7 +114,8 @@ template<class T, class Container>
  * @param targetLength
  * @param allocator
  * @return the index of the place where the target string match the source
- * string; if the target string doesn't match, a -1 will be returned.
+ * string; if the target string doesn't match, a <code>-1</code> will be
+ * returned.
  */
 template<class T, class Allocator = std::allocator<SizeT>>
 [[nodiscard]] SizeT StringMatching(const T& source, SizeT sourceLength,
@@ -133,7 +134,7 @@ template<class T, class Allocator = std::allocator<SizeT>>
 /**
  * Find the first index where a target string matches the source string.  If
  * the target string doesn't match the source string, the function will return
- * -1.
+ * <code>-1</code>.
  * <br>
  * This function uses Knuth-Morris-Pratt algorithm.
  * @tparam Allocator the allocator type to allocate the partial match table
