@@ -58,6 +58,8 @@ public:
     Pair& operator=(const Pair& obj)  = default;
     Pair& operator=(Pair&& obj) = default;
 
+    ~Pair() = default;
+
     bool operator==(const Pair& obj) const {
         return this->first == obj.first && this->second == obj.second;
     }
@@ -66,11 +68,14 @@ public:
         return !(*this == obj);
     }
 
-    ~Pair() = default;
-
     T1 first;
     T2 second;
 };
+
+template<class T1, class T2>
+Pair<T1, T2> MakePair(const T1& firstIn, const T2& secondIn) {
+    return Pair<T1, T2>(firstIn, secondIn);
+}
 
 template<class Key, class Value>
 struct KeyValuePair {
@@ -122,6 +127,11 @@ struct KeyValuePair {
     Key   key;
     Value value;
 };
+
+template<class Key, class Value>
+KeyValuePair<Key, Value> MakeKeyValuePair(const Key& key, const Value& value) {
+    return KeyValuePair<Key, Value>(key, value);
+}
 
 } // namespace lau
 
