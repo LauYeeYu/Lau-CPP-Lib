@@ -58,6 +58,14 @@ public:
     Pair& operator=(const Pair& obj)  = default;
     Pair& operator=(Pair&& obj) = default;
 
+    bool operator==(const Pair& obj) const {
+        return this->first == obj.first && this->second == obj.second;
+    }
+
+    bool operator!=(const Pair& obj) const {
+        return !(*this == obj);
+    }
+
     ~Pair() = default;
 
     T1 first;
@@ -102,6 +110,14 @@ struct KeyValuePair {
     KeyValuePair& operator=(KeyValuePair&& obj) = default;
 
     ~KeyValuePair() = default;
+
+    bool operator==(const KeyValuePair& obj) const {
+        return this->key == obj.first && this->value == obj.second;
+    }
+
+    bool operator!=(const KeyValuePair& obj) const {
+        return !(*this == obj);
+    }
 
     Key   key;
     Value value;
