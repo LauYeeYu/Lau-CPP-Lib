@@ -80,8 +80,8 @@ void Swap(PriorityQueue<T, Compare, Allocator> priorityQueue1,
 } // namespace lau
 ```
 ## 模板
-- `T`:元素之類型
-- `Compare`:比較類之類型（默認爲 `std::less<T>`）
+- `T`：元素之類型
+- `Compare`：比較類之類型（默認爲 `std::less<T>`）
   - 必須具有合法的 `bool Compare(const T& lhs, const T& rhs)`。
   - 保證唯一性（若 `Compare(a, b) = false` 且 `Compare(a, b) = false`，或
     `Compare(a, b) = true` 且 `Compare(a, b) = true`，則 `a` 與 `b` 相同）

@@ -28,8 +28,10 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
   a map on disk storage using the data structure called unrolled linked list
 - [InvalidArgument](wiki/exception_en.md): indicate there is an invalid argument
 - [InvalidIterator](wiki/exception_en.md): indicate this is an invalid iterator
+- [KeyValuePair](wiki/key_value_pair_en.md): a pair of key and value
 - [OutOfRange](wiki/exception_en.md): indicate that the operation is out of
   range
+- [Pair](wiki/pair_en.md): a pair of two elements
 - [PriorityQueue](wiki/priority_queue_en.md): a queue that pops elements in the
   order of priority
 - [RuntimeError](wiki/exception_en.md): indicate a runtime error occurs

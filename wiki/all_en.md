@@ -14,8 +14,10 @@ The `lau/all.h` header file includes all the elements in Lau CPP Library.
   a map on disk storage using the data structure called unrolled linked list
 - [InvalidArgument](exception_en.md): indicate there is an invalid argument
 - [InvalidIterator](exception_en.md): indicate this is an invalid iterator
+- [KeyValuePair](key_value_pair_en.md): a pair of key and value
 - [OutOfRange](exception_en.md): indicate that the operation is out of
   range
+- [Pair](pair_en.md): a pair of two elements
 - [PriorityQueue](priority_queue_en.md): a queue that pops elements in the
   order of priority
 - [RuntimeError](exception_en.md): indicate a runtime error occurs
