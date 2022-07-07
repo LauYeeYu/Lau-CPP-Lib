@@ -105,6 +105,8 @@ public:
     Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
     Vector& Resize(SizeT count);
     Vector& Resize(SizeT count, const T& value);
+    template<class Compare = std::less<T>>
+    Vector& Sort(const Compare& compare = Compare());
 };
 
 // 非成員函數
@@ -166,7 +168,8 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 - [`PopFront`](#PopFront)：從頭部移除元素
 - [`Swap`](#Swap)：交換內容
 - [`SwapElement`](#SwapElement)：交换元素
-- [`Resize`](#Resize)更改容器之元素個數
+- [`Resize`](#Resize)：更改容器之元素個數
+- [`Sort`](#Sort)：將容器排序
 
 ## 非成員函數
 - [`Swap`](#SwapNonmember)：交換內容
@@ -573,6 +576,18 @@ Vector& EmplaceFront(Args&&... args);
 - 構造函數與此函數提供的參數一致。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度：不確定。多數情況下爲 $O(n)$。僅當容器前部有空間時爲 $O(1)$。
+
+### <span id="Sort">`Sort`</span>
+```c++
+template<class Compare = std::less<T>>
+Vector& Sort(const Compare& compare = Compare());
+```
+- 將此容器以特定比較規則排序。
+- 此函數使用[歸併排序 (merge sort)](https://zh.wikipedia.org/wiki/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F)
+  算法來將此容器排序。
+- 此函數以 `operator<` (`std::less`) 爲缺省值。
+- 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
+- 時間複雜度： $O(n \log n)$。
 
 ### <span id="SwapNonmember">`Swap`</span>
 ```c++

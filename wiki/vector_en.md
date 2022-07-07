@@ -108,6 +108,8 @@ public:
     Vector& SwapElement(const Iterator& iterator1, const Iterator& iterator2);
     Vector& Resize(SizeT count);
     Vector& Resize(SizeT count, const T& value);
+    template<class Compare = std::less<T>>
+    Vector& Sort(const Compare& compare = Compare());
 };
 
 // Non-member Function
@@ -171,6 +173,7 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 - [`Swap`](#Swap): swap the content
 - [`SwapElement`](#SwapElement): swap two elements
 - [`Resize`](#Resize): resize the vector
+- [`Sort`](#Sort): sort the vector
 
 ## Non-member Function
 - [`Swap`](#SwapNonmember): swap the content
@@ -609,6 +612,20 @@ Vector& EmplaceFront(Args&&... args);
   pointing to this class.
 - Complexity: Depends. In most case, it is $O(n)$. Only if the container
   have space in the front, it is $O(1)$.
+
+### <span id="Sort">`Sort`</span>
+```c++
+template<class Compare = std::less<T>>
+Vector& Sort(const Compare& compare = Compare());
+```
+- Sort the vector.
+- The function uses the [merge sort](https://en.wikipedia.org/wiki/Merge_sort)
+  algorithm.
+- The function uses the `operator<` (`std::less`) as default to compare
+  the elements.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
+- Complexity: $O(n \log n)$.
 
 ### <span id="SwapNonmember">`Swap`</span>
 ```c++
