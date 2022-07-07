@@ -808,6 +808,19 @@ public:
     }
 
     /**
+     * Sort all the elements in the vector with the customized comparing
+     * method.
+     * @tparam Compare The class to compare two elements
+     * @param compare the comparing method
+     * @return a reference to the current class
+     */
+    template<class Compare>
+    Vector& Sort(const Compare& compare) {
+        Sort_(compare);
+        return *this;
+    }
+
+    /**
      * Reduce the capacity to its size.
      * @return a reference to the current class
      */
@@ -916,13 +929,6 @@ public:
     }
 
 private:
-    T**       target_     = nullptr;
-    SizeT     size_       = 0;
-    SizeT     capacity_   = 0;
-    SizeT     beginIndex_ = 0;
-    Allocator            allocator_;
-    PointerAllocatorType pointerAllocator_;
-
     /**
      * Enlarge the vector for the case that the vector is right at its biggest
      * capacity.
@@ -938,6 +944,49 @@ private:
     /// Check whether a vector needs enlarging.
     [[nodiscard]] bool NeedEnlarging_() const noexcept { return (capacity_ == beginIndex_ + size_); }
 
+    /**
+     * Sort the vector with the customized comparing method.
+     * @tparam Compare
+     * @param compare
+     */
+    template<class Compare>
+    void Sort_(const Compare& compare) {
+        T** tmp = new T*[size_];
+        MergeSort_(size_, target_ + beginIndex_, tmp, compare);
+    }
+
+    /**
+     * Merge sort function for the sort function.
+     * @tparam Compare
+     * @param count the number of the elements in the vector
+     * @param array the vector pointer array
+     * @param tmp the tmp array to perform as a temporary storage
+     * @param compare
+     */
+    template<class Compare>
+    void MergeSort_(SizeT count, T** array, T** tmp, const Compare& compare) {
+        if (count <= 1) return;
+        SizeT middle = count >> 1;
+        MergeSort_(middle, array, tmp, compare);
+        MergeSort_(count - middle, array + middle, tmp, compare);
+        for (SizeT i = 0, j = middle, t = 0; i < middle || j < count;) {
+            if (i < middle && (j >= count || compare(*(array[i]), *(array[j])))) {
+                tmp[t++] = array[i++];
+            } else {
+                tmp[t++] = array[j++];
+            }
+        }
+        for (int i = 0; i < count; ++i) {
+            array[i] = tmp[i];
+        }
+    }
+
+    T**   target_     = nullptr;
+    SizeT size_       = 0;
+    SizeT capacity_   = 0;
+    SizeT beginIndex_ = 0;
+    Allocator            allocator_;
+    PointerAllocatorType pointerAllocator_;
 };
 
 /**
