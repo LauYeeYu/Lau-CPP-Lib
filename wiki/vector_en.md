@@ -621,8 +621,10 @@ Vector& Sort(const Compare& compare = Compare());
 - Sort the vector.
 - The function uses the [merge sort](https://en.wikipedia.org/wiki/Merge_sort)
   algorithm.
+- The `Compare` class must define the
+  `bool operator()(const T&, const T&) const` function.
 - The function uses the `operator<` (`std::less`) as default to compare
-  the elements.
+ the elements.
 - To make the class visiting easier, the function returns a reference
   pointing to this class.
 - Complexity: $O(n \log n)$.

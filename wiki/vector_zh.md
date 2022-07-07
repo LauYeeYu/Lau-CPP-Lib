@@ -585,6 +585,7 @@ Vector& Sort(const Compare& compare = Compare());
 - 將此容器以特定比較規則排序。
 - 此函數使用[歸併排序 (merge sort)](https://zh.wikipedia.org/wiki/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F)
   算法來將此容器排序。
+- `Compare` 類必須有 `bool operator()(const T&, const T&) const` 函數。
 - 此函數以 `operator<` (`std::less`) 爲缺省值。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度： $O(n \log n)$。
