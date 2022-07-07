@@ -814,8 +814,8 @@ public:
      * @param compare the comparing method
      * @return a reference to the current class
      */
-    template<class Compare>
-    Vector& Sort(const Compare& compare) {
+    template<class Compare = std::less<T>>
+    Vector& Sort(const Compare& compare = Compare()) {
         Sort_(compare);
         return *this;
     }
