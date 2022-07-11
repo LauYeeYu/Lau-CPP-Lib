@@ -29,6 +29,7 @@
 - [OutOfRange](wiki/exception_zh.md)：表明操作越界
 - [Pair](wiki/pair_zh.md)：含兩個元素的包裹類
 - [PriorityQueue](wiki/priority_queue_zh.md)：一個以優先級作爲出列依據的佇列（優先佇列）
+- [RehashPolicy](wiki/rehash_policy_zh.md)：哈希表的重新哈希策略
 - [RuntimeError](wiki/exception_zh.md)：表明運行時發成錯誤
 - [SparseTable](wiki/sparse_table_zh.md)：預處理數據以減少可重複貢獻問題的稀疏表
 - [TokenScanner](wiki/token_scanner_zh.md)：以客製化分隔符掃描並分割爲多個字段

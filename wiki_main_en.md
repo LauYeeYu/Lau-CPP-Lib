@@ -34,6 +34,7 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
 - [Pair](wiki/pair_en.md): a pair of two elements
 - [PriorityQueue](wiki/priority_queue_en.md): a queue that pops elements in the
   order of priority
+- [RehashPolicy](wiki/rehash_policy_en.md): a rehashing policy for hash tables
 - [RuntimeError](wiki/exception_en.md): indicate a runtime error occurs
 - [SparseTable](wiki/sparse_table_en.md): a sparse table that preprocess data
   to boost the efficiency of repeatable contribution questions

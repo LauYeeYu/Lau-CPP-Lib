@@ -20,6 +20,7 @@ The `lau/all.h` header file includes all the elements in Lau CPP Library.
 - [Pair](pair_en.md): a pair of two elements
 - [PriorityQueue](priority_queue_en.md): a queue that pops elements in the
   order of priority
+- [RehashPolicy](rehash_policy_en.md): a rehashing policy for hash tables
 - [RuntimeError](exception_en.md): indicate a runtime error occurs
 - [SparseTable](sparse_table_en.md): a sparse table that preprocess data to
   boost the efficiency of repeatable contribution questions
