@@ -1236,7 +1236,7 @@ public:
     [[nodiscard]] Iterator Begin() noexcept { return Iterator(first_, this); }
     [[nodiscard]] ConstIterator Begin() const noexcept { return ConstIterator(first_, this); }
 
-    [[nodiscard]] Iterator begin() { return Begin(); }
+    [[nodiscard]] Iterator begin() noexcept { return Begin(); }
     [[nodiscard]] ConstIterator begin() const noexcept { return ConstIterator(first_, this); }
 
     [[nodiscard]] ConstIterator ConstBegin() const noexcept { return ConstIterator(first_, this); }
@@ -1244,10 +1244,10 @@ public:
     [[nodiscard]] Iterator End() noexcept { return Iterator(nullptr, this); }
     [[nodiscard]] ConstIterator End() const noexcept { return ConstIterator(nullptr, this); }
 
-    [[nodiscard]] Iterator end() { return End(); }
+    [[nodiscard]] Iterator end() noexcept { return End(); }
     [[nodiscard]] ConstIterator end() const noexcept { return ConstIterator(nullptr, this); }
 
-    [[nodiscard]] ConstIterator ConstEnd() const { return ConstIterator(nullptr, this); }
+    [[nodiscard]] ConstIterator ConstEnd() const noexcept { return ConstIterator(nullptr, this); }
 
     /**
      * Swap the contents of two red black tree.
