@@ -88,11 +88,16 @@ void Swap(PriorityQueue<T, Compare, Allocator> priorityQueue1,
 ## Template
 - `T`: the type of element
 - `Compare`: the type of compare function (`std::less<T>` is default)
-  - `bool Compare(const T& lhs, const T& rhs)` must be available.
-  - If `Compare(a, b) = false` and `Compare(a, b) = false`, or
-    `Compare(a, b) = true` and `Compare(a, b) = true`, `a` must be the
-    same as `b`. (Uniqueness)
-- `Allocator`: the type of allocator (`std::allocator` is default)
+  - need to satisfy the C++ comparing class requirements (see
+    [C++ named requirements: Compare](https://en.cppreference.com/w/cpp/named_req/Compare))
+    - `bool Compare(const T& lhs, const T& rhs)` must be available.
+    - If `Compare(a, b) = false` and `Compare(a, b) = false`, or
+      `Compare(a, b) = true` and `Compare(a, b) = true`, `a` must be the
+      same as `b`. (Uniqueness)
+- `Allocator`: the type of allocator
+  - need to satisfy the C++ allocator requirements (see
+    [C++ named requirements: Allocator](https://en.cppreference.com/w/cpp/named_req/Allocator))
+  - `std::allocator` is default.
 
 ## Member Functions
 - [(constructors)](#Constructors)

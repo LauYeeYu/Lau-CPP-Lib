@@ -31,7 +31,7 @@ public:
     using AllocatorType = Allocator;
     using PointerAllocatorType = typename std::allocator_traits<Allocator>::template rebind_alloc<T*>;
     class Iterator;
-	class ConstIterator;
+    class ConstIterator;
 
     // Constructors
     Vector() noexcept(noexcept(Allocator()));
@@ -119,7 +119,10 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 ```
 ## Template
 - `T`: the type contained in the vector
-- `Allocator`: the type of allocator (`std::allocator` is default).
+- `Allocator`: the type of allocator
+  - need to satisfy the C++ allocator requirements (see
+    [C++ named requirements: Allocator](https://en.cppreference.com/w/cpp/named_req/Allocator))
+  - `std::allocator` is default.
 
 ## Member Type
 - `AllocatorType`: the type of allocator, the same as `Allocator`
