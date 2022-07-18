@@ -435,8 +435,8 @@ public:
     /**
      * Erase the element whose key is equal to the input key.  A
      * <code>lau::InvalidArgument</code> will be thrown if there doesn't
-     * exist such node.  Please note that the type K must have valid
-     * <code>Compare::is_transparent</code>.
+     * exist such node.  Please note that the type <code>K</code> must have
+     * valid <code>Compare::is_transparent</code>.
      * @param key the key to be erased
      * @return the reference to the current class
      */
@@ -460,8 +460,8 @@ public:
     /**
      * Count the number of element whose key is equal to the input key.  Since
      * the keys must be different from each other, the return value can only
-     * be either 1 or 0.  Please note that the type K must have valid
-     * <code>Compare::is_transparent</code>.
+     * be either 1 or 0.  Please note that the type <code>K</code> must have
+     * valid <code>Compare::is_transparent</code>.
      * @param key the input key
      * @return the number of elements with key
      */
@@ -483,7 +483,7 @@ public:
 
     /**
      * Check whether this container contains the element whose key is equal to
-     * the input key.  Please note that the type K must have valid
+     * the input key.  Please note that the type <code>K</code> must have valid
      * <code>Compare::is_transparent</code>.
      * @param key the input key
      * @return whether this container contains the element whose key is equal
@@ -508,7 +508,8 @@ public:
     /**
      * Find the element whose key is equal to the input key.  If there doesn't
      * exist such element, the end iterator will be return.  Please note that
-     * the type K must have valid <code>Compare::is_transparent</code>.
+     * the type <code>K</code> must have valid
+     * <code>Compare::is_transparent</code>.
      * @param key the input key
      * @return the iterator of the found element, or the end iterator if not
      * exists
@@ -532,7 +533,7 @@ public:
     /**
      * Find the element whose key is equal to the input key.  If there doesn't
      * exist such element, the end constant iterator will be return.  Please
-     * note that the type K must have valid
+     * note that the type <code>K</code> must have valid
      * <code>Compare::is_transparent</code>.
      * @param key the input key
      * @return the constant iterator of the found element, or the end constant
@@ -568,7 +569,7 @@ public:
     /**
      * Find the first element whose key is no less than the input key.  If
      * there doesn't exist such element, the end iterator will be return.
-     * Please note that the type K must have valid
+     * Please note that the type <code>K</code> must have valid
      * <code>Compare::is_transparent</code>.
      * @param key
      * @return the iterator of the first element whose key is no less
@@ -582,7 +583,7 @@ public:
     /**
      * Find the first element whose key is no less than the input key.  If
      * there doesn't exist such element, the const end iterator will be return.
-     * Please note that the type K must have valid
+     * Please note that the type <code>K</code> must have valid
      * <code>Compare::is_transparent</code>.
      * @param key
      * @return the const iterator of the first element whose key is no less
@@ -618,7 +619,7 @@ public:
     /**
      * Find the first element whose key is greater than the input key.  If
      * there doesn't exist such element, the end iterator will be return.
-     * Please note that the type K must have valid
+     * Please note that the type <code>K</code> must have valid
      * <code>Compare::is_transparent</code>.
      * @param key
      * @return the iterator of the first element whose key is no less than
@@ -632,7 +633,7 @@ public:
     /**
      * Find the first element whose key is greater than the input key.  If
      * there doesn't exist such element, the end iterator will be return.
-     * Please note that the type K must have valid
+     * Please note that the type <code>K</code> must have valid
      * <code>Compare::is_transparent</code>.
      * @param key
      * @return the iterator of the first element whose key is no less

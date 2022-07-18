@@ -17,7 +17,6 @@ class.
 ## Overview
 ```c++
 namespace lau {
-
 class RehashPolicy {
 public:
     // Constructors
@@ -41,7 +40,6 @@ public:
     [[nodiscard]] SizeT GetSize() const noexcept;
     [[nodiscard]] constexpr static SizeT MaxSize() noexcept;
 };
-
 } // namespace lau
 ```
 

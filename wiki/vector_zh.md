@@ -123,7 +123,7 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 ## 成員類型
 - `AllocatorType`：記憶體分配器類型，與 `Allocator` 一致
 - `PointerAllocatorType`：`T*` 的記憶體分配器類型
-- [`Iterator`](#iterator)：迭代器 `lau::vector` 之類型
+- [`Iterator`](#iterator)：迭代器 `lau::Vector` 之類型
 - [`ConstIterator`](#iterator)：常量迭代器 `lau::Vector` 之類型
 
 ## 成員函數
@@ -182,8 +182,9 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 
 時間複雜度：
 - 訪問： $O(1)$
-- 插入： $O(n)$
-- 移除： $O(n)$
+- 插入： $O(n)$ （平均）
+- 移除： $O(n)$ （平均）
+- 遍歷： $O(n)$
 
 ### <span id="Constructors">構造函數</span>
 ```c++

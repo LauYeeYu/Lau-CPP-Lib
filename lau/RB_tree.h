@@ -902,7 +902,8 @@ public:
     }
 
     /**
-     * Erase the node with the same value.
+     * Erase the node with the same value.  Throw <code>lau::InvalidArgument</code>
+     * if the <code>value</code> doesn't belong to this tree.
      * @param value
      * @return the reference to this class
      */
@@ -916,7 +917,8 @@ public:
     }
 
     /**
-     * Erase the node with the same value.
+     * Erase the node with the same value.  Please note that the type
+     * <code>K</code> must have valid <code>Compare::is_transparent</code>.
      * @param value
      * @return the reference to this class
      */
@@ -1879,6 +1881,14 @@ private:
     AllocatorType allocator_;
 };
 
+/**
+ * Swap the contents of two trees.
+ * @tparam T
+ * @tparam Compare
+ * @tparam Allocator
+ * @param lhs
+ * @param rhs
+ */
 template <class T, class Compare, class Allocator>
 void Swap(RBTree<T, Compare, Allocator>& lhs,
           RBTree<T, Compare, Allocator>& rhs) noexcept {

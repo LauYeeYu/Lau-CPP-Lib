@@ -16,7 +16,6 @@ class RehashPolicy;
 ## 概覽
 ```c++
 namespace lau {
-
 class RehashPolicy {
 public:
     // 構造函數
@@ -40,7 +39,6 @@ public:
     [[nodiscard]] SizeT GetSize() const noexcept;
     [[nodiscard]] constexpr static SizeT MaxSize() noexcept;
 };
-
 } // namespace lau
 ```
 

@@ -16,7 +16,6 @@ class KeyValuePair;
 ## Overview
 ```c++
 namespace lau {
-
 template<class Key, class Value>
 struct KeyValuePair {
     KeyValuePair() noexcept(noexcept(Key()) && noexcept(Value())) : key(), value() {}
@@ -65,7 +64,6 @@ struct KeyValuePair {
 
 template<class Key, class Value>
 KeyValuePair<Key, Value> MakeKeyValuePair(const Key& key, const Value& value);
-
 } // namespace lau
 ```
 

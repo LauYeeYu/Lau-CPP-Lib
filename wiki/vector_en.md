@@ -124,11 +124,11 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
     [C++ named requirements: Allocator](https://en.cppreference.com/w/cpp/named_req/Allocator))
   - `std::allocator` is default.
 
-## Member Type
+## Member Types
 - `AllocatorType`: the type of allocator, the same as `Allocator`
 - `PointerAllocatorType`: the type of the allocator of `T*`, which is converted
   from the allocator
-- [`Iterator`](#iterator): The type of iterator in `lau::vector`
+- [`Iterator`](#iterator): The type of iterator in `lau::Vector`
 - [`ConstIterator`](#iterator): the type of constant iterator in `lau::Vector`
 
 ## Member Functions
@@ -187,8 +187,9 @@ The vector is just an array with dynamic length.
 
 Complexity:
 - Access: $O(1)$
-- Insert: $O(n)$
-- Remove: $O(n)$
+- Insert: $O(n)$ (On average)
+- Remove: $O(n)$ (On average)
+- Traverse: $O(n)$
 
 ### <span id="Constructors">Constructors</span>
 ```c++

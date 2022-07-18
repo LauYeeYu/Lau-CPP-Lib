@@ -16,7 +16,6 @@ class Pair;
 ## Overview
 ```c++
 namespace lau {
-
 template<class T1, class T2>
 class Pair {
 public:
@@ -58,7 +57,6 @@ public:
 
 template<class T1, class T2>
 Pair<T1, T2> MakePair(const T1& firstIn, const T2& secondIn);
-
 } // namespace lau
 ```
 
