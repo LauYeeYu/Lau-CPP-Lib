@@ -39,9 +39,9 @@
 - [Vector](wiki/vector_zh.md)：綫性容器（動態數組）
 
 ## 函數（以字母順序排列）
-- [`PartialMatchTable`](wiki/algorithm_zh.md)：計算
+- [`PartialMatchTable`](wiki/algorithm_zh.md#PartialMatchTable)：計算
   KMP 算法中部分匹配表（位於 `algorithm.h` 標頭檔中）
-- [`StringMatching`](wiki/algorithm_zh.md)：以
+- [`StringMatching`](wiki/algorithm_zh.md#StringMatching)：以
   KMP 算法匹配字符串（位於 `algorithm.h` 標頭檔中）
-- [`StringMatchingWithPartialMatchTable`](wiki/algorithm_zh.md)：透過已經處理完畢的部分匹配表作字符串匹配（位於
+- [`StringMatchingWithPartialMatchTable`](wiki/algorithm_zh.md#StringMatchingWithPartialMatchTable)：透過已經處理完畢的部分匹配表作字符串匹配（位於
   `algorithm.h` 標頭檔中）

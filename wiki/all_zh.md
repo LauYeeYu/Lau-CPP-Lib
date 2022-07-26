@@ -23,8 +23,8 @@
 - [Vector](vector_zh.md)：綫性容器（動態數組）
 
 ## 函數（以字母順序排列）
-- [`PartialMatchTable`](#PartialMatchTable)：計算
+- [`PartialMatchTable`](algorithm_zh.md#PartialMatchTable)：計算
   KMP 算法中部分匹配表
-- [`StringMatching`](#StringMatching)：以
+- [`StringMatching`](algorithm_zh.md#StringMatching)：以
   KMP 算法匹配字符串
-- [`StringMatchingWithPartialMatchTable`](#StringMatchingWithPartialMatchTable)：透過已經處理完畢的部分匹配表作字符串匹配
+- [`StringMatchingWithPartialMatchTable`](algorithm_zh.md#StringMatchingWithPartialMatchTable)：透過已經處理完畢的部分匹配表作字符串匹配

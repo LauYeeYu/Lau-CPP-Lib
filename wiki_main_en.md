@@ -46,9 +46,9 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
 - [Vector](wiki/vector_en.md): linear container (dynamic array)
 
 ## Functions (in Alphabetical Order)
-- [PartialMatchTable](wiki/algorithm_en.md): calculate the partial match table
-  for KMP algorithm (in `algorithm.h` header file)
-- [StringMatching](wiki/algorithm_en.md): match two string (with KMP algorithm)
-  (in `algorithm.h` header file)
-- [StringMatchingWithPartialMatchTable](wiki/algorithm_en.md):
+- [PartialMatchTable](wiki/algorithm_en.md#PartialMatchTable): calculate
+  the partial match table for KMP algorithm (in `algorithm.h` header file)
+- [StringMatching](wiki/algorithm_en.md#StringMatching): match two string
+  (with KMP algorithm) (in `algorithm.h` header file)
+- [StringMatchingWithPartialMatchTable](wiki/algorithm_en.md#StringMatchingWithPartialMatchTable):
   match the string with a processed partial table (in `algorithm.h` header file)

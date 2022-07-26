@@ -30,8 +30,9 @@ The `lau/all.h` header file includes all the elements in Lau CPP Library.
 - [Vector](vector_en.md): linear container (dynamic array)
 
 ## Functions (in Alphabetical Order)
-- [`PartialMatchTable`](algorithm_en.md): calculate the partial match table
-  for KMP algorithm
-- [`StringMatching`](algorithm_en.md): match two string (with KMP algorithm)
-- [`StringMatchingWithPartialMatchTable`](algorithm_en.md):
+- [`PartialMatchTable`](algorithm_en.md#PartialMatchTable): calculate the
+  partial match table for KMP algorithm
+- [`StringMatching`](algorithm_en.md#StringMatching): match two string
+  (with KMP algorithm)
+- [`StringMatchingWithPartialMatchTable`](algorithm_en.md#StringMatchingWithPartialMatchTable):
   match the string with a processed partial table
