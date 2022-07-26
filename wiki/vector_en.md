@@ -673,3 +673,4 @@ Invalidate when:
 - PushFront: all except the begin iterator if there is no space in the front;
   only begin iterator if there is space in the front
 - PopFront: only begin iterator
+- Sort: all the iterators of the elements whose position is changed

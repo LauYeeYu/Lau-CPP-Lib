@@ -12,6 +12,8 @@
 - file_unrolled_linked_list.h：包含類
   [`FileUnrolledLinkedList`](wiki/file_unrolled_linked_list_zh.md)
 - priority_queue.h：包含類 [`PriorityQueue`](wiki/priority_queue_zh.md)
+- RB_tree.h：包含類 [`RBTree`](wiki/RB_tree_zh.md)
+- rehash_policy.h：包含類 [`RehashPolicy`](wiki/rehash_policy_zh.md)
 - sparse_table.h：包含類 [`SparseTable`](wiki/sparse_table_zh.md)
 - token_scanner.h：包含類 [`TokenScanner`](wiki/token_scanner_zh.md)
 - [type_trait.h](wiki/type_trait_en.md)：包含所有 Lau CPP Library 中的類型特性
@@ -29,6 +31,7 @@
 - [OutOfRange](wiki/exception_zh.md)：表明操作越界
 - [Pair](wiki/pair_zh.md)：含兩個元素的包裹類
 - [PriorityQueue](wiki/priority_queue_zh.md)：一個以優先級作爲出列依據的佇列（優先佇列）
+- [RBTree](wiki/RB_tree_zh.md)：紅黑樹類
 - [RehashPolicy](wiki/rehash_policy_zh.md)：哈希表的重新哈希策略
 - [RuntimeError](wiki/exception_zh.md)：表明運行時發成錯誤
 - [SparseTable](wiki/sparse_table_zh.md)：預處理數據以減少可重複貢獻問題的稀疏表

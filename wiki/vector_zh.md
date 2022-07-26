@@ -51,7 +51,7 @@ public:
     // 析構函數
     ~Vector();
 
-    // 獲取器
+    // 獲取
     [[nodiscard]] AllocatorType GetAllocator() const noexcept;
 
     // 元素訪問
@@ -123,15 +123,15 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 ## 成員類型
 - `AllocatorType`：記憶體分配器類型，與 `Allocator` 一致
 - `PointerAllocatorType`：`T*` 的記憶體分配器類型
-- [`Iterator`](#iterator)：迭代器 `lau::Vector` 之類型
-- [`ConstIterator`](#iterator)：常量迭代器 `lau::Vector` 之類型
+- [`Iterator`](#iterator)：`lau::Vector` 之迭代器類型
+- [`ConstIterator`](#iterator)：`lau::Vector` 之唯讀迭代器類型
 
 ## 成員函數
 - [（構造函數）](#Constructors)
 - [`operator=`](#operator=)
 - （析構函數）
 
-### 獲取器
+### 獲取
 - [`GetAllocator`](#GetAllocator)：獲得記憶體分配器之副本
 
 ### 元素訪問
@@ -141,20 +141,20 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 - [`Back`](#Back)：訪問末尾元素
 
 ### 迭代器
-- [`Begin`](#Begin)：獲取首迭代器
-- [`begin`](#begin)：獲取首迭代器
-- [`ConstBegin`](#ConstBegin)：獲取首常量迭代器
-- [`cbegin`](#cbegin)：獲取首常量迭代器
-- [`End`](#End)：獲取末迭代器
-- [`end`](#end)：獲取末迭代器
-- [`ConstEnd`](#ConstEnd)：獲取末常量迭代器
-- [`cend`](#cend)：獲取末常量迭代器
+- [`Begin`](#Begin)：取得首迭代器
+- [`begin`](#begin)：取得首迭代器
+- [`ConstBegin`](#ConstBegin)：取得首常量迭代器
+- [`cbegin`](#cbegin)：取得首常量迭代器
+- [`End`](#End)：取得末迭代器
+- [`end`](#end)：取得末迭代器
+- [`ConstEnd`](#ConstEnd)：取得末常量迭代器
+- [`cend`](#cend)：取得末常量迭代器
 
 ### 容量
-- [`Capacity`](#Capacity)：獲取容量
+- [`Capacity`](#Capacity)：取得容量
 - [`Empty`](#Empty)：檢查容器是否爲空
-- [`MaxSize`](#MaxSize)：獲取最大可存放元素個數
-- [`Size`](#Size)：獲取所存之元素數量
+- [`MaxSize`](#MaxSize)：取得最大可存放元素個數
+- [`Size`](#Size)：取得所存之元素數量
 - [`ShrinkToFit`](#ShrinkToFit)：減少容量
 - [`Reserve`](#Reserve)：保留容量
 
@@ -252,7 +252,7 @@ Vector& operator=(Vector&& obj) noexcept;
 ```c++
 [[nodiscard]] AllocatorType GetAllocator() const noexcept;
 ```
-- 獲取此類中記憶體分配器的副本。
+- 取得此類中記憶體分配器的副本。
 
 ### <span id="At">`At`</span>
 ```c++
@@ -326,68 +326,68 @@ const T& Back() const;
 ```c++
 [[nodiscard]] Iterator Begin() noexcept;
 ```
-- 獲取首迭代器。
+- 取得首迭代器。
 
 ```c++
 [[nodiscard]] ConstIterator Begin() const noexcept;
 ```
-- 獲取首常量迭代器。
+- 取得首常量迭代器。
 
 ### <span id="begin">`begin`</span>
 ```c++
 [[nodiscard]] Iterator begin() noexcept;
 ```
-- 獲取首迭代器。
+- 取得首迭代器。
 
 ```c++
 [[nodiscard]] ConstIterator Begin() const noexcept;
 ```
-- 獲取首常量迭代器。
+- 取得首常量迭代器。
 
 ### <span id="ConstBegin">`ConstBegin`</span>
 ```c++
 [[nodiscard]] ConstIterator ConstBegin() const noexcept;
 ```
-- 獲取首常量迭代器。
+- 取得首常量迭代器。
 
 ### <span id="End">`End`</span>
 ```c++
 [[nodiscard]] Iterator End() noexcept;
 ```
-- 獲取末迭代器。
+- 取得末迭代器。
 - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
 
 ```c++
 [[nodiscard]] ConstIterator End() const noexcept;
 ```
-- 獲取末常量迭代器。
+- 取得末常量迭代器。
 - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
 
 ### <span id="end">`end`</span>
 ```c++
 [[nodiscard]] Iterator end() noexcept;
 ```
-- 獲取末迭代器。
+- 取得末迭代器。
 - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
 
 ```c++
 [[nodiscard]] ConstIterator end() const noexcept;
 ```
-- 獲取末常量迭代器。
+- 取得末常量迭代器。
 - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
 
 ### <span id="ConstEnd">`ConstEnd`</span>
 ```c++
 [[nodiscard]] ConstIterator ConstEnd() const noexcept;
 ```
-- 獲取末常量迭代器。
+- 取得末常量迭代器。
 - 請注意：此迭代器是最後一個元素對應迭代器的後一個。
 
 ### <span id="Capacity">`Capacity`</span>
 ```c++
 [[nodiscard]] SizeT Capacity() noexcept;
 ```
-- 獲取容器的容量。
+- 取得容器的容量。
 - 請注意：由於此容器可以從前部移除元素，因此可用空間可能比此結果小。
 
 ### <span id="Empty">`Empty`</span>
@@ -400,13 +400,13 @@ const T& Back() const;
 ```c++
 [[nodiscard]] long MaxSize() const noexcept;
 ```
-- 獲取此容器的最大容量。
+- 取得此容器的最大容量。
 
 ### <span id="Size">`Size`</span>
 ```c++
 [[nodiscard]] SizeT Size() const noexcept;
 ```
-- 獲取容器中的元素個數。
+- 取得容器中的元素個數。
 
 ### <span id="ShrinkToFit">`ShrinkToFit`</span>
 ```c++
@@ -630,4 +630,5 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 - 從尾部插入元素：僅末迭代器
 - 從尾部移除元素：僅末迭代器
 - 從頭部插入元素：當頭部無空間時，除首迭代器外的所有迭代器；當頭部有空間時，僅首迭代器
-- 從頭部移除：僅首迭代器。
+- 從頭部移除：僅首迭代器
+- 排序容器：所有位置發生改變的元素對應的迭代器

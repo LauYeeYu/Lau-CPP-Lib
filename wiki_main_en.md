@@ -12,6 +12,8 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
 - file_unrolled_linked_list.h: the class
   [`FileUnrolledLinkedList`](wiki/file_unrolled_linked_list_en.md)
 - priority_queue.h: the class [`PriorityQueue`](wiki/priority_queue_en.md)
+- RB_tree.h: the class [`RBTree`](wiki/RB_tree_en.md)
+- rehash_policy.h: the class [`RehashPolicy`](wiki/rehash_policy_en.md)
 - sparse_table.h: the class [`SparseTable`](wiki/sparse_table_en.md)
 - token_scanner.h: the class [`TokenScanner`](wiki/token_scanner_en.md)
 - [type_trait.h](wiki/type_trait_en.md): all the type traits in Lau CPP Library
@@ -34,6 +36,7 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
 - [Pair](wiki/pair_en.md): a pair of two elements
 - [PriorityQueue](wiki/priority_queue_en.md): a queue that pops elements in the
   order of priority
+- [RBTree](wiki/RB_tree_en.md): a red-black tree class
 - [RehashPolicy](wiki/rehash_policy_en.md): a rehashing policy for hash tables
 - [RuntimeError](wiki/exception_en.md): indicate a runtime error occurs
 - [SparseTable](wiki/sparse_table_en.md): a sparse table that preprocess data

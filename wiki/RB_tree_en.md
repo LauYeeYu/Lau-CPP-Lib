@@ -15,7 +15,7 @@ class RBTree;
 
 `lau::RBTree` uses the data structure called
 [red-black tree](https://en.wikipedia.org/wiki/Red-black_tree).  The
-tree is sorted associative container with logarithmic complexity in
+tree is a sorted associative container with logarithmic complexity in
 search, removal and insertion.
 
 A customized compare function can be supplied to compare the elements.  Note
@@ -129,12 +129,12 @@ public:
     // Iterators
     [[nodiscard]] Iterator Begin() noexcept;
     [[nodiscard]] ConstIterator Begin() const noexcept;
-    [[nodiscard]] Iterator begin();
+    [[nodiscard]] Iterator begin() noexcept;
     [[nodiscard]] ConstIterator begin() const;
     [[nodiscard]] ConstIterator ConstBegin() const noexcept;
     [[nodiscard]] Iterator End() noexcept;
     [[nodiscard]] ConstIterator End() const noexcept;
-    [[nodiscard]] Iterator end();
+    [[nodiscard]] Iterator end() noexcept;
     [[nodiscard]] ConstIterator end() const noexcept;
     [[nodiscard]] ConstIterator ConstEnd() const;
 };
@@ -328,7 +328,7 @@ RBTree(const RBTree& obj);
 - Copy constructor
 - Construct a class with the same elements, allocator and compare class
   as `obj`.
-- Time complexity: $O(n \log n)$. ($n$ is the number of elements in the
+- Time complexity: $O(n)$. ($n$ is the number of elements in the
   `obj` class)
 
 ```c++
@@ -337,7 +337,7 @@ RBTree(const RBTree& obj, const Allocator& allocator);
 - Copy constructor with customized allocator
 - Construct a class with the same elements and compare class as `obj`.
 - The allocator of the new class copied from `allocator`.
-- Time complexity: $O(n \log n)$. ($n$ is the number of elements in the
+- Time complexity: $O(n)$. ($n$ is the number of elements in the
   `obj` class)
 
 ```c++
@@ -441,6 +441,8 @@ RBTree& Erase(const Iterator& position);
 - Erase the element at `position`.
 - Throw `lau::InvalidIterator` if the iterator doesn't belong to this tree
   or the iterator is the end iterator.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
 - Time complexity: $O(\log n)$ (on average).
 
 ```c++
@@ -448,6 +450,8 @@ RBTree& Erase(const T& value);
 ```
 - Erase the element that is equal to `value`.
 - Throw `lau::InvalidArgument` if the `value` doesn't belong to this tree.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
 - Time complexity: $O(\log n)$.
 
 ```c++
@@ -457,6 +461,8 @@ RBTree& Erase(const K& value);
 - Erase the element that is equal to `value`.
 - Throw `lau::InvalidArgument` if the `value` doesn't belong to this tree.
 - Please note that the type `K` must have valid `Compare::is_transparent`.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
 - Time complexity: $O(\log n)$.
 
 ### <span id="Clear">`Clear`</span>
@@ -464,6 +470,8 @@ RBTree& Erase(const K& value);
 RBTree& Clear() noexcept;
 ```
 - Erase all the elements in the tree.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
 - Time complexity: $O(n)$.
 
 ### <span id="Swap">`Swap`</span>
@@ -471,6 +479,8 @@ RBTree& Clear() noexcept;
 RBTree& Swap(RBTree& other) noexcept;
 ```
 - Swap the contents of the two trees.
+- To make the class visiting easier, the function returns a reference
+  pointing to this class.
 - Time complexity: $O(1)$.
 
 ### <span id="Size">`Size`</span>
@@ -646,7 +656,7 @@ template<class K>
 
 ### <span id="begin">`begin`</span>
 ```c++
-[[nodiscard]] Iterator begin();
+[[nodiscard]] Iterator begin() noexcept;
 ```
 - Get the iterator of the first element.
 - Time complexity: $O(1)$.
@@ -683,7 +693,7 @@ template<class K>
 
 ### <span id="end">`end`</span>
 ```c++
-[[nodiscard]] Iterator end();
+[[nodiscard]] Iterator end() noexcept;
 ```
 - Get the end iterator.
 - Please note that the end iterator is pointing at the node after the last
