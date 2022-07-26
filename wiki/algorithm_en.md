@@ -19,14 +19,14 @@ The `lau/algorithm.h` header file includes all the algorithms in Lau CPP Lib.
 ## Details
 ### <span id="Knuth-Morris-Pratt_Algorithm">Knuth-Morris-Pratt algorithm</span>
 The Knuth-Morris-Pratt algorithm is published in 1977.  Different from the
-naive string matching algorithm (with time complexity of $O(m \times n)$),
-this algorithm is way more efficient (with the time complexity of $O(m + n)$).
+naive string matching algorithm (with time complexity of $O(m \times n)$ ),
+this algorithm is way more efficient (with the time complexity of $O(m + n)$ ).
 
 This algorithm uses a partial match table to avoid repeated match.  For more
 information about this algorithm, please view the
 [Wikipedia page](https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm).
 
-Complexity: $O(m \times n)$
+Complexity: $O(m + n)$
 
 Related content:
 - [`PartialMatchTable`](#PartialMatchTable): calculate the partial match table

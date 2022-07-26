@@ -21,7 +21,7 @@ $O(m \times n)$）不同的是，此算法相當高效（時間複雜度爲 $O(m
 
 此算法透過部分匹配表來避免重複匹配。如需瞭解更多關於此算法的信息，請檢視[維基百科頁](https://zh.wikipedia.org/wiki/KMP%E7%AE%97%E6%B3%95) 。
 
-時間複雜度： $O(m \times n)$
+時間複雜度： $O(m + n)$
 
 相關内容：
 - [`PartialMatchTable`](#PartialMatchTable)：計算
