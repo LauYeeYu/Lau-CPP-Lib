@@ -122,7 +122,7 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 - `Allocator`: the type of allocator
   - need to satisfy the C++ allocator requirements (see
     [C++ named requirements: Allocator](https://en.cppreference.com/w/cpp/named_req/Allocator))
-  - `std::allocator` is default.
+  - `std::allocator<T>` is default.
 
 ## Member Types
 - `AllocatorType`: the type of allocator, the same as `Allocator`

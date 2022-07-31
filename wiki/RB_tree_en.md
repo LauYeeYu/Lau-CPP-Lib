@@ -19,15 +19,15 @@ tree is a sorted associative container with logarithmic complexity in
 search, removal and insertion.
 
 A customized compare function can be supplied to compare the elements.  Note
-that the `Compare` must have overloaded the
-`bool operator(const T&, const T&) const`.  It must also guarantee that the
-order of the elements is preserved.
+that the `Compare` must have an overloaded
+`bool operator(const T&, const T&) const` function.  It must also guarantee
+that the order of the elements is preserved.
 
 Note: this class is an implementation of the data structure, so it gives
 users the freedom to modify most of the data by using the iterator.  In most
 case, as long as you didn't modify the order given by the `Compare` class,
 there is no risk.  But if you want to be 100% sure that no undefined
-behaviour will occur, you should use the `lau::Map` class. 
+behaviour will occur, you should use the `lau::Map` class.
 
 For more information about the data structure, please go to the
 [detail of data structure](#DataStructure).
@@ -157,7 +157,7 @@ void Swap(RBTree<T, Compare, Allocator>& lhs,
 - `Allocator`: the type of allocator
   - need to satisfy the C++ allocator requirements (see
     [C++ named requirements: Allocator](https://en.cppreference.com/w/cpp/named_req/Allocator))
-  - `std::allocator` is default.
+  - `std::allocator<T>` is default.
 
 ## Enumeration Type
 - `Flag`: the colour of the tree nodes
@@ -264,24 +264,25 @@ Complexity:
 RBTree();
 ```
 - Default constructor
-- Construct an empty tree with default compare class, default allocator.
+- Construct an empty tree with the default compare class and the default
+  allocator.
 
 ```c++
 explicit RBTree(const Compare& compare);
 ```
-- Construct an empty tree with customized compare class, and default
+- Construct an empty tree with a customized compare class and the default
   allocator.
 
 ```c++
 explicit RBTree(const Allocator& allocator);
 ```
-- Construct an empty tree with default compare class, and customized
+- Construct an empty tree with the default compare class and a customized
   allocator.
 
 ```c++
 RBTree(const Compare& compare, const Allocator& allocator);
 ```
-- Construct an empty tree with customized compare class, and customized
+- Construct an empty tree with a customized compare class and the customized
   allocator.
 
 ```c++
@@ -289,7 +290,7 @@ template<class InputIterator>
 RBTree(InputIterator begin, InputIterator end);
 ```
 - Construct a tree whose elements are among the range `[begin, end)`
-  with default compare class, and default allocator.
+  with the default compare class and the default allocator.
 - Time complexity: $O(n \log n)$. ($n$ is the number of elements in the
   range)
 
@@ -298,7 +299,7 @@ template<class InputIterator>
 RBTree(InputIterator begin, InputIterator end, const Compare& compare);
 ```
 - Construct a tree whose elements are among the range `[begin, end)`
-  with customized compare class, and default allocator.
+  with a customized compare class and the default allocator.
 - Time complexity: $O(n \log n)$. ($n$ is the number of elements in the
   range)
 
@@ -307,7 +308,7 @@ template<class InputIterator>
 RBTree(InputIterator begin, InputIterator end, const Allocator& allocator);
 ```
 - Construct a tree whose elements are among the range `[begin, end)`
-  with default compare class, and customized allocator.
+  with the default compare class and a customized allocator.
 - Time complexity: $O(n \log n)$. ($n$ is the number of elements in the
   range)
 
@@ -318,7 +319,7 @@ RBTree(InputIterator begin, InputIterator end,
        const Allocator& allocator);
 ```
 - Construct a tree whose elements are among the range `[begin, end)`
-  with customized compare class, and customized allocator.
+  with a customized compare class and a customized allocator.
 - Time complexity: $O(n \log n)$. ($n$ is the number of elements in the
   range)
 

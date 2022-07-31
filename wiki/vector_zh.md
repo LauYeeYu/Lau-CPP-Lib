@@ -118,7 +118,7 @@ void Swap(Vector<T, Allocator>& vector1, Vector<T, Allocator>& vector2) noexcept
 - `T`：類內嵌的類型
 - `Allocator`：記憶體分配器
 - 需要符合 C++ 對於記憶體分配器之要求（參見 [C++ 具名要求：分配器 (Allocator)](https://zh.cppreference.com/w/cpp/named_req/Allocator)）
-- 默認爲 `std::allocator`。
+- 默認爲 `std::allocator<T>`。
 
 ## 成員類型
 - `AllocatorType`：記憶體分配器類型，與 `Allocator` 一致

@@ -147,7 +147,7 @@ void Swap(RBTree<T, Compare, Allocator>& lhs,
       `Compare(a, b) = true` 且 `Compare(a, b) = true`，則 `a` 與 `b` 相同）
 - `Allocator`：記憶體分配器之類型（默認爲 `std::allocator`）
   - 需要符合 C++ 對於記憶體分配器之要求（參見 [C++ 具名要求：分配器 (Allocator)](https://zh.cppreference.com/w/cpp/named_req/Allocator)）
-  - 默認爲 `std::allocator`。
+  - 默認爲 `std::allocator<T>`。
 
 ## 枚舉類型
 - `Flag`：樹節點的顏色
