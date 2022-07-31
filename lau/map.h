@@ -321,7 +321,6 @@ public:
      */
     [[nodiscard]] bool Empty() const noexcept { return tree_.Empty(); }
 
-
     /**
      * Get the number of elements.
      * @return the number of elements
@@ -332,9 +331,7 @@ public:
      * Get the maximum size of the class.
      * @return the maximum size of the class
      */
-    [[nodiscard]] long MaxSize() const noexcept {
-        return tree_.MaxSize();
-    }
+    [[nodiscard]] long MaxSize() const noexcept { return tree_.MaxSize(); }
 
     /**
      * Clear the contents
@@ -526,7 +523,7 @@ public:
      * @return the constant iterator of the found element, or the end constant
      * iterator if not found
      */
-    ConstIterator Find(const Key& key) const {
+    [[nodiscard]] ConstIterator Find(const Key& key) const {
         return ConstIterator(tree_.Find(MapPair(key, Value())));
     }
 
@@ -540,7 +537,7 @@ public:
      * iterator if not found
      */
     template<class K>
-    ConstIterator Find(const K& key) const {
+    [[nodiscard]] ConstIterator Find(const K& key) const {
         return ConstIterator(tree_.Find(key));
     }
 
@@ -649,7 +646,7 @@ public:
      * not the type used to store the elements.
      * @return the copy of the allocator
      */
-    [[nodiscard]] Allocator GetAllocator() const {
+    [[nodiscard]] Allocator GetAllocator() const noexcept {
         return Allocator(tree_.GetAllocator());
     }
 
