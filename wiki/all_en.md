@@ -15,6 +15,7 @@ The `lau/all.h` header file includes all the elements in Lau CPP Library.
 - [InvalidArgument](exception_en.md): indicate there is an invalid argument
 - [InvalidIterator](exception_en.md): indicate this is an invalid iterator
 - [KeyValuePair](key_value_pair_en.md): a pair of key and value
+- [Map](map_en.md): a mapping class for a key-value pair
 - [OutOfRange](exception_en.md): indicate that the operation is out of
   range
 - [Pair](pair_en.md): a pair of two elements

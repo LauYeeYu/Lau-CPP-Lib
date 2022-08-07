@@ -12,6 +12,7 @@
 - [InvalidArgument](exception_zh.md)：表明存在非法參數
 - [InvalidIterator](exception_zh.md)：表明非法迭代器
 - [KeyValuePair](key_value_pair_zh.md)：鍵值對
+- [Map](map_zh.md)：鍵值對映射類
 - [OutOfRange](exception_zh.md)：表明操作越界
 - [Pair](pair_zh.md)：含兩個元素的包裹類
 - [PriorityQueue](priority_queue_zh.md)：一個以優先級作爲出列依據的佇列（優先佇列）

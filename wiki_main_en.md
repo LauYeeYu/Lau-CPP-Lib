@@ -11,6 +11,7 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
   [`FileDoubleUnrolledLinkedList`](wiki/file_double_unrolled_linked_list_en.md)
 - file_unrolled_linked_list.h: the class
   [`FileUnrolledLinkedList`](wiki/file_unrolled_linked_list_en.md)
+- map.h: the class [`Map`](wiki/map_en.md)
 - priority_queue.h: the class [`PriorityQueue`](wiki/priority_queue_en.md)
 - RB_tree.h: the class [`RBTree`](wiki/RB_tree_en.md)
 - rehash_policy.h: the class [`RehashPolicy`](wiki/rehash_policy_en.md)
@@ -31,6 +32,7 @@ Switch to Other Languages: [繁體中文（香港）](wiki_main_zh.md)
 - [InvalidArgument](wiki/exception_en.md): indicate there is an invalid argument
 - [InvalidIterator](wiki/exception_en.md): indicate this is an invalid iterator
 - [KeyValuePair](wiki/key_value_pair_en.md): a pair of key and value
+- [Map](wiki/map_en.md): a mapping class for a key-value pair
 - [OutOfRange](wiki/exception_en.md): indicate that the operation is out of
   range
 - [Pair](wiki/pair_en.md): a pair of two elements

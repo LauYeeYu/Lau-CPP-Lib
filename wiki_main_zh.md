@@ -11,6 +11,7 @@
   [`FileDoubleUnrolledLinkedList`](wiki/file_double_unrolled_linked_list_zh.md)
 - file_unrolled_linked_list.h：包含類
   [`FileUnrolledLinkedList`](wiki/file_unrolled_linked_list_zh.md)
+- map.h：包含類 [`Map`](wiki/map_zh.md)
 - priority_queue.h：包含類 [`PriorityQueue`](wiki/priority_queue_zh.md)
 - RB_tree.h：包含類 [`RBTree`](wiki/RB_tree_zh.md)
 - rehash_policy.h：包含類 [`RehashPolicy`](wiki/rehash_policy_zh.md)
@@ -28,6 +29,7 @@
 - [InvalidArgument](wiki/exception_zh.md)：表明存在非法參數
 - [InvalidIterator](wiki/exception_zh.md)：表明非法迭代器
 - [KeyValuePair](wiki/key_value_pair_zh.md)：鍵值對
+- [Map](wiki/map_zh.md)：鍵值對映射類
 - [OutOfRange](wiki/exception_zh.md)：表明操作越界
 - [Pair](wiki/pair_zh.md)：含兩個元素的包裹類
 - [PriorityQueue](wiki/priority_queue_zh.md)：一個以優先級作爲出列依據的佇列（優先佇列）
