@@ -14,7 +14,7 @@ class RBTree;
 ```
 
 `lau::RBTree` uses the data structure called
-[red-black tree](https://en.wikipedia.org/wiki/Red-black_tree).  The
+[red-black tree](https://en.wikipedia.org/wiki/Red%E2%80%93black_tree).  The
 tree is a sorted associative container with logarithmic complexity in
 search, removal and insertion.
 
@@ -166,37 +166,35 @@ void Swap(RBTree<T, Compare, Allocator>& lhs,
 
 ## Member Types
 - `Node`: the node in the read black tree
-  - You may use the interface to have a view of the tree's structure. 
+  - You may use the interface to have a view of the tree's structure.
   - The code structure is listed below.
 ```c++
 struct Node {
-  friend RBTree;
-  
-  public:
-  Node() = default;
-  
-  explicit Node(const T& valueIn) : value(valueIn) {}
-  explicit Node(T&& valueIn) : value(std::move(valueIn)) {}
-  
-  Node(Node& obj) = default;
-  Node(const Node& obj) = default;
-  Node(Node&& obj) = default;
-  
-  template<class... Args>
-  explicit Node(Args&&... args) : value(std::forward<Args>(args)...) {}
-  
-  Node& operator=(Node& obj) = default;
-  Node& operator=(const Node& obj) = default;
-  Node& operator=(Node&& obj) = default;
-  
-  ~Node() = default;
-  
-  Flag  Colour() const noexcept;
-  Node* Parent() const noexcept;
-  Node* Left()   const noexcept;
-  Node* Right()  const noexcept;
-  
-  T value;
+public:
+    Node() = default;
+
+    explicit Node(const T& valueIn) : value(valueIn) {}
+    explicit Node(T&& valueIn) : value(std::move(valueIn)) {}
+
+    Node(Node& obj) = default;
+    Node(const Node& obj) = default;
+    Node(Node&& obj) = default;
+
+    template<class... Args>
+    explicit Node(Args&&... args) : value(std::forward<Args>(args)...) {}
+
+    Node& operator=(Node& obj) = default;
+    Node& operator=(const Node& obj) = default;
+    Node& operator=(Node&& obj) = default;
+
+    ~Node() = default;
+
+    Flag  Colour() const noexcept;
+    Node* Parent() const noexcept;
+    Node* Left()   const noexcept;
+    Node* Right()  const noexcept;
+
+    T value;
 };
 ```
 - `AllocatorType`: the allocator type for the `Node` type
@@ -234,10 +232,10 @@ struct Node {
 
 ### Iterators
 - [`Begin`](#Begin): get the iterator to the first element
-- [`End`](#End): get the iterator to the end of the tree
 - [`begin`](#begin): get the iterator to the first element
-- [`end`](#end): get the iterator to the end of the tree
 - [`ConstBegin`](#ConstBegin): get the constant iterator to the first element
+- [`End`](#End): get the iterator to the end of the tree
+- [`end`](#end): get the iterator to the end of the tree
 - [`ConstEnd`](#ConstEnd): get the constant iterator to the end of the tree
 
 ## Non-member Function
@@ -388,7 +386,7 @@ RBTree(std::initializer_list<T> init,
 - Time complexity: $O(n \log n)$. ($n$ is the number of elements in the
   initializer list)
 
-### <span id="operator=">operator=</span>
+### <span id="operator=">`operator=`</span>
 ```c++
 RBTree& operator=(const RBTree& obj);
 ```
@@ -501,7 +499,7 @@ RBTree& Swap(RBTree& other) noexcept;
 ### <span id="MaxSize">`MaxSize`</span>
 ```c++
 [[nodiscard]] long MaxSize() const noexcept;
-``` 
+```
 - Get the maximum number of elements that can be stored in the tree.
 
 ### <span id="GetAllocator">`GetAllocator`</span>

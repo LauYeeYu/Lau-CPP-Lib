@@ -1,6 +1,6 @@
 # lau::KeyValuePair
 
-Switch to Other Languages: [繁體中文（香港）](KeyValuePair_zh.md)
+Switch to Other Languages: [繁體中文（香港）](key_value_pair_zh.md)
 
 Included in header `lau/ultility.h`.
 

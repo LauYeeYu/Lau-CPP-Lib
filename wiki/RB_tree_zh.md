@@ -13,8 +13,7 @@ class RBTree;
 } // namespace lau
 ```
 
-`lau::RBTree` 使用
-[紅黑樹](https://zh.wikipedia.org/wiki/%E7%BA%A2%E9%BB%91%E6%A0%91)作爲數據結構。此樹爲有序容器，搜索、插入以及移除操作皆僅需對數複雜度。
+`lau::RBTree` 使用[紅黑樹](https://zh.wikipedia.org/wiki/%E7%BA%A2%E9%BB%91%E6%A0%91)作爲數據結構。此樹爲有序容器，搜索、插入以及移除操作皆僅需對數複雜度。
 
 您可以針對排序方式自定義比較方法（`Comapre` 類）。注意 `Compare` 類必須支援
 `bool operator(const T&, const T&) const` 函數，並保證此函數能始終保證唯一的全序關係。
@@ -156,37 +155,35 @@ void Swap(RBTree<T, Compare, Allocator>& lhs,
 
 ## 成員類型
 - `Node`：紅黑樹之節點
-  - 可以透過此類之接口來檢視樹結構。 
+  - 可以透過此類之接口來檢視樹結構。
   - 代碼結構如下所列。
 ```c++
 struct Node {
-  friend RBTree;
-  
-  public:
-  Node() = default;
-  
-  explicit Node(const T& valueIn) : value(valueIn) {}
-  explicit Node(T&& valueIn) : value(std::move(valueIn)) {}
-  
-  Node(Node& obj) = default;
-  Node(const Node& obj) = default;
-  Node(Node&& obj) = default;
-  
-  template<class... Args>
-  explicit Node(Args&&... args) : value(std::forward<Args>(args)...) {}
-  
-  Node& operator=(Node& obj) = default;
-  Node& operator=(const Node& obj) = default;
-  Node& operator=(Node&& obj) = default;
-  
-  ~Node() = default;
-  
-  Flag  Colour() const noexcept;
-  Node* Parent() const noexcept;
-  Node* Left()   const noexcept;
-  Node* Right()  const noexcept;
-  
-  T value;
+public:
+    Node() = default;
+
+    explicit Node(const T& valueIn) : value(valueIn) {}
+    explicit Node(T&& valueIn) : value(std::move(valueIn)) {}
+
+    Node(Node& obj) = default;
+    Node(const Node& obj) = default;
+    Node(Node&& obj) = default;
+
+    template<class... Args>
+    explicit Node(Args&&... args) : value(std::forward<Args>(args)...) {}
+
+    Node& operator=(Node& obj) = default;
+    Node& operator=(const Node& obj) = default;
+    Node& operator=(Node&& obj) = default;
+
+    ~Node() = default;
+
+    Flag  Colour() const noexcept;
+    Node* Parent() const noexcept;
+    Node* Left()   const noexcept;
+    Node* Right()  const noexcept;
+
+    T value;
 };
 ```
 - `AllocatorType`：`Node` 類之記憶體分配器類型
@@ -343,11 +340,10 @@ RBTree(std::initializer_list<T> init,
 - 以 `init` 內元素、輸入之比較類、輸入之記憶體建立一個紅黑樹。
 - 時間複雜度： $O(n \log n)$。（$n$ 是範圍中的元素個數）
 
-### <span id="operator=">operator=</span>
+### <span id="operator=">`operator=`</span>
 ```c++
 RBTree& operator=(const RBTree& obj);
 ```
-- 複製賦值運算符
 - 建立一個與 `obj` 所含元素、記憶體分配器以及比較類相同的類。
 - 時間複雜度： $O(n)$。（$n$ 是範圍中的元素個數）
 
@@ -388,7 +384,7 @@ Pair<Iterator, bool> Emplace(Args&&... args);
 ```c++
 RBTree& Erase(const Iterator& position);
 ```
-- 刪除 `position` 所指的元素。
+- 移除 `position` 所指的元素。
 - 如果 `position` 指向的元素不是紅黑樹中的元素或者迭代器不是末迭代器，則會拋出
   `lau::InvalidIterator` 异常。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
@@ -397,7 +393,7 @@ RBTree& Erase(const Iterator& position);
 ```c++
 RBTree& Erase(const T& value);
 ```
-- 刪除紅黑樹中與 `value` 相等的元素。
+- 移除紅黑樹中與 `value` 相等的元素。
 - 如果元素不是紅黑樹中的元素，則會拋出 `lau::InvalidIterator` 异常。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度： $O(\log n)$。（$n$ 是樹中元素個數）
@@ -406,7 +402,7 @@ RBTree& Erase(const T& value);
 template<class K>
 RBTree& Erase(const K& value);
 ```
-- 刪除紅黑樹中與 `value` 相等的元素。
+- 移除紅黑樹中與 `value` 相等的元素。
 - 如果元素不是紅黑樹中的元素，則會拋出 `lau::InvalidIterator` 异常。
 - 注意：`K` 必須符合 `Compare::is_transparent` 類別。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
@@ -416,7 +412,7 @@ RBTree& Erase(const K& value);
 ```c++
 RBTree& Clear() noexcept;
 ```
-- 刪除紅黑樹中所有元素。
+- 清除紅黑樹中所有元素。
 - 爲使代碼更加整潔，訪問更加簡便，此函數返回原類的引用。
 - 時間複雜度： $O(n)$。（$n$ 是樹中元素個數）
 
@@ -445,14 +441,14 @@ RBTree& Swap(RBTree& other) noexcept;
 ### <span id="MaxSize">`MaxSize`</span>
 ```c++
 [[nodiscard]] long MaxSize() const noexcept;
-``` 
+```
 - 取得紅黑樹可容納的最大元素個數。
 
 ### <span id="GetAllocator">`GetAllocator`</span>
 ```c++
 [[nodiscard]] AllocatorType GetAllocator() const noexcept;
 ```
-- 取得紅黑樹的空間分配器副本。
+- 取得紅黑樹的記憶體分配器副本。
 
 ### <span id="GetCompare">`GetCompare`</span>
 ```c++
@@ -512,14 +508,14 @@ template<class K>
 ```c++
 [[nodiscard]] Iterator LowerBound(const T& value);
 ```
-- 取得紅黑樹中不小於（大於等於） `value` 的最小元素的迭代器。
+- 取得紅黑樹中不小於（大於等於）`value` 的最小元素的迭代器。
 - 如果元素不是紅黑樹中的元素，則返回末迭代器；否則返回指向對應元素的迭代器。
 - 時間複雜度： $O(\log n)$。（$n$ 是樹中元素個數）
 
 ```c++
 [[nodiscard]] ConstIterator LowerBound(const T& value) const;
 ```
-- 取得紅黑樹中不小於（大於等於） `value` 的最小元素的常量迭代器。
+- 取得紅黑樹中不小於（大於等於）`value` 的最小元素的常量迭代器。
 - 如果元素不是紅黑樹中的元素，則返回末常量迭代器；否則返回指向對應元素的常量迭代器。
 - 時間複雜度： $O(\log n)$。（$n$ 是樹中元素個數）
 
@@ -527,7 +523,7 @@ template<class K>
 template<class K>
 [[nodiscard]] Iterator LowerBound(const K& value);
 ```
-- 取得紅黑樹中不小於（大於等於） `value` 的最小元素的迭代器。
+- 取得紅黑樹中不小於（大於等於）`value` 的最小元素的迭代器。
 - 如果元素不是紅黑樹中的元素，則返回末迭代器；否則返回指向對應元素的迭代器。
 - 注意：`K` 必須符合 `Compare::is_transparent` 類別。
 - 時間複雜度： $O(\log n)$。（$n$ 是樹中元素個數）
@@ -536,7 +532,7 @@ template<class K>
 template<class K>
 [[nodiscard]] ConstIterator LowerBound(const K& value) const;
 ```
-- 取得紅黑樹中不小於（大於等於） `value` 的最小元素的常量迭代器。
+- 取得紅黑樹中不小於（大於等於）`value` 的最小元素的常量迭代器。
 - 如果元素不是紅黑樹中的元素，則返回末常量迭代器；否則返回指向對應元素的常量迭代器。
 - 注意：`K` 必須符合 `Compare::is_transparent` 類別。
 - 時間複雜度： $O(\log n)$。（$n$ 是樹中元素個數）

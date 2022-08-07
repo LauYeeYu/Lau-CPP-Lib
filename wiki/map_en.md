@@ -15,7 +15,7 @@ class Map;
 ```
 
 `lau::Map` is a mapping container that uses a
-[red-black tree](https://en.wikipedia.org/wiki/Red-black_tree) as its
+[red-black tree](https://en.wikipedia.org/wiki/Red%E2%80%93black_tree) as its
 underlying data structure.
 
 A customized compare function can be supplied to compare the elements.  Note
@@ -86,7 +86,7 @@ public:
     Value& operator[](const Key& key);
     Value& operator[](Key&& key);
     [[nodiscard]] const Value& operator[](const Key& key) const;
-    
+
     // Modifiers
     Pair<Iterator, bool> Insert(const MapPair& pair);
     Pair<Iterator, bool> Insert(MapPair&& pair);
@@ -172,7 +172,7 @@ void Swap(Map<Key, Value, Compare, Allocator>& lhs,
   - `std::allocator<KeyValuePair<const Key, Value>>` is default.
 
 ## Member Types
-- `MapPair`: `KeyValuePair<const Key, Value>` 
+- `MapPair`: `KeyValuePair<const Key, Value>`
 - `value_type`: `KeyValuePair<const Key, Value>`
 
 - `PairCompare`: the type to compare the pair
@@ -180,7 +180,7 @@ void Swap(Map<Key, Value, Compare, Allocator>& lhs,
 class PairCompare {
     public:
         PairCompare() = default;
-        explicit PairCompare(const Compare& compareIn) : compare_(compareIn) {}
+        explicit PairCompare(const Compare&);
 
         bool operator()(const MapPair& lhs, const MapPair& rhs) const;
         template<class K>
@@ -198,16 +198,16 @@ class PairCompare {
 - (destructors)
 
 ### Modifiers
-- [`Insert`](#Insert): insert a new element to the tree
-- [`Emplace`](#Emplace): insert a new element to the tree in place
-- [`Erase`](#Erase): erase an element from the tree
-- [`Clear`](#Clear): clear the tree
-- [`Swap`](#Swap): swap the tree
+- [`Insert`](#Insert): insert a new element
+- [`Emplace`](#Emplace): insert a new element in place
+- [`Erase`](#Erase): erase an element
+- [`Clear`](#Clear): clear the class
+- [`Swap`](#Swap): swap two classes
 
 ### Capacity
-- [`Size`](#Size): get the size of the tree
-- [`Empty`](#Empty): tell whether the tree is empty
-- [`MaxSize`](#MaxSize): get the maximum size of the tree
+- [`Size`](#Size): get the size of the class
+- [`Empty`](#Empty): tell whether the class is empty
+- [`MaxSize`](#MaxSize): get the maximum size of the class
 
 ### Getter
 - [`GetAllocator`](#GetAllocator): get the allocator
@@ -215,8 +215,8 @@ class PairCompare {
 - [`GetPairCompare`](#GetPairCompare): get the compare class for the map pair
 
 ### Lookup
-- [`Contains`](#Contains): tell whether the tree contains the element
-- [`Find`](#Find): find the element in the tree
+- [`Contains`](#Contains): tell whether the class contains the element
+- [`Find`](#Find): find the element in the class
 - [`LowerBound`](#LowerBound): find the first element that is not less than the
   given element
 - [`UpperBound`](#UpperBound): find the first element that is greater than
@@ -224,14 +224,14 @@ class PairCompare {
 
 ### Iterators
 - [`Begin`](#Begin): get the iterator to the first element
-- [`End`](#End): get the iterator to the end of the tree
 - [`begin`](#begin): get the iterator to the first element
-- [`end`](#end): get the iterator to the end of the tree
 - [`ConstBegin`](#ConstBegin): get the constant iterator to the first element
+- [`End`](#End): get the iterator to the end of the tree
+- [`end`](#end): get the iterator to the end of the tree
 - [`ConstEnd`](#ConstEnd): get the constant iterator to the end of the tree
 
 ## Non-member Function
-- [`Swap`](#SwapNonmember): swap the content
+- [`Swap`](#SwapNonmember): swap two classes
 
 ## Details
 ### <span id="DataStructure">Data Structure</span>
@@ -372,7 +372,7 @@ Map(std::initializer_list<MapPair> init,
 - Time complexity: $O(n \log n)$. ($n$ is the number of elements in the
   initializer list)
 
-### <span id="operator=">operator=</span>
+### <span id="operator=">`operator=`</span>
 ```c++
 Map& operator=(const Map& obj);
 ```
@@ -485,7 +485,7 @@ Map& Swap(Map& other) noexcept;
 ### <span id="MaxSize">`MaxSize`</span>
 ```c++
 [[nodiscard]] long MaxSize() const noexcept;
-``` 
+```
 - Get the maximum number of elements that can be stored in the tree.
 
 ### <span id="GetAllocator">`GetAllocator`</span>
@@ -714,7 +714,7 @@ template<class Key, class Value, class Compare, class Allocator>
 void Swap(Map<Key, Value, Compare, Allocator>& lhs,
           Map<Key, Value, Compare, Allocator>& rhs) noexcept;
 ```
-- Swap the contents of two `RBTree`s.
+- Swap the contents of two `Map`s.
 - Time complexity: $O(1)$.
 
 ### <span id="iterator">iterator</span>

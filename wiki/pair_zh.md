@@ -1,6 +1,6 @@
 # lau::Pair
 
-Switch to Other Languages: [繁體中文（香港）](pair_zh.md)
+切換到其他語言： [English](pair_en.md)
 
 包含於標頭檔 `lau/ultility.h`。
 
