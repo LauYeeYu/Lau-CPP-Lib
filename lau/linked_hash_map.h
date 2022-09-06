@@ -560,10 +560,10 @@ public:
         return *this;
     }
 
-    [[nodiscard]] SizeT Count(const Key& key) const { return table_.Count(key); }
+    [[nodiscard]] SizeT Count(const Key& key) const { return table_.Contains(key) ? 1 : 0; }
 
     template<class K>
-    [[nodiscard]] SizeT Count(const K& key) const { return table_.Count(key); }
+    [[nodiscard]] SizeT Count(const K& key) const { return table_.Contains(key) ? 1 : 0; }
 
     [[nodiscard]] Iterator Find(const Key& key) { return Iterator(table_.Find(key)); }
 

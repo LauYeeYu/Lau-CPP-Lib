@@ -1162,14 +1162,14 @@ public:
     [[nodiscard]] ConstIterator begin() const noexcept { return ConstIterator(head_, this); }
 
     [[nodiscard]] BucketIterator Begin(SizeT bucketIndex) {
-        if (bucketIndex >= bucketSize_) {
+        if (bucketIndex >= bucketSize_ || bucketIndex < 0) {
             throw InvalidArgument("Invalid Argument: bucket index out of range");
         }
         return BucketIterator(bucket_[bucketIndex], bucket_ + bucketIndex);
     }
 
     [[nodiscard]] ConstBucketIterator Begin(SizeT bucketIndex) const {
-        if (bucketIndex >= bucketSize_) {
+        if (bucketIndex >= bucketSize_ || bucketIndex < 0) {
             throw InvalidArgument("Invalid Argument: bucket index out of range");
         }
         return ConstBucketIterator(bucket_[bucketIndex], bucket_ + bucketIndex);
@@ -1178,7 +1178,7 @@ public:
     [[nodiscard]] ConstIterator ConstBegin() const noexcept { return ConstIterator(head_, this); }
 
     [[nodiscard]] ConstBucketIterator ConstBegin(SizeT bucketIndex) const {
-        if (bucketIndex >= bucketSize_) {
+        if (bucketIndex >= bucketSize_ || bucketIndex < 0) {
             throw InvalidArgument("Invalid Argument: bucket index out of range");
         }
         return ConstBucketIterator(bucket_[bucketIndex], bucket_ + bucketIndex);
@@ -1190,14 +1190,14 @@ public:
     [[nodiscard]] ConstIterator end() const noexcept { return ConstIterator(nullptr, this); }
 
     [[nodiscard]] BucketIterator End(SizeT bucketIndex) {
-        if (bucketIndex >= bucketSize_) {
+        if (bucketIndex >= bucketSize_ || bucketIndex < 0) {
             throw InvalidArgument("Invalid Argument: bucket index out of range");
         }
         return BucketIterator(nullptr, bucket_ + bucketIndex);
     }
 
     [[nodiscard]] ConstBucketIterator End(SizeT bucketIndex) const {
-        if (bucketIndex >= bucketSize_) {
+        if (bucketIndex >= bucketSize_ || bucketIndex < 0) {
             throw InvalidArgument("Invalid Argument: bucket index out of range");
         }
         return ConstBucketIterator(nullptr, bucket_ + bucketIndex);
@@ -1206,7 +1206,7 @@ public:
     [[nodiscard]] ConstIterator ConstEnd() const noexcept { return ConstIterator(nullptr, this); }
 
     [[nodiscard]] ConstBucketIterator ConstEnd(SizeT bucketIndex) const {
-        if (bucketIndex >= bucketSize_) {
+        if (bucketIndex >= bucketSize_ || bucketIndex < 0) {
             throw InvalidArgument("Invalid Argument: bucket index out of range");
         }
         return ConstBucketIterator(nullptr, bucket_ + bucketIndex);
@@ -1221,11 +1221,6 @@ public:
 
     template<class K>
     [[nodiscard]] ConstIterator Find(const K& value) const { return ConstIterator(Find_(value), this); }
-
-    [[nodiscard]] SizeT Count(const T& value) const { return Find_(value) != nullptr ? 1 : 0; }
-
-    template<class K>
-    [[nodiscard]] SizeT Count(const K& value) const { return Find_(value) != nullptr ? 1 : 0; }
 
     [[nodiscard]] bool Contains(const T& value) const { return Find_(value) != nullptr; }
 
